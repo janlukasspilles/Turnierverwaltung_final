@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
 
 namespace Turnierverwaltung.ControllerNS
 {
@@ -22,13 +24,41 @@ namespace Turnierverwaltung.ControllerNS
                 Geburtstag = "1996-11-19",
                 Mannschaft = "1. Fc Köln"
             };
-            TeilnehmerHinzufuegen(f1);
-            f1.AnzahlTore = 11;
-            TeilnehmerAendern(f1.Id);
-            TeilnehmerLoeschen(f1.Id);
+            //Teilnehmer = GetAlleTeilnehmer();
+            //TeilnehmerHinzufuegen(f1);
+            ZieheFussballSpieler();
+            //f1.AnzahlTore = 11;
+            //TeilnehmerAendern(f1.Id);
+            //TeilnehmerLoeschen(f1.Id);
         }
         #endregion
         #region Methods
+        public void ZieheFussballSpieler()
+        {
+            string sql = "SELECT S.ID FROM SPIELER S WHERE EXISTS(SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.SPIELER_ID = S.ID)";
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            try
+            {
+                Connection.Open();
+                MySqlCommand command = new MySqlCommand(sql, Connection);
+                MySqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Fussballspieler fs = new Fussballspieler();
+                    fs.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(fs);
+                }
+                reader.Close();
+            }
+            catch (Exception)
+            {
+
+            }
+            finally
+            {
+                Connection.Close();
+            }
+        }
         public bool TeilnehmerHinzufuegen(Teilnehmer t)
         {
             if (t.Neuanlage())
@@ -140,7 +170,7 @@ namespace Turnierverwaltung.ControllerNS
         public List<Teilnehmer> GetAlleMannschaften()
         {
             List<Teilnehmer> res = new List<Teilnehmer>();
-            foreach(Teilnehmer t in Teilnehmer)
+            foreach (Teilnehmer t in Teilnehmer)
             {
                 if (t is Mannschaft)
                     res.Add(t);

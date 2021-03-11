@@ -40,7 +40,7 @@
 
         public override string GetInformation()
         {
-            return base.GetInformation() + $"Geburtstag: {Geburtstag}\r\n";
+            return base.GetInformation() + $"{Geburtstag};{Mannschaft};";
         }
 
         public abstract override bool Speichern();

@@ -26,7 +26,7 @@ namespace Turnierverwaltung
         #region Methods
         public virtual string GetInformation()
         {
-            return $"Name: {Name}\r\n";
+            return $"{Name};";
         }
         public abstract bool Speichern();
         public abstract void SelektionId(long id);

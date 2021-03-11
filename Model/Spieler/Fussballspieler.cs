@@ -26,7 +26,7 @@ namespace Turnierverwaltung
 
         public override string GetInformation()
         {
-            return base.GetInformation();
+            return base.GetInformation() + $"{AnzahlTore}";
         }
 
         public override void SelektionId(long id)
@@ -41,7 +41,7 @@ namespace Turnierverwaltung
                     $"FS.ANZAHL_TORE, " +
                     $"S.VORNAME, " +
                     $"S.NACHNAME, " +
-                    $"M.MANNSCHAFT, " +
+                    $"M.NAME, " +
                     $"S.GEBURTSTAG " +
                     $"FROM SPIELER S " +
                     $"JOIN FUSSBALLSPIELER FS " +
