@@ -162,6 +162,14 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <EmbeddedResource Include="Ressources\SQL\ExampleData\inserts.sql" />
+    <EmbeddedResource Include="Ressources\queries.sql" />
+    <EmbeddedResource Include="Ressources\turnierverwaltung.sql" />
+    <EmbeddedResource Include="Ressources\SQL\Structure\CreateDatabase.sql" />
+    <EmbeddedResource Include="Ressources\SQL\Structure\CreateProcedures.sql" />
+    <EmbeddedResource Include="Ressources\SQL\Structure\CreateTables.sql" />
+    <EmbeddedResource Include="Ressources\SQL\Structure\CreateTriggers.sql" />
+    <EmbeddedResource Include="Ressources\SQL\Structure\CreateViews.sql" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -201,6 +209,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\DatabaseCreator.cs" />
     <Compile Include="Model\Mannschaft.cs" />
     <Compile Include="Model\Physio.cs" />
     <Compile Include="Model\Spieler\Fussballspieler.cs" />

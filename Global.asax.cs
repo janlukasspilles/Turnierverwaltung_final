@@ -7,25 +7,25 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using Turnierverwaltung.ControllerNS;
+using Turnierverwaltung_final.Helper;
 
 namespace Turnierverwaltung_final
 {
     public class Global : HttpApplication
     {
         private static Controller _controller;
-
         public static Controller Controller { get => _controller; set => _controller = value; }
-
-        public Global() : base()
-        {
-            Controller = new Controller();
-        }
 
         void Application_Start(object sender, EventArgs e)
         {
             // Code, der beim Anwendungsstart ausgeführt wird
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+#if DEBUG
+            DatabaseCreator.GenerateDatabase();
+#endif
+            Controller = new Controller();
         }
     }
 }

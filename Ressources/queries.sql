@@ -1,0 +1,71 @@
+-- Anzeige alle Personen
+SELECT
+COALESCE(S.VORNAME, T.VORNAME) AS "Vorname",
+COALESCE(S.NACHNAME, T.NACHNAME) AS "Nachname",
+COALESCE(S.GEBURTSTAG, T.GEBURTSTAG) AS "Geburtstag"
+FROM SPIELER S 
+JOIN MANNSCHAFT M
+ON S.MANNSCHAFT_ID = M.ID
+JOIN TRAINER T
+ON T.MANNSCHAFT_ID = M.ID
+
+-- Anzeige alle Personen sortiert nach Namen
+SELECT
+COALESCE(S.VORNAME, T.VORNAME) AS "Vorname",
+COALESCE(S.NACHNAME, T.NACHNAME) AS "Nachname",
+COALESCE(S.GEBURTSTAG, T.GEBURTSTAG) AS "Geburtstag",
+M.NAME AS "Mannschaft"
+FROM SPIELER S 
+JOIN MANNSCHAFT M
+ON S.MANNSCHAFT_ID = M.ID
+JOIN TRAINER T
+ON T.MANNSCHAFT_ID = M.ID
+ORDER BY NACHNAME asc, VORNAME asc
+
+-- Anzeige alle Personen sortiert nach Geburtstag
+SELECT
+COALESCE(S.VORNAME, T.VORNAME) AS "Vorname",
+COALESCE(S.NACHNAME, T.NACHNAME) AS "Nachname",
+COALESCE(S.GEBURTSTAG, T.GEBURTSTAG) AS "Geburtstag",
+M.NAME AS "Mannschaft"
+FROM SPIELER S 
+JOIN MANNSCHAFT M
+ON S.MANNSCHAFT_ID = M.ID
+JOIN TRAINER T
+ON T.MANNSCHAFT_ID = M.ID
+ORDER BY GEBURTSTAG asc	
+
+-- Anzeige alle Personen sortiert nach Alter
+SELECT
+COALESCE(S.VORNAME, T.VORNAME) AS "Vorname",
+COALESCE(S.NACHNAME, T.NACHNAME) AS "Nachname",
+COALESCE(S.GEBURTSTAG, T.GEBURTSTAG) AS "Geburtstag",
+TIMESTAMPDIFF(YEAR, COALESCE(S.GEBURTSTAG, T.GEBURTSTAG), CURDATE()) AS "Alter",
+M.NAME AS "Mannschaft"
+FROM SPIELER S 
+JOIN MANNSCHAFT M
+ON S.MANNSCHAFT_ID = M.ID
+JOIN TRAINER T
+ON T.MANNSCHAFT_ID = M.ID
+ORDER BY GEBURTSTAG asc	
+
+
+-- Experimental
+SELECT 
+  SPIELER.Id, 
+  spieler.VORNAME,
+  spieler.NACHNAME,
+  CASE WHEN FUSSBALLSPIELER.SPIELER_ID IS NOT NULL then 'Fussballspieler'
+       WHEN handballspieler.SPIELER_ID IS NOT NULL THEN 'Handballspieler' 
+       WHEN tennisspieler.spieler_id is not null then 'Tennisspieler'
+  END AS ObjectName  
+FROM SPIELER
+  LEFT JOIN FUSSBALLSPIELER
+    ON FUSSBALLSPIELER.SPIELER_ID = SPIELER.ID
+  left join handballspieler
+  	on handballspieler.SPIELER_ID = spieler.ID
+  left join tennisspieler
+  	on tennisspieler.SPIELER_ID = spieler.id
+  left join mannschaft m
+    on m.id = spieler.mannschaft_id
+where m.id = 1
