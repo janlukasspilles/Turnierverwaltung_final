@@ -5,7 +5,7 @@
 -- Tabellenstruktur für Tabelle mannschaft
 --
 
-CREATE TABLE mannschaft (
+CREATE TABLE MANNSCHAFT (
   ID int(11) NOT NULL,
   NAME varchar(50) NOT NULL,
   STADT varchar(50) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE mannschaft (
 -- Tabellenstruktur für Tabelle schiedsrichter
 --
 
-CREATE TABLE schiedsrichter (
+CREATE TABLE SCHIEDSRICHTER (
   ID int(11) NOT NULL,
   NACHNAME varchar(35) NOT NULL,
   VORNAME varchar(35) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE schiedsrichter (
 -- Tabellenstruktur für Tabelle spieler
 --
 
-CREATE TABLE spieler (
+CREATE TABLE SPIELER (
   ID int(11) NOT NULL,
   VORNAME varchar(25) NOT NULL,
   NACHNAME varchar(25) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE spieler (
 -- Tabellenstruktur für Tabelle trainer
 --
 
-CREATE TABLE trainer (
+CREATE TABLE TRAINER (
   ID int(11) NOT NULL,
   VORNAME varchar(40) NOT NULL,
   NACHNAME varchar(40) NOT NULL,
@@ -153,26 +153,26 @@ CREATE TABLE SPORTART (
 --
 -- Indizes für die Tabelle mannschaft
 --
-ALTER TABLE mannschaft
+ALTER TABLE MANNSCHAFT
   ADD PRIMARY KEY (ID);
 
 --
 -- Indizes für die Tabelle schiedsrichter
 --
-ALTER TABLE schiedsrichter
+ALTER TABLE SCHIEDSRICHTER
   ADD PRIMARY KEY (ID);
 
 --
 -- Indizes für die Tabelle spieler
 --
-ALTER TABLE spieler
+ALTER TABLE SPIELER
   ADD PRIMARY KEY (ID),
   ADD KEY MANNSCHAFT_ID (MANNSCHAFT_ID);
 
 --
 -- Indizes für die Tabelle trainer
 --
-ALTER TABLE trainer
+ALTER TABLE TRAINER
   ADD PRIMARY KEY (ID),
   ADD KEY MANNSCHAFT_ID (MANNSCHAFT_ID);
 
@@ -234,25 +234,25 @@ ALTER TABLE SPORTART
 --
 -- AUTO_INCREMENT für Tabelle mannschaft
 --
-ALTER TABLE mannschaft
+ALTER TABLE MANNSCHAFT
   MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle schiedsrichter
 --
-ALTER TABLE schiedsrichter
+ALTER TABLE SCHIEDSRICHTER
   MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle spieler
 --
-ALTER TABLE spieler
+ALTER TABLE SPIELER
   MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle trainer
 --
-ALTER TABLE trainer
+ALTER TABLE TRAINER
   MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -304,7 +304,7 @@ ALTER TABLE TURNIER
 --
 -- Constraints der Tabelle trainer
 --
-ALTER TABLE trainer
+ALTER TABLE TRAINER
   ADD CONSTRAINT FK_TRAINER_MANNSCHAFT_ID FOREIGN KEY (MANNSCHAFT_ID) REFERENCES mannschaft (ID) ON DELETE SET NULL ON UPDATE CASCADE;
   
 --

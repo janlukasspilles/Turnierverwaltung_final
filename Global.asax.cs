@@ -23,7 +23,7 @@ namespace Turnierverwaltung_final
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 #if DEBUG
-            DatabaseCreator.GenerateDatabase();
+            //DatabaseCreator.GenerateDatabase();
 #endif
             Controller = new Controller();
         }

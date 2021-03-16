@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.ComponentModel;
 
 namespace Turnierverwaltung
 {
@@ -10,6 +11,7 @@ namespace Turnierverwaltung
 
         #endregion
         #region Properties
+        [DisplayName("Anzahl Tore")]
         public int AnzahlTore { get => _anzahlTore; set => _anzahlTore = value; }
         #endregion
         #region Constructors
@@ -31,7 +33,7 @@ namespace Turnierverwaltung
 
         public override void SelektionId(long id)
         {
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try
             {
                 Connection.Open();

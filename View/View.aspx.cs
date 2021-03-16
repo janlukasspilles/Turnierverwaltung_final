@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung;
 
-namespace Turnierverwaltung_final
+namespace Turnierverwaltung_final.View
 {
     public partial class View : Page
     {

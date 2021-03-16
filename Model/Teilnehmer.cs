@@ -3,6 +3,8 @@
 //Datei:        Controller.cs
 //Datum:        19.11.2020
 //Beschreibung: Kümmert sich um den Programmablauf
+using System.ComponentModel;
+
 namespace Turnierverwaltung
 {
     public abstract class Teilnehmer
@@ -14,6 +16,7 @@ namespace Turnierverwaltung
         #endregion
         #region Properties
         public long Id { get => _id; set => _id = value; }
+        [DisplayName("Name")]
         public string Name { get => _name; set => _name = value; }
         public string Mannschaft { get => _mannschaft; set => _mannschaft = value; }
         #endregion

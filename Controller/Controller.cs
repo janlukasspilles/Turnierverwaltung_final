@@ -36,7 +36,7 @@ namespace Turnierverwaltung.ControllerNS
         public void ZieheFussballSpieler()
         {
             string sql = "SELECT S.ID FROM SPIELER S WHERE EXISTS(SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.SPIELER_ID = S.ID)";
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try
             {
                 Connection.Open();

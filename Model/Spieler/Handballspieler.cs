@@ -29,7 +29,7 @@ namespace Turnierverwaltung
 
         public override void SelektionId(long id)
         {
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try
             {
                 Connection.Open();
@@ -77,7 +77,7 @@ namespace Turnierverwaltung
             string updateSpieler = $"UPDATE SPIELER SET VORNAME='{Vorname}', NACHNAME='{Nachname}', GEBURTSTAG='{Geburtstag}', MANNSCHAFT_ID=(SELECT M.ID FROM MANNSCHAFT M WHERE M.NAME='{Mannschaft}') WHERE ID='{Id}'";
             string updateDetails = $"UPDATE HANDBALLSPIELER SET ANZAHL_TORE='{AnzahlTore}' WHERE SPIELER_ID='{Id}'";
 
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             Connection.Open();
             //Transaction, da immer beide Tabellen ein Update benötigen. Wenn ein Update schief geht soll Rollback ausgeführt werden.
             MySqlTransaction transaction = Connection.BeginTransaction();
@@ -87,7 +87,6 @@ namespace Turnierverwaltung
                 Connection = Connection,
                 Transaction = transaction
             };
-
 
             try
             {
@@ -115,7 +114,7 @@ namespace Turnierverwaltung
             string insertSpieler = $"INSERT INTO SPIELER (VORNAME, NACHNAME, GEBURTSTAG, MANNSCHAFT_ID) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}', MANNSCHAFT_ID=(SELECT M.ID FROM MANNSCHAFT M WHERE M.NAME='{Mannschaft}'))";
             string insertHandballer = $"INSERT INTO HANDBALLSPIELER (SPIELER_ID, ANZAHL_TORE) VALUES ('{Id}', '{AnzahlTore}')";
 
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             Connection.Open();
             //Transaction, da immer beide Tabellen ein Update benötigen. Wenn ein Update schief geht soll Rollback ausgeführt werden.
             MySqlTransaction transaction = Connection.BeginTransaction();
@@ -153,7 +152,7 @@ namespace Turnierverwaltung
             string deleteSpieler = $"DELETE FROM SPIELER WHERE ID='{Id}'";
             string deleteHandballer = $"DELETE FROM HANDBALLSPIELER WHERE SPIELER_ID='{Id}'";
 
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             Connection.Open();
             //Transaction, da immer beide Tabellen ein Update benötigen. Wenn ein Update schief geht soll Rollback ausgeführt werden.
             MySqlTransaction transaction = Connection.BeginTransaction();
