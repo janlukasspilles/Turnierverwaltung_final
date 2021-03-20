@@ -12,8 +12,10 @@ namespace Turnierverwaltung_final.Helper
     public static class DatabaseCreator
     {
         private const string _connectionString = "Server=127.0.0.1;Uid=user;Pwd=user;";
-        public static void GenerateDatabase()
+        private static string _structurePath;
+        public static void GenerateDatabase(bool newStructure)
         {
+            _structurePath = newStructure ? "Turnierverwaltung_final.Ressources.SQL.Structure_New" : "Turnierverwaltung_final.Ressources.SQL.Structure_Old";
             using (MySqlConnection con = new MySqlConnection(_connectionString))
             {
                 con.Open();
@@ -68,7 +70,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateDatabase()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream("Turnierverwaltung_final.Ressources.SQL.Structure.CreateDatabase.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateDatabase.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -79,7 +81,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateTables()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream("Turnierverwaltung_final.Ressources.SQL.Structure.CreateTables.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateTables.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -90,7 +92,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateTriggers()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream("Turnierverwaltung_final.Ressources.SQL.Structure.CreateTriggers.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateTriggers.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -101,7 +103,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateProcedures()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream("Turnierverwaltung_final.Ressources.SQL.Structure.CreateProcedures.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateProcedures.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -112,7 +114,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateViews()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream("Turnierverwaltung_final.Ressources.SQL.Structure.CreateViews.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateViews.sql"))
             using (StreamReader sr = new StreamReader(s))
             {
                 return sr.ReadToEnd();

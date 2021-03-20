@@ -31,21 +31,21 @@ namespace Turnierverwaltung
 
         public override void SelektionId(long id)
         {
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try
             {
                 Connection.Open();
 
                 string selektionstring = $"SELECT S.ID, " +
-                    $"TS.ANZAHL_GEWONNENE_SPIELE, " +
+                    $"TS.GEWONNENE_SPIELE, " +
                     $"TS.ANZAHL_SPIELE, " +
                     $"S.VORNAME, " +
                     $"S.NACHNAME, " +
                     $"M.NAME, " +
                     $"S.GEBURTSTAG " +
                     $"FROM SPIELER S " +
-                    $"JOIN HANDBALLER_DETAILS TS " +
-                    $"ON S.ID = TD.SPIELER_ID " +
+                    $"JOIN TENNISSPIELER TS " +
+                    $"ON S.ID = TS.SPIELER_ID " +
                     $"JOIN MANNSCHAFT M " +
                     $"ON M.ID = S.MANNSCHAFT_ID " +
                     $"WHERE S.ID = {id}";
@@ -55,7 +55,7 @@ namespace Turnierverwaltung
                 while (reader.Read())
                 {
                     Id = reader.GetInt64("ID");
-                    AnzahlGewonneneSpiele = reader.GetInt32("ANZAHL_GEWONNENE_SPIELE");
+                    AnzahlGewonneneSpiele = reader.GetInt32("GEWONNENE_SPIELE");
                     AnzahlSpiele = reader.GetInt32("ANZAHL_SPIELE");
                     Vorname = reader.GetString("VORNAME");
                     Nachname = reader.GetString("NACHNAME");
@@ -64,7 +64,7 @@ namespace Turnierverwaltung
                 }
                 reader.Close();
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
             finally

@@ -11,7 +11,7 @@ namespace Turnierverwaltung
 
         #endregion
         #region Properties
-        [DisplayName("Anzahl Tore")]
+        //[DisplayName("Anzahl Tore")]
         public int AnzahlTore { get => _anzahlTore; set => _anzahlTore = value; }
         #endregion
         #region Constructors

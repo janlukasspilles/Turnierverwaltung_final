@@ -26,15 +26,62 @@ namespace Turnierverwaltung.ControllerNS
             };
             //Teilnehmer = GetAlleTeilnehmer();
             //TeilnehmerHinzufuegen(f1);
-            ZieheFussballSpieler();
+            //ZieheFussballSpieler();
             //f1.AnzahlTore = 11;
             //TeilnehmerAendern(f1.Id);
             //TeilnehmerLoeschen(f1.Id);
         }
         #endregion
         #region Methods
+
+        public void ZieheAlleSpieler()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT S.ID,"
+            + " case when((SELECT 1 from fussballspieler fs where fs.SPIELER_ID = s.id) is not null) then 'Fussballspieler'"
+            + " when((SELECT 1 from handballspieler hs where hs.SPIELER_ID = s.id) is not null) then 'Handballspieler'"
+            + " when((SELECT 1 from tennisspieler ts where ts.SPIELER_ID = s.id) is not null) then 'Tennisspieler'"
+            + " end as Profession"
+            + " FROM SPIELER S";
+
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            Teilnehmer t = null;
+            try
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    switch (reader.GetString("Profession"))
+                    {
+                        case "Fussballspieler":
+                            t = new Fussballspieler();
+                            break;
+                        case "Handballspieler":
+                            t = new Handballspieler();
+                            break;
+                        case "Tennisspieler":
+                            t = new Tennisspieler();
+                            break;
+                    }
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(t);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
         public void ZieheFussballSpieler()
         {
+            Teilnehmer.Clear();
             string sql = "SELECT S.ID FROM SPIELER S WHERE EXISTS(SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.SPIELER_ID = S.ID)";
             MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try

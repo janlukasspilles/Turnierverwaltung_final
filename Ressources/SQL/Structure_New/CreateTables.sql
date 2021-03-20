@@ -1,0 +1,229 @@
+-- Sammlung aller Datenbanktabellen
+
+/**/
+--
+-- Tabellenstruktur für Tabelle Person
+--
+
+CREATE TABLE PERSON (
+  ID int(11) NOT NULL,
+  VORNAME varchar(50) NOT NULL,
+  NACHNAME varchar(50) NOT NULL,
+  GEBURTSTAG date NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle TRAINER
+--
+
+CREATE TABLE TRAINER (
+  ID int(11) NOT NULL,
+  PERSON_ID int(11) NOT NULL,
+  LIZENZ varchar(50) NOT NULL,
+  ERFAHRUNG int(11) NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle SPIELER
+--
+
+CREATE TABLE SPIELER (
+  ID int(11) NOT NULL,
+  PERSON_ID int(11) NOT NULL,
+  VERLETZT tinyint(1) NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle PHYSIO
+--
+
+CREATE TABLE PHYSIO (
+  ID int(11) NOT NULL,
+  PERSON_ID int(11) NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle MANNSCHAFT
+--
+
+CREATE TABLE MANNSCHAFT (
+  ID int(11) NOT NULL,
+  NAME varchar(50) NOT NULL,
+  STADT varchar(50) NOT NULL,
+  GRUENDUNGSJAHR date NOT NULL,
+  SPORTART_ID int(11) NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle PERSONEN_MANNSCHAFTEN
+--
+
+CREATE TABLE PERSONEN_MANNSCHAFTEN (
+  ID int(11) NOT NULL,
+  PERSON_ID int(11) NOT NULL,
+  MANNSCHAFT_ID int(11) NOT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle SPORTART
+--
+
+CREATE TABLE SPORTART (
+  ID int(11) NOT NULL,
+  BEZEICHNUNG varchar(50) NOT NULL,
+  ANZAHL_PUNKTE_SIEG int(11) NOT NULL,
+  ANZAHL_PUNKTE_VERLUST int(11) NOT NULL,
+  ANZAHL_PUNKTE_PATT int(11) NOT NULL,
+  ANZAHL_SPIELER_PRO_TEAM int(11) NOT NULL,
+);
+
+--
+-- Indizes der exportierten Tabellen
+--
+
+--
+-- Indizes für die Tabelle MANNSCHAFT
+--
+ALTER TABLE MANNSCHAFT
+  ADD PRIMARY KEY (ID),
+  ADD KEY SPORTART_ID (SPORTART_ID);
+
+--
+-- Indizes für die Tabelle PERSON
+--
+ALTER TABLE PERSON
+  ADD PRIMARY KEY (ID);
+
+--
+-- Indizes für die Tabelle SPIELER
+--
+ALTER TABLE SPIELER
+  ADD PRIMARY KEY (ID),
+  ADD KEY PERSON_ID (PERSON_ID);
+
+--
+-- Indizes für die Tabelle PHYSIO
+--
+ALTER TABLE PHYSIO
+  ADD PRIMARY KEY (ID),
+  ADD KEY PERSON_ID (PERSON_ID);
+
+--
+-- Indizes für die Tabelle TRAINER
+--
+ALTER TABLE TRAINER
+  ADD PRIMARY KEY (ID),
+  ADD KEY PERSON_ID (PERSON_ID);
+
+--
+-- Indizes für die Tabelle PERSONEN_MANNSCHAFTEN
+--
+ALTER TABLE PERSONEN_MANNSCHAFTEN
+  ADD PRIMARY KEY (ID),
+  ADD KEY PERSON_ID (PERSON_ID),
+  ADD KEY MANNSCHAFT_ID (MANNSCHAFT_ID);
+
+--
+-- Indizes für die Tabelle SPORTART
+--
+ALTER TABLE TENNISSPIELER
+  ADD PRIMARY KEY (ID);
+
+--
+-- Indizes für die Tabelle SPORTART
+--
+ALTER TABLE SPORTART
+  ADD PRIMARY KEY (ID);
+
+--
+-- AUTO_INCREMENT für exportierte Tabellen
+--
+
+--
+-- AUTO_INCREMENT für Tabelle MANNSCHAFT
+--
+ALTER TABLE MANNSCHAFT
+  MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle PHYSIO
+--
+ALTER TABLE PHYSIO
+  MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle PERSON
+--
+ALTER TABLE PERSON
+  MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle TRAINER
+--
+ALTER TABLE TRAINER
+  MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle SPORTART
+--
+ALTER TABLE SPORTART
+  MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
+  
+--
+-- AUTO_INCREMENT für Tabelle PERSONEN_MANNSCHAFTEN
+--
+ALTER TABLE PERSONEN_MANNSCHAFTEN
+  MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
+  
+--
+-- AUTO_INCREMENT für Tabelle SPIELER
+--
+ALTER TABLE SPIELER
+  MODIFY ID int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints der exportierten Tabellen
+--
+
+--
+-- Constraints der Tabelle TRAINER
+--
+ALTER TABLE TRAINER
+  ADD CONSTRAINT FK_TRAINER_PERSON_ID FOREIGN KEY (PERSON_ID) REFERENCES PERSON (ID) ON DELETE SET NULL ON UPDATE CASCADE;
+  
+--
+-- Constraints der Tabelle SPIELER
+--
+ALTER TABLE SPIELER
+  ADD CONSTRAINT FK_SPIELER_PERSON_ID FOREIGN KEY (PERSON_ID) REFERENCES PERSON (ID) ON DELETE SET NULL ON UPDATE CASCADE;
+    
+--
+-- Constraints der Tabelle PHYSIO
+--
+ALTER TABLE PHYSIO
+  ADD CONSTRAINT FK_PHYSIO_PERSON_ID FOREIGN KEY (PERSON_ID) REFERENCES PERSON (ID) ON DELETE CASCADE ON UPDATE CASCADE;
+      
+--
+-- Constraints der Tabelle MANNSCHAFT
+--
+ALTER TABLE MANNSCHAFT
+  ADD CONSTRAINT FK_MANNSCHAFT_SPORTART_ID FOREIGN KEY (SPORTART_ID) REFERENCES SPORTART (ID) ON DELETE CASCADE ON UPDATE CASCADE;
+        
+--
+-- Constraints der Tabelle PERSONEN_MANNSCHAFT
+--
+ALTER TABLE PERSONEN_MANNSCHAFT
+  ADD CONSTRAINT FK_PERSONEN_MANNSCHAFT_PERSON_ID FOREIGN KEY (PERSON_ID) REFERENCES PERSON (ID) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT FK_PERSONEN_MANNSCHAFT_MANNSCHAFT_ID FOREIGN KEY (MANNSCHAFT_ID) REFERENCES MANNSCHAFT (ID) ON DELETE CASCADE ON UPDATE CASCADE;

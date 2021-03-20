@@ -39,7 +39,7 @@ namespace Turnierverwaltung
                     $"HS.ANZAHL_TORE, " +
                     $"S.VORNAME, " +
                     $"S.NACHNAME, " +
-                    $"M.MANNSCHAFT, " +
+                    $"M.NAME, " +
                     $"S.GEBURTSTAG " +
                     $"FROM SPIELER S " +
                     $"JOIN HANDBALLSPIELER HS " +

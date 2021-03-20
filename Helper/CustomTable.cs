@@ -26,8 +26,12 @@ namespace Turnierverwaltung_final.Helper
             set
             {
                 _content = value;
-                ListDataType = GetListDatatype();
-                Refresh();
+                if (CheckContentListValid())
+                {
+                    ListDataType = GetListDatatype();
+                    if (ListDataType != null)
+                        Refresh();
+                }
             }
         }
         public List<PropertyInfo> DisplayFields { get => _displayFields; set => _displayFields = value; }
@@ -44,18 +48,21 @@ namespace Turnierverwaltung_final.Helper
         #region Constructors
         public CustomTable()
         {
-
+            DisplayFields = new List<PropertyInfo>();
+            Content = new List<T>();
+            ID = "tbl_custom";
         }
         public CustomTable(List<T> content)
         {
             DisplayFields = new List<PropertyInfo>();
             Content = content;
+            ID = "tbl_custom";
         }
         #endregion
         #region Methods
         private bool CheckContentListValid()
         {
-            return Content != null && ListDataType != null;
+            return Content != null && Content.Count > 0;
         }
 
         /// <summary>
