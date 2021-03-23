@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung.ControllerNS
 {
@@ -16,106 +17,55 @@ namespace Turnierverwaltung.ControllerNS
         public Controller()
         {
             Teilnehmer = new List<Teilnehmer>();
-            Fussballspieler f1 = new Fussballspieler
-            {
-                Vorname = "Peter",
-                Nachname = "Zwegat",
-                AnzahlTore = 10,
-                Geburtstag = "1996-11-19",
-                Mannschaft = "1. Fc Köln"
-            };
-            //Teilnehmer = GetAlleTeilnehmer();
-            //TeilnehmerHinzufuegen(f1);
-            //ZieheFussballSpieler();
-            //f1.AnzahlTore = 11;
-            //TeilnehmerAendern(f1.Id);
-            //TeilnehmerLoeschen(f1.Id);
+            GetAllePersonen();
         }
         #endregion
         #region Methods
 
-        public void ZieheAlleSpieler()
-        {
-            Teilnehmer.Clear();
-            string sql = "SELECT S.ID,"
-            + " case when((SELECT 1 from fussballspieler fs where fs.SPIELER_ID = s.id) is not null) then 'Fussballspieler'"
-            + " when((SELECT 1 from handballspieler hs where hs.SPIELER_ID = s.id) is not null) then 'Handballspieler'"
-            + " when((SELECT 1 from tennisspieler ts where ts.SPIELER_ID = s.id) is not null) then 'Tennisspieler'"
-            + " end as Profession"
-            + " FROM SPIELER S";
 
+        public void GetAllePersonen()
+        {
+            Person p = null;
+            string sql = "SELECT P.ID," +
+                " case " +
+                "when((SELECT 1 from TRAINER T where T.PERSON_ID = P.id) is not null) then 'Trainer' " +
+                "when((SELECT 1 from SPIELER SP where SP.PERSON_ID = P.id) is not null) then 'Spieler' " +
+                "when((SELECT 1 from PHYSIO PH where PH.PERSON_ID = P.id) is not null) then 'Physio' " +
+                "end as Profession " +
+                "FROM PERSON P";
             MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
-            Teilnehmer t = null;
             try
             {
                 con.Open();
+
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 MySqlDataReader reader = cmd.ExecuteReader();
+
                 while (reader.Read())
                 {
                     switch (reader.GetString("Profession"))
                     {
-                        case "Fussballspieler":
-                            t = new Fussballspieler();
+                        case "Spieler":
+                            p = new Spieler();
                             break;
-                        case "Handballspieler":
-                            t = new Handballspieler();
+                        case "Trainer":
+                            p = new Trainer();
                             break;
-                        case "Tennisspieler":
-                            t = new Tennisspieler();
+                        case "Physio":
+                            p = new Physio();
                             break;
                     }
-                    t.SelektionId(reader.GetInt64("ID"));
-                    Teilnehmer.Add(t);
+                    p.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(p);
                 }
                 reader.Close();
             }
             catch (Exception e)
             {
-
             }
             finally
             {
                 con.Close();
-            }
-        }
-        public void ZieheFussballSpieler()
-        {
-            Teilnehmer.Clear();
-            string sql = "SELECT S.ID FROM SPIELER S WHERE EXISTS(SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.SPIELER_ID = S.ID)";
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
-            try
-            {
-                Connection.Open();
-                MySqlCommand command = new MySqlCommand(sql, Connection);
-                MySqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    Fussballspieler fs = new Fussballspieler();
-                    fs.SelektionId(reader.GetInt64("ID"));
-                    Teilnehmer.Add(fs);
-                }
-                reader.Close();
-            }
-            catch (Exception)
-            {
-
-            }
-            finally
-            {
-                Connection.Close();
-            }
-        }
-        public bool TeilnehmerHinzufuegen(Teilnehmer t)
-        {
-            if (t.Neuanlage())
-            {
-                Teilnehmer.Add(t);
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
         public bool TeilnehmerAendern(long id)

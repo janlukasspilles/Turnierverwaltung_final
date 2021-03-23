@@ -30,8 +30,7 @@ namespace Turnierverwaltung_final.View
 
         protected void btn_Insert_Click(object sender, EventArgs e)
         {
-            Fussballspieler fs = new Fussballspieler() { Vorname = txt_Vorname.Text, Nachname = txt_Nachname.Text, Geburtstag = txt_Geburtstag.Text, Mannschaft = txt_Mannschaft.Text, AnzahlTore = Convert.ToInt32(txt_AnzahlTore.Text) };
-            Global.Controller.TeilnehmerHinzufuegen(fs);
+            
         }
     }
 }

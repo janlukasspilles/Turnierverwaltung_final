@@ -12,7 +12,6 @@ namespace Turnierverwaltung_final.Model.Spieler
         private string _vorname;
         private string _nachname;
         private string _geburtstag;
-        private string _mannschaft;
         #endregion
         #region Properties
         public string Vorname
@@ -34,7 +33,6 @@ namespace Turnierverwaltung_final.Model.Spieler
             }
         }
         public string Geburtstag { get => _geburtstag; set => _geburtstag = value; }
-        public string Mannschaft { get => _mannschaft; set => _mannschaft = value; }
         #endregion
         #region Constructs
         #endregion

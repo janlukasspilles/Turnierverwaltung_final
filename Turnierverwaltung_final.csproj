@@ -247,16 +247,13 @@
     <Compile Include="Helper\DatabaseCreator.cs" />
     <Compile Include="Helper\Viewhelpers.cs" />
     <Compile Include="Model\Mannschaft.cs" />
-    <Compile Include="Model\Physio.cs" />
-    <Compile Include="Model\Spieler\Fussballspieler.cs" />
-    <Compile Include="Model\Spieler\Handballspieler.cs" />
-    <Compile Include="Model\Spieler\Person.cs" />
-    <Compile Include="Model\Spieler\Spieler.cs" />
-    <Compile Include="Model\Spieler\Tennisspieler.cs" />
+    <Compile Include="Model\Perosnen\Physio.cs" />
+    <Compile Include="Model\Perosnen\Person.cs" />
+    <Compile Include="Model\Perosnen\Spieler.cs" />
     <Compile Include="Model\Sportart.cs" />
     <Compile Include="Model\SportartDetailTabelle.cs" />
     <Compile Include="Model\Teilnehmer.cs" />
-    <Compile Include="Model\Trainer.cs" />
+    <Compile Include="Model\Perosnen\Trainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

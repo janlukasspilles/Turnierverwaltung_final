@@ -140,62 +140,7 @@ namespace Turnierverwaltung
                 Connection.Close();
             }
             return true;
-        }
-
-        private bool SelektionSpieler()
-        {
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung2;Uid=user;Pwd=user;");
-            try
-            {
-                Connection.Open();
-
-                string selektionstring = $"SELECT"
-                + $"SPIELER.Id,"
-                + $"spieler.VORNAME,"
-                + $"spieler.NACHNAME,"
-                + $"CASE WHEN FUSSBALLSPIELER.SPIELER_ID IS NOT NULL then 'Fussballspieler'"
-                + $"WHEN handballspieler.SPIELER_ID IS NOT NULL THEN 'Handballspieler'"
-                + $"WHEN tennisspieler.spieler_id is not null then 'Tennisspieler'"
-                + $"END AS Source"
-                + $"FROM SPIELER"
-                + $"LEFT JOIN FUSSBALLSPIELER"
-                + $"ON FUSSBALLSPIELER.SPIELER_ID = SPIELER.ID"
-                + $"left join handballspieler"
-                + $"on handballspieler.SPIELER_ID = spieler.ID"
-                + $"left join tennisspieler"
-                + $"on tennisspieler.SPIELER_ID = spieler.id"
-                + $"left join mannschaft m"
-                + $"on m.id = spieler.mannschaft_id"
-                + $"where m.id = {Id}";
-                MySqlCommand command = new MySqlCommand(selektionstring, Connection);
-                MySqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    switch (reader.GetString("Source"))
-                    {
-                        case "Fussballspieler":
-                            Mitglieder.Add(new Fussballspieler(Id));
-                            break;
-                        case "Handballspieler":
-                            Mitglieder.Add(new Handballspieler(Id));
-                            break;
-                        case "Tennisspieler":
-                            Mitglieder.Add(new Tennisspieler(Id));
-                            break;
-                    }                    
-                }
-                reader.Close();
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                Connection.Close();
-            }
-            return true;
-        }
+        }       
 
         public override bool Neuanlage()
         {
