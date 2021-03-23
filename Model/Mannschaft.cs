@@ -23,29 +23,20 @@ namespace Turnierverwaltung
         }
         #endregion
         #region Methods
-        public override string GetInformation()
-        {
-            Mitglieder.Sort((a, b) => a.GetType().Name.CompareTo(b.GetType().Name));
-            string res = $"Mannschaft: {Name}\r\n\r\n";
-            foreach (Teilnehmer t in Mitglieder)
-            {
-                res += t.GetInformation();
-            }
-            return res;
-        }
 
         public bool NeuesMannschaftsMitglied(Teilnehmer teilnehmer)
         {
-            teilnehmer.Mannschaft = Name;
-            if (teilnehmer.Speichern())
-            {
-                Mitglieder.Add(teilnehmer);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            //teilnehmer.Mannschaft = Name;
+            //if (teilnehmer.Speichern())
+            //{
+            //    Mitglieder.Add(teilnehmer);
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
+            return true;
         }
 
         public Teilnehmer MitgliedVerlaesstMannschaft(string name)

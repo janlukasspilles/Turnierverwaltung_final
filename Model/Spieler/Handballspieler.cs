@@ -22,10 +22,6 @@ namespace Turnierverwaltung
         }
         #endregion
         #region Methods
-        public override string GetInformation()
-        {
-            return base.GetInformation();
-        }
 
         public override void SelektionId(long id)
         {

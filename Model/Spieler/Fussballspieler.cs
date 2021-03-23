@@ -26,11 +26,6 @@ namespace Turnierverwaltung
         #endregion
         #region Methods
 
-        public override string GetInformation()
-        {
-            return base.GetInformation() + $"{AnzahlTore}";
-        }
-
         public override void SelektionId(long id)
         {
             MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");

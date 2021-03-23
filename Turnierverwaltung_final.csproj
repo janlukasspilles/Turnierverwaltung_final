@@ -164,6 +164,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Einstellungen.aspx" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <EmbeddedResource Include="Ressources\SQL\ExampleData\inserts.sql" />
     <EmbeddedResource Include="Ressources\queries.sql" />
@@ -178,6 +179,7 @@
     <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateTables.sql" />
     <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateTriggers.sql" />
     <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateViews.sql" />
+    <EmbeddedResource Include="Ressources\SQL\ExampleData\inserts_new.sql" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.4.1-vsdoc.js" />
@@ -248,8 +250,11 @@
     <Compile Include="Model\Physio.cs" />
     <Compile Include="Model\Spieler\Fussballspieler.cs" />
     <Compile Include="Model\Spieler\Handballspieler.cs" />
+    <Compile Include="Model\Spieler\Person.cs" />
     <Compile Include="Model\Spieler\Spieler.cs" />
     <Compile Include="Model\Spieler\Tennisspieler.cs" />
+    <Compile Include="Model\Sportart.cs" />
+    <Compile Include="Model\SportartDetailTabelle.cs" />
     <Compile Include="Model\Teilnehmer.cs" />
     <Compile Include="Model\Trainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -287,6 +292,13 @@
     </Compile>
     <Compile Include="View\View.aspx.designer.cs">
       <DependentUpon>View.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Einstellungen.aspx.cs">
+      <DependentUpon>Einstellungen.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Einstellungen.aspx.designer.cs">
+      <DependentUpon>Einstellungen.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,10 @@
-﻿namespace Turnierverwaltung
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Turnierverwaltung;
+
+namespace Turnierverwaltung_final.Model.Spieler
 {
     public abstract class Person : Teilnehmer
     {
@@ -6,6 +12,7 @@
         private string _vorname;
         private string _nachname;
         private string _geburtstag;
+        private string _mannschaft;
         #endregion
         #region Properties
         public string Vorname
@@ -27,18 +34,15 @@
             }
         }
         public string Geburtstag { get => _geburtstag; set => _geburtstag = value; }
+        public string Mannschaft { get => _mannschaft; set => _mannschaft = value; }
         #endregion
-        #region Constructors
-        public Person() : base()
-        {
-
-        }
+        #region Constructs
         #endregion
-        #region Methods       
-        public abstract override bool Speichern();
-        public abstract override void SelektionId(long id);
-        public abstract override bool Neuanlage();
+        #region Methods
         public abstract override bool Loeschen();
+        public abstract override bool Neuanlage();
+        public abstract override void SelektionId(long id);
+        public abstract override bool Speichern();
         #endregion
     }
 }

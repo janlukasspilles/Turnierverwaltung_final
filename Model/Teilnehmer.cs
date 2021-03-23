@@ -12,13 +12,10 @@ namespace Turnierverwaltung
         #region Attributes
         private long _id;
         private string _name;
-        private string _mannschaft;
         #endregion
         #region Properties
         public long Id { get => _id; set => _id = value; }
-        [DisplayName("Name")]
         public string Name { get => _name; set => _name = value; }
-        public string Mannschaft { get => _mannschaft; set => _mannschaft = value; }
         #endregion
         #region Constructors
         public Teilnehmer()
@@ -27,10 +24,6 @@ namespace Turnierverwaltung
         }
         #endregion
         #region Methods
-        public virtual string GetInformation()
-        {
-            return $"{Name};";
-        }
         public abstract bool Speichern();
         public abstract void SelektionId(long id);
         public abstract bool Neuanlage();

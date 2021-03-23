@@ -22,9 +22,9 @@ namespace Turnierverwaltung_final
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-#if DEBUG
-            //DatabaseCreator.GenerateDatabase();
-#endif
+
+            DatabaseCreator.GenerateDatabase(true);
+
             Controller = new Controller();
         }
     }

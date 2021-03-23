@@ -53,7 +53,7 @@ namespace Turnierverwaltung_final.Helper
                             cmd.CommandText = currentStatement;
                             cmd.ExecuteNonQuery();
                         }
-                        currentStatement = InsertExampleData();
+                        currentStatement = InsertExampleData(newStructure);
                         if (currentStatement != "")
                         {
                             cmd.CommandText = currentStatement;
@@ -61,7 +61,7 @@ namespace Turnierverwaltung_final.Helper
                         }
                         trans.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         trans.Rollback();
                     }
@@ -121,10 +121,10 @@ namespace Turnierverwaltung_final.Helper
             }
         }
 
-        private static string InsertExampleData()
+        private static string InsertExampleData(bool newStructure)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream("Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts.sql"))
+            using (Stream s = assembly.GetManifestResourceStream(newStructure?"Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts_new.sql": "Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts.sql"))
             using (StreamReader sr = new StreamReader(s))
             {
                 return sr.ReadToEnd();

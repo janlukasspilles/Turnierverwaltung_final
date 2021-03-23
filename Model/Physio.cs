@@ -39,11 +39,6 @@ namespace Turnierverwaltung
         #endregion
         #region Methods
 
-        public override string GetInformation()
-        {
-            return "";
-        }
-
         public override bool Speichern()
         {
             throw new NotImplementedException();
