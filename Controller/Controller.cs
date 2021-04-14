@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using Turnierverwaltung_final.Helper;
 using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung.ControllerNS
@@ -9,22 +10,54 @@ namespace Turnierverwaltung.ControllerNS
     {
         #region Attributes
         private List<Teilnehmer> _teilnehmer;
+        private CustomTable _ct;
         #endregion
         #region Properties
         public List<Teilnehmer> Teilnehmer { get => _teilnehmer; set => _teilnehmer = value; }
+        public CustomTable Ct { get => _ct; set => _ct = value; }
         #endregion
         #region Constructors
         public Controller()
         {
             Teilnehmer = new List<Teilnehmer>();
+            Ct = new CustomTable();
             GetAllePersonen();
         }
         #endregion
         #region Methods
 
+        public void GetAlleSpieler()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT P.ID FROM PERSON P JOIN SPIELER SP ON P.ID = SP.PERSON_ID";
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Spieler s = new Spieler();
+                    s.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(s);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
 
         public void GetAllePersonen()
         {
+            Teilnehmer.Clear();
             Person p = null;
             string sql = "SELECT P.ID," +
                 " case " +

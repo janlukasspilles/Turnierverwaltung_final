@@ -54,7 +54,7 @@
                         <li><a runat="server" href="~/">Startseite</a></li>
                         <li><a runat="server" href="~/About">Turniere</a></li>
                         <li><a runat="server" href="~/Contact">Mannschaften</a></li>
-                        <li><a runat="server" href="~/Spieler">Spieler</a></li>
+                        <li><a runat="server" href="~/Personen">Personen</a></li>
                         <li><a runat="server" href="~/Einstellungen">Einstellungen</a></li>
                     </ul>
                 </div>

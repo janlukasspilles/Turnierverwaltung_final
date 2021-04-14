@@ -8,9 +8,11 @@ namespace Turnierverwaltung
     {
         #region Attributes
         private int _jahreErfahrung;
+        private string _lizenz;
         #endregion
         #region Properties
-        public int JahreErfahrung { get => _jahreErfahrung; set => _jahreErfahrung = value; }        
+        public int JahreErfahrung { get => _jahreErfahrung; set => _jahreErfahrung = value; }
+        public string Lizenz { get => _lizenz; set => _lizenz = value; }
         #endregion
         #region Constructors
         public Trainer() : base()
@@ -35,7 +37,7 @@ namespace Turnierverwaltung
                     $"WHERE ID = {Id}";
                 cmd.CommandText = updatePerson;
                 cmd.ExecuteNonQuery();
-                string updateTrainer = $"UPDATE TRAINER SET ERFAHRUNG= {JahreErfahrung} WHERE PERSON_ID = '{Id}'";
+                string updateTrainer = $"UPDATE TRAINER SET ERFAHRUNG = {JahreErfahrung}, LIZENZ = '{Lizenz}' WHERE PERSON_ID = '{Id}'";
                 cmd.CommandText = updateTrainer;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
@@ -58,7 +60,7 @@ namespace Turnierverwaltung
             try
             {
                 con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, T.ERFAHRUNG " +
+                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, T.ERFAHRUNG, T.LIZENZ " +
                     $"FROM PERSON P " +
                     $"JOIN TRAINER T " +
                     $"ON P.ID = T.PERSON_ID " +
@@ -74,6 +76,7 @@ namespace Turnierverwaltung
                     Nachname = reader.GetString("NACHNAME");
                     Geburtstag = reader.GetDateTime("GEBURTSTAG").ToString("yyyy-MM-dd");
                     JahreErfahrung = reader.GetInt32("ERFAHRUNG");
+                    Lizenz = reader.GetString("Lizenz");
                 }
                 reader.Close();
             }
@@ -97,7 +100,7 @@ namespace Turnierverwaltung
                 string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
-                string insertSpieler = $"INSERT INTO TRAINER (PERSON_ID, ERFAHRUNG) VALUES ('{cmd.LastInsertedId}', '{JahreErfahrung}')";
+                string insertSpieler = $"INSERT INTO TRAINER (PERSON_ID, ERFAHRUNG, LIZENZ) VALUES ('{cmd.LastInsertedId}', '{JahreErfahrung}', '{Lizenz}')";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();

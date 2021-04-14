@@ -124,7 +124,7 @@ namespace Turnierverwaltung_final.Helper
         private static string InsertExampleData(bool newStructure)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream(newStructure?"Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts_new.sql": "Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts.sql"))
+            using (Stream s = assembly.GetManifestResourceStream(newStructure ? "Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts_new.sql" : "Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts.sql"))
             using (StreamReader sr = new StreamReader(s))
             {
                 return sr.ReadToEnd();

@@ -210,7 +210,7 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="ViewSwitcher.ascx" />
-    <Content Include="Spieler.aspx" />
+    <Content Include="Personen.aspx" />
     <Content Include="View\View.aspx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
@@ -243,6 +243,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\BooleanExtensions.cs" />
+    <Compile Include="Helper\CustomRow.cs" />
     <Compile Include="Helper\CustomTable.cs" />
     <Compile Include="Helper\DatabaseCreator.cs" />
     <Compile Include="Helper\Viewhelpers.cs" />
@@ -276,12 +278,12 @@
     <Compile Include="ViewSwitcher.ascx.designer.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Spieler.aspx.cs">
-      <DependentUpon>Spieler.aspx</DependentUpon>
+    <Compile Include="Personen.aspx.cs">
+      <DependentUpon>Personen.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Spieler.aspx.designer.cs">
-      <DependentUpon>Spieler.aspx</DependentUpon>
+    <Compile Include="Personen.aspx.designer.cs">
+      <DependentUpon>Personen.aspx</DependentUpon>
     </Compile>
     <Compile Include="View\View.aspx.cs">
       <DependentUpon>View.aspx</DependentUpon>
