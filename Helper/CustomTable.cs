@@ -31,12 +31,6 @@ namespace Turnierverwaltung_final.Helper
             set
             {
                 _content = value;
-                if (CheckContentListValid())
-                {
-                    ListDataType = GetListDatatype();
-                    if (ListDataType != null)
-                        Refresh();
-                }
             }
         }
         public List<PropertyInfo> DisplayFields { get => _displayFields; set => _displayFields = value; }
@@ -46,7 +40,6 @@ namespace Turnierverwaltung_final.Helper
             set
             {
                 _listDataType = value;
-                SetDisplayFields();
             }
         }
 
@@ -54,82 +47,35 @@ namespace Turnierverwaltung_final.Helper
         public int EditedRowIndex { get => _editedRowIndex; set => _editedRowIndex = value; }
         #endregion
         #region Constructors
-        public CustomTable()
-        {
-            DisplayFields = new List<PropertyInfo>();
-            Content = new List<Teilnehmer>();
-            ID = "tbl_custom";
-        }
-        public CustomTable(List<Teilnehmer> content)
+        public CustomTable(List<Teilnehmer> content) : base()
         {
             DisplayFields = new List<PropertyInfo>();
             Content = content;
             ID = "tbl_custom";
+            if (Content != null && Content.Count > 0)
+            {
+                ListDataType = GetListDatatype();
+                if (ListDataType != null)
+                {
+                    foreach (PropertyInfo propertyInfo in ListDataType.GetProperties())
+                    {
+                        if (!Attribute.IsDefined(propertyInfo, typeof(DisplayNameAttribute)))
+                            DisplayFields.Add(propertyInfo);
+                    }
+                }
+            }
+            CreateTable();
         }
         #endregion
         #region Methods
-        private bool CheckContentListValid()
+        public void CreateTable()
         {
-            return Content != null && Content.Count > 0;
-        }
-
-        /// <summary>
-        /// Ermittelt die gemeinsame Basisklasse der Elemente.
-        /// </summary>
-        /// <returns>
-        /// Typ der gemeinsamen Basisklasse der Elemente,
-        /// gibt es keine wird null zurückgegeben.
-        /// </returns>
-        private Type GetListDatatype()
-        {
-            if (!Content.All(x => x.GetType().Equals(Content.First().GetType())))
-            {
-                //Checken, ob es eine gemeinsame Basisklasse gibt
-                for (Type current = Content.First().GetType(); current != null; current = current.BaseType)
-                {
-                    if (Content.All(x => x.GetType().IsSubclassOf(current)))
-                    {
-                        return current;
-                    }
-                }
-                //Keine gemeinsame Basisklasse
-                return null;
-            }
-            else
-            {
-                return Content.First().GetType();
-            }
-        }
-
-        /// <summary>
-        /// Ermittelt die anzeigbaren Felder.
-        /// </summary>
-        private void SetDisplayFields()
-        {
-            foreach (PropertyInfo propertyInfo in ListDataType.GetProperties())
-            {
-                if (!Attribute.IsDefined(propertyInfo, typeof(DisplayNameAttribute)))
-                    DisplayFields.Add(propertyInfo);
-            }
-        }
-
-        /// <summary>
-        /// Aktualisiert die Tabelle.
-        /// </summary>
-        public void Refresh()
-        {
-            if (CheckContentListValid())
-            {
-                Rows.Clear();
-                GenerateHeaderRow();
+            Rows.Clear();
+            GenerateHeaderRow();
+            if (Content != null && Content.Count > 0)
                 GenerateDataRows();
-                GenerateButtonRow();
-            }
+            GenerateButtonRow();
         }
-
-        /// <summary>
-        /// Erzeugt die Kopfzeile.
-        /// </summary>
         private void GenerateHeaderRow()
         {
             TableHeaderRow headerRow = new TableHeaderRow();
@@ -148,61 +94,141 @@ namespace Turnierverwaltung_final.Helper
             }
         }
 
-        /// <summary>
-        /// Erzeugt die Zeilen mit den Daten.
-        /// </summary>
         private void GenerateDataRows()
         {
-            int i = 0;
-            foreach (Teilnehmer contentMember in Content)
+            for (int memberNum = 0; memberNum < Content.Count; memberNum++)
             {
-                i += 1;
-                CustomRow newRow = new CustomRow(DisplayFields, contentMember);
+                // Wir geben MemberNum + 1, damit die Id der Row gleich der Position des Datensatzes
+                // in der Liste ist, da in es noch eine HeaderRows gibt.
+                CustomRow newRow = new CustomRow(Content[memberNum], memberNum + 1, DisplayFields);
                 Rows.Add(newRow);
             }
         }
+
         private void GenerateButtonRow()
         {
             TableRow tr = new TableRow();
             TableCell tc = new TableCell();
-            Button acceptButton = new Button()
+
+            //Accept Button
+            Button btn = new Button()
             {
-                Text = "accept",
+                Text = "Änderungen speichern",
                 Visible = true,
-                CausesValidation = true,
                 ID = "btnAccept",
             };
-            acceptButton.Click += acceptButton_Click;
-            tc.Controls.Add(acceptButton);
+            btn.Click += acceptButton_Click;
+            tc.Controls.Add(btn);
             tr.Cells.Add(tc);
+
+            tc = new TableCell();
+            //Delete Button
+            btn = new Button()
+            {
+                Text = "Ausgewählte löschen",
+                Visible = true,
+                ID = "btnDelete",
+            };
+            btn.Click += deleteButton_Click;
+            tc.Controls.Add(btn);
+            tr.Cells.Add(tc);
+
+            tc = new TableCell();
+            //Cancel Button
+            btn = new Button()
+            {
+                Text = "Änderungen verwerfen",
+                Visible = true,
+                ID = "btnCancel",
+            };
+            btn.Click += cancelButton_Click;
+            tc.Controls.Add(btn);
+            tr.Cells.Add(tc);
+
             Rows.Add(tr);
         }
-        public void DeleteItem(CustomRow cr)
-        {
-            Content.RemoveAt(Rows.GetRowIndex(cr) - 1);
-            Refresh();
-        }
 
-        public void ApplyRowChanges(int rowIndex)
+        private Type GetListDatatype()
         {
-            (Content[rowIndex] as Person).Vorname = this.Parent.Parent.Parent.Page.Request.Form["ctl00$MainContent$txtBox0"];
-            (Content[rowIndex] as Person).Nachname = this.Parent.Parent.Parent.Page.Request.Form["ctl00$MainContent$txtBox1"];
-            (Content[rowIndex] as Person).Geburtstag = this.Parent.Parent.Parent.Page.Request.Form["ctl00$MainContent$txtBox2"];            
-            Content[rowIndex].Speichern();
-            Refresh();
-        }
-
-        public void SetRowInEditMode(CustomRow cr)
-        {
-            EditedRowIndex = Rows.GetRowIndex(cr);
-            cr.RowState = RowState.rsEdit;
-            cr.RefreshRow();
+            Type t = Content.First().GetType();
+            if (!Content.All(x => x.GetType().Equals(t)))
+            {
+                //Checken, ob es eine gemeinsame Basisklasse gibt
+                for (Type current = t; current != null; current = current.BaseType)
+                {
+                    if (Content.All(x => x.GetType().IsSubclassOf(current)))
+                    {
+                        return current;
+                    }
+                }
+                //Keine gemeinsame Basisklasse
+                return null;
+            }
+            else
+            {
+                return t;
+            }
         }
 
         //Accept-Button OnClickEvent
         private void acceptButton_Click(object sender, EventArgs e)
         {
-            ApplyRowChanges(EditedRowIndex);
+            foreach (TableRow tmp in Rows)
+            {
+                if (tmp is CustomRow)
+                {
+                    if ((tmp as CustomRow).InEditMode)
+                    {
+                        //(tmp as CustomRow).InEditMode = false;
+                        for (int i = 0; i < DisplayFields.Count; i++)
+                        {
+                            var cur = Content[Rows.GetRowIndex(tmp) - 1];
+                            //Hack: Irgendwie sind das zu diesem Zeitpunkt wieder Labels und keine Textboxen mehr...
+                            //Doch ein Big-Mistake --> Durch den Controlwechsel geht der Wert flöten                            
+                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(Content[Rows.GetRowIndex(tmp) - 1], Convert.ChangeType((tmp.Cells[i].Controls[0] as Label).Text, DisplayFields[i].PropertyType));
+                        }
+                        //Convert.ChangeType(Content[Rows.GetRowIndex(tmp) - 1], ListDataType).;
+                    }
+                }
+            }
+        }
+
+        //Delete-Button OnClickEvent
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            List<TableRow> deleteRows = new List<TableRow>();
+            foreach (TableRow tmp in Rows)
+            {
+                if (tmp is CustomRow)
+                {
+                    if ((tmp as CustomRow).SelectedCheckBox.Checked)
+                    {
+                        Content[Rows.GetRowIndex(tmp) - 1].Loeschen();
+                        deleteRows.Add(tmp);
+                    }
+                }
+            }
+            //Rows müssen im nachhinein gelöscht werden, da sonst Exception bei foreach
+            foreach (TableRow delRow in deleteRows)
+            {
+                Rows.Remove(delRow);
+            }
+        }
+
+        //Cancel-Button OnClick
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            foreach (TableRow tmp in Rows)
+            {
+                if (tmp is CustomRow)
+                {
+                    if ((tmp as CustomRow).InEditMode)
+                    {
+                        (tmp as CustomRow).InEditMode = false;
+                        (tmp as CustomRow).RefreshRow();
+                    }
+                }
+            }
         }
         #endregion
     }

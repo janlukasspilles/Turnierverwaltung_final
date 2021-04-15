@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung;
 using Turnierverwaltung_final.View;
@@ -11,137 +12,114 @@ namespace Turnierverwaltung_final.Helper
 {
     public class CustomRow : TableRow
     {
-        #region Attributes
-        private RowState _rowState;
-        private Button _cancelButton;
+        #region Attributes        
         private Button _editButton;
-        private Button _deleteButton;
+        private CheckBox _selectedCheckBox;
+        private bool _inEditMode;
         #endregion
         #region Properties
-        public RowState RowState { get => _rowState; set => _rowState = value; }
         public Button EditButton { get => _editButton; set => _editButton = value; }
-        public Button DeleteButton { get => _deleteButton; set => _deleteButton = value; }
-        public Button CancelButton { get => _cancelButton; set => _cancelButton = value; }        
+        public CheckBox SelectedCheckBox { get => _selectedCheckBox; set => _selectedCheckBox = value; }
+        public bool InEditMode
+        {
+            get
+            {
+                if (this.ViewState["InEditMode"] == null)
+                    return _inEditMode;
+                return (bool)this.ViewState["InEditMode"];
+            }
+            set
+            {
+                this.ViewState["InEditMode"] = value;
+                _inEditMode = value;
+            }
+        }
         #endregion
         #region Constructors
         #endregion
-        public CustomRow(List<PropertyInfo> displayFields, Teilnehmer teilnehmer) : base()
+        public CustomRow(Teilnehmer contentMember, int pos, List<PropertyInfo> displayFields) : base()
         {
-            TableCell newCell = null;
-            foreach (PropertyInfo propertyInfo in displayFields)
+            ID = $"tblRow{pos}";
+            if (contentMember != null && displayFields != null)
             {
-                newCell = new TableCell();
-                Label l = new Label();
-                l.Text = propertyInfo.PropertyType == typeof(bool) ? ((bool)propertyInfo.GetValue(teilnehmer)).GetJaNeinString() : propertyInfo.GetValue(teilnehmer).ToString();
-                newCell.Controls.Add(l);
-                Cells.Add(newCell);
+                for (int counter = 0; counter < displayFields.Count; counter++)
+                {
+                    TableCell newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
+                    Control newControl = null;
+                    if (!InEditMode)
+                    {
+                        newControl = new Label() { ID = $"lbl{counter}Row{pos}" };
+                        (newControl as Label).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
+                    }
+                    else
+                    {
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                        (newControl as TextBox).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
+                    }
+                    newCell.Controls.Add(newControl);
+                    Cells.Add(newCell);
+                }
+                AddUserControls(pos);
             }
+        }
 
-            RowState = RowState.rsNone;
-            EditButton = new Button()
-            {
-                Text = "edit",
-            };
-            DeleteButton = new Button()
-            {
-                Text = "del",
-            };            
-            CancelButton = new Button()
-            {
-                Text = "cancel",
-                Visible = false,
-            };
+        private void AddUserControls(int pos)
+        {
+            TableCell newCell = new TableCell() { ID = $"tblCell{Cells.Count}Row{pos}" };
+            //Edit-Button
+            EditButton = new Button();
+            EditButton.ID = $"btnEdit{pos}";
+            EditButton.Text = "Edit";
             EditButton.Click += editButton_Click;
-            DeleteButton.Click += delButton_Click;
-            CancelButton.Click += cancelButton_Click;
-            newCell = new TableCell();
             newCell.Controls.Add(EditButton);
             Cells.Add(newCell);
-            newCell = new TableCell();
-            newCell.Controls.Add(DeleteButton);
-            Cells.Add(newCell);            
-            newCell = new TableCell();
-            newCell.Controls.Add(CancelButton);
+            //CheckBox
+            newCell = new TableCell() { ID = $"tblCell{Cells.Count}Row{pos}" };
+            SelectedCheckBox = new CheckBox() { ID = $"cbSelected{pos}" };
+            newCell.Controls.Add(SelectedCheckBox);
             Cells.Add(newCell);
         }
 
+        //Convert.ChangeType(contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null), displayFields[counter].PropertyType);
         #region Methods
         public void RefreshRow()
         {
-            switch (RowState)
-            {
-                case RowState.rsNone:
-                    SetRowInNoneMode();
-                    break;
-                case RowState.rsEdit:
-                    SetRowInEditMode();
-                    break;
-            }
+            if (InEditMode)
+                SetRowInEditMode();
+            else
+                SetRowInNoneMode();
         }
         private void SetRowInNoneMode()
         {
-            for (int i = 0; i < Cells.Count - 4; i++)
-            {
-                foreach (System.Web.UI.Control co in Cells[i].Controls)
-                {
-                    if (co is TextBox)
-                    {
-                        string tmp = (co as TextBox).Text;
-                        Cells[i].Controls.Remove(co);
-                        Cells[i].Controls.Add(new Label() { Text = tmp });
-                    }
-                }
-            }
-            EditButton.Visible = true;
-            DeleteButton.Visible = true;
-            CancelButton.Visible = false;
+
         }
         private void SetRowInEditMode()
         {
-            for (int i = 0; i < Cells.Count - 4; i++)
+            //-2, da die letzten zwei Spalten Checkbox und Button sind
+            for (int counter = 0; counter < Cells.Count - 2; counter++)
             {
-                foreach (System.Web.UI.Control co in Cells[i].Controls)
+                foreach (Control c in Cells[counter].Controls)
                 {
-                    if (co is Label)
+                    if (c is Label)
                     {
-                        string tmp = (co as Label).Text;
-                        Cells[i].Controls.Remove(co);
-                        Cells[i].Controls.Add(new TextBox() { Text = tmp, ID = $"txtBox{i}"});
+                        TextBox txtTmp = new TextBox()
+                        {
+                            ID = (c as Label).ID.Replace("lbl", "txt"),
+                            Text = (c as Label).Text,
+                        };
+                        Cells[counter].Controls.Remove(c);
+                        Cells[counter].Controls.Add(txtTmp);
                     }
                 }
             }
-            EditButton.Visible = false;
-            DeleteButton.Visible = true;
-            CancelButton.Visible = true;
-        }
-        //Delete-Button OnClick Event
-        private void delButton_Click(object sender, EventArgs e)
-        {
-            if (Parent is CustomTable)
-                (Parent as CustomTable).DeleteItem(this);
         }
 
         //Edit-Button OnClickEvent
         private void editButton_Click(object sender, EventArgs e)
         {
-            if (Parent is CustomTable)
-            {
-                (Parent as CustomTable).SetRowInEditMode(this);
-            }
-            //RowState = RowState.rsEdit;
-            //RefreshRow();
-        }        
-        //Cancel-Button OnClickEvent
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            RowState = RowState.rsNone;
+            InEditMode = true;
             RefreshRow();
         }
         #endregion
-    }
-    public enum RowState
-    {
-        rsNone,
-        rsEdit
     }
 }
