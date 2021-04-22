@@ -5,10 +5,6 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turnierverwaltung_final", "Turnierverwaltung_final.csproj", "{FB36A451-97A2-40A8-9F66-A065403C0AD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurnierverwaltungTests", "..\TurnierverwaltungTests\TurnierverwaltungTests.csproj", "{2E9E1D95-A53F-43B9-9CF2-F1182F610515}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JansCooleBibliothek", "..\JansCooleBibliothek\JansCooleBibliothek.csproj", "{4D810DEB-E08B-466E-8E42-B295E52D47C6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,14 +15,6 @@ Global
 		{FB36A451-97A2-40A8-9F66-A065403C0AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB36A451-97A2-40A8-9F66-A065403C0AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB36A451-97A2-40A8-9F66-A065403C0AD2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E9E1D95-A53F-43B9-9CF2-F1182F610515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E9E1D95-A53F-43B9-9CF2-F1182F610515}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E9E1D95-A53F-43B9-9CF2-F1182F610515}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E9E1D95-A53F-43B9-9CF2-F1182F610515}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D810DEB-E08B-466E-8E42-B295E52D47C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D810DEB-E08B-466E-8E42-B295E52D47C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D810DEB-E08B-466E-8E42-B295E52D47C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D810DEB-E08B-466E-8E42-B295E52D47C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

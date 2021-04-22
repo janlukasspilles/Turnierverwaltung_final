@@ -21,7 +21,62 @@ namespace Turnierverwaltung.ControllerNS
         }
         #endregion
         #region Methods
+        public void GetAllePhysios()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT P.ID FROM PERSON P JOIN PHYSIO PH ON P.ID = PH.PERSON_ID";
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
 
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Physio p = new Physio();
+                    p.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(p);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+        public void GetAlleTrainer()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT P.ID FROM PERSON P JOIN TRAINER T ON P.ID = T.PERSON_ID";
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Trainer t = new Trainer();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(t);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
         public void GetAlleSpieler()
         {
             Teilnehmer.Clear();

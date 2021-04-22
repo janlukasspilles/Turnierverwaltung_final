@@ -1,24 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Personen.aspx.cs" Inherits="Turnierverwaltung_final.View.Personen" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:Panel runat="server" ID="pnl_tbl"></asp:Panel>
-    <%--<asp:UpdatePanel ID="pnl_tbl" runat="server">
-        <ContentTemplate runat="server">--%>
-            <%--<ContentTemplate>
-            <asp:GridView ID="grdvUserInfo" AllowPaging="True" PagerSettings-Mode="NextPreviousFirstLast" PageSize="20" runat="server" AutoGenerateColumns="False" Width="700px" SkinID="grdMySite" DataSourceID="ObjectDataSource1">
-                <Columns>
-                    <asp:BoundField DataField="UserID" Visible="false" HeaderText="UserID" SortExpression="UserID" />
-                    <asp:BoundField DataField="UserName" HeaderText="UserName" SortExpression="UserName" />
-                    <asp:BoundField DataField="ProviderName" HeaderText="ProviderName" SortExpression="ProviderName" />
-                    <asp:BoundField DataField="IpAddress" HeaderText="IpAddress" SortExpression="IpAddress" />
-                    <asp:BoundField DataField="TimeIn" HeaderText="TimeIn" SortExpression="TimeIn" />
-                    <asp:BoundField DataField="TimeOUt" HeaderText="TimeOUt" SortExpression="TimeOUt" />
-                </Columns>
-            </asp:GridView>
-        </ContentTemplate>--%>
-        <%--</ContentTemplate>
-        <Triggers>
-            <asp:AsyncPostBackTrigger ControlID="btnAccept" EventName="Click" />
-        </Triggers>
-    </asp:UpdatePanel>--%>
+    <asp:DropDownList runat="server" ID="ddl_selection" OnSelectedIndexChanged="ddl_selection_SelectedIndexChanged" AutoPostBack="true">
+        <asp:ListItem runat="server" ID="li_Empty"></asp:ListItem>
+        <asp:ListItem runat="server" ID="li_Personen">Personen</asp:ListItem>
+        <asp:ListItem runat="server" ID="li_Spieler">Spieler</asp:ListItem>
+        <asp:ListItem runat="server" ID="li_Trainer">Trainer</asp:ListItem>
+        <asp:ListItem runat="server" ID="li_Physio">Physio</asp:ListItem>
+    </asp:DropDownList>
+    <asp:Panel runat="server" ID="pnl_tbl"></asp:Panel>    
 </asp:Content>

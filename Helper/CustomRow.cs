@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using Turnierverwaltung_final.View;
 
 namespace Turnierverwaltung_final.Helper
@@ -20,18 +21,17 @@ namespace Turnierverwaltung_final.Helper
         #region Properties
         public Button EditButton { get => _editButton; set => _editButton = value; }
         public CheckBox SelectedCheckBox { get => _selectedCheckBox; set => _selectedCheckBox = value; }
-        public bool InEditMode
+        public RowState RowState
         {
             get
             {
-                if (this.ViewState["InEditMode"] == null)
-                    return _inEditMode;
-                return (bool)this.ViewState["InEditMode"];
+                if (ViewState["RowState"] == null)
+                    return RowState.rsNone;
+                return (RowState)ViewState["RowState"];
             }
             set
             {
-                this.ViewState["InEditMode"] = value;
-                _inEditMode = value;
+                ViewState["RowState"] = value;
             }
         }
         #endregion
@@ -46,15 +46,50 @@ namespace Turnierverwaltung_final.Helper
                 {
                     TableCell newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
                     Control newControl = null;
-                    if (!InEditMode)
+                    if (RowState == RowState.rsNone)
                     {
                         newControl = new Label() { ID = $"lbl{counter}Row{pos}" };
                         (newControl as Label).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
                     }
-                    else
+                    else if(RowState == RowState.rsEdit)
                     {
                         newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
                         (newControl as TextBox).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
+                    }
+                    else if (RowState == RowState.rsInsert)
+                    {
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                    }
+                    newCell.Controls.Add(newControl);
+                    Cells.Add(newCell);
+                }
+                AddUserControls(pos);
+            }
+        }
+
+        public CustomRow(Teilnehmer contentMember, int pos, List<PropertyInfo> displayFields, RowState rs) : base()
+        {
+            RowState = rs;
+            ID = $"tblRow{pos}";
+            if (contentMember != null && displayFields != null)
+            {
+                for (int counter = 0; counter < displayFields.Count; counter++)
+                {
+                    TableCell newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
+                    Control newControl = null;
+                    if (RowState == RowState.rsNone)
+                    {
+                        newControl = new Label() { ID = $"lbl{counter}Row{pos}" };
+                        (newControl as Label).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
+                    }
+                    else if (RowState == RowState.rsEdit)
+                    {
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                        (newControl as TextBox).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
+                    }
+                    else if(RowState == RowState.rsInsert)
+                    {
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
                     }
                     newCell.Controls.Add(newControl);
                     Cells.Add(newCell);
@@ -84,14 +119,35 @@ namespace Turnierverwaltung_final.Helper
         #region Methods
         public void RefreshRow()
         {
-            if (InEditMode)
+            if (RowState == RowState.rsEdit)
                 SetRowInEditMode();
-            else
+            else if(RowState == RowState.rsNone)
                 SetRowInNoneMode();
+        }
+
+        private void SetRowInInsertMode()
+        {
+            
         }
         private void SetRowInNoneMode()
         {
-
+            //-2, da die letzten zwei Spalten Checkbox und Button sind
+            for (int counter = 0; counter < Cells.Count - 2; counter++)
+            {
+                foreach (Control c in Cells[counter].Controls)
+                {
+                    if (c is TextBox)
+                    {
+                        Label lblTmp = new Label()
+                        {
+                            ID = (c as TextBox).ID.Replace("txt", "lbl"),
+                            Text = (c as TextBox).Text,
+                        };
+                        Cells[counter].Controls.Remove(c);
+                        Cells[counter].Controls.Add(lblTmp);
+                    }
+                }
+            }
         }
         private void SetRowInEditMode()
         {
@@ -117,7 +173,7 @@ namespace Turnierverwaltung_final.Helper
         //Edit-Button OnClickEvent
         private void editButton_Click(object sender, EventArgs e)
         {
-            InEditMode = true;
+            RowState = RowState.rsEdit;
             RefreshRow();
         }
         #endregion

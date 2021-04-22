@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
 using Turnierverwaltung;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung_final.Helper
@@ -21,8 +22,6 @@ namespace Turnierverwaltung_final.Helper
         private List<Teilnehmer> _content;
         private List<PropertyInfo> _displayFields;
         private Type _listDataType;
-        private bool _editable;
-        private int _editedRowIndex;
         #endregion
         #region Properties
         public List<Teilnehmer> Content
@@ -42,9 +41,6 @@ namespace Turnierverwaltung_final.Helper
                 _listDataType = value;
             }
         }
-
-        public bool Editable { get => _editable; set => _editable = value; }
-        public int EditedRowIndex { get => _editedRowIndex; set => _editedRowIndex = value; }
         #endregion
         #region Constructors
         public CustomTable(List<Teilnehmer> content) : base()
@@ -100,7 +96,11 @@ namespace Turnierverwaltung_final.Helper
             {
                 // Wir geben MemberNum + 1, damit die Id der Row gleich der Position des Datensatzes
                 // in der Liste ist, da in es noch eine HeaderRows gibt.
-                CustomRow newRow = new CustomRow(Content[memberNum], memberNum + 1, DisplayFields);
+                CustomRow newRow;
+                if (Content[memberNum].Id != 0)
+                    newRow = new CustomRow(Content[memberNum], memberNum + 1, DisplayFields);
+                else
+                    newRow = new CustomRow(Content[memberNum], memberNum + 1, DisplayFields, RowState.rsInsert);
                 Rows.Add(newRow);
             }
         }
@@ -143,9 +143,25 @@ namespace Turnierverwaltung_final.Helper
             };
             btn.Click += cancelButton_Click;
             tc.Controls.Add(btn);
+            //Add Button
+            btn = new Button()
+            {
+                Text = "Hinzufügen",
+                Visible = true,
+                ID = "btnAdd",
+            };
+            btn.Click += addButton_Click;
+            tc.Controls.Add(btn);
             tr.Cells.Add(tc);
 
             Rows.Add(tr);
+        }
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            Teilnehmer t = (Teilnehmer)Activator.CreateInstance(ListDataType);
+            Content.Add(t);
+            CreateTable();
         }
 
         private Type GetListDatatype()
@@ -177,17 +193,32 @@ namespace Turnierverwaltung_final.Helper
             {
                 if (tmp is CustomRow)
                 {
-                    if ((tmp as CustomRow).InEditMode)
+                    if ((tmp as CustomRow).RowState == RowState.rsEdit)
                     {
                         //(tmp as CustomRow).InEditMode = false;
                         for (int i = 0; i < DisplayFields.Count; i++)
                         {
                             var cur = Content[Rows.GetRowIndex(tmp) - 1];
-                            //Hack: Irgendwie sind das zu diesem Zeitpunkt wieder Labels und keine Textboxen mehr...
-                            //Doch ein Big-Mistake --> Durch den Controlwechsel geht der Wert flöten                            
-                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(Content[Rows.GetRowIndex(tmp) - 1], Convert.ChangeType((tmp.Cells[i].Controls[0] as Label).Text, DisplayFields[i].PropertyType));
+                            //Problem: Zu diesem Zeitpunkt handelt es sich hier um ein Label                         
+                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(Content[Rows.GetRowIndex(tmp) - 1], Convert.ChangeType((tmp.Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
+                            Content[Rows.GetRowIndex(tmp) - 1].Speichern();
                         }
-                        //Convert.ChangeType(Content[Rows.GetRowIndex(tmp) - 1], ListDataType).;
+                        (tmp as CustomRow).RowState = RowState.rsNone;
+                        (tmp as CustomRow).RefreshRow();
+                    }
+                    else if ((tmp as CustomRow).RowState == RowState.rsInsert)
+                    {
+                        for (int i = 0; i < DisplayFields.Count; i++)
+                        {
+                            var cur = Content[Rows.GetRowIndex(tmp) - 1];
+                            if(DisplayFields[i].Name != "Id")
+                            {
+                                ListDataType.GetProperty(DisplayFields[i].Name).SetValue(Content[Rows.GetRowIndex(tmp) - 1], Convert.ChangeType((tmp.Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
+                            }
+                        }
+                        Content[Rows.GetRowIndex(tmp) - 1].Neuanlage();
+                        (tmp as CustomRow).RowState = RowState.rsNone;
+                        (tmp as CustomRow).RefreshRow();
                     }
                 }
             }
@@ -222,9 +253,9 @@ namespace Turnierverwaltung_final.Helper
             {
                 if (tmp is CustomRow)
                 {
-                    if ((tmp as CustomRow).InEditMode)
+                    if ((tmp as CustomRow).RowState == RowState.rsEdit)
                     {
-                        (tmp as CustomRow).InEditMode = false;
+                        (tmp as CustomRow).RowState = RowState.rsNone;
                         (tmp as CustomRow).RefreshRow();
                     }
                 }

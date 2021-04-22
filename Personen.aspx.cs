@@ -4,6 +4,7 @@ using Turnierverwaltung;
 using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung_final.Helper;
 using System.Linq;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.View
 {
@@ -16,17 +17,42 @@ namespace Turnierverwaltung_final.View
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-            if (!IsPostBack)
+
+            switch (ddl_selection.SelectedValue)
             {
-                //Do things only when page loads for the first time. 
+                case "Personen":
+                    Controller.GetAllePersonen();
+                    break;
+                case "Spieler":
+                    Controller.GetAlleSpieler();
+                    break;
+                case "Trainer":
+                    Controller.GetAlleTrainer();
+                    break;
+                case "Physio":
+                    Controller.GetAllePhysios();
+                    break;
             }
-            Controller.GetAllePersonen();
             LoadTable();
+
+            if (IsPostBack)
+            {
+                foreach (TableRow r in (pnl_tbl.FindControl("tbl_custom") as CustomTable).Rows)
+                {
+                    if (r is CustomRow)
+                        if ((r as CustomRow).RowState == RowState.rsEdit || (r as CustomRow).RowState == RowState.rsInsert)
+                            (r as CustomRow).RefreshRow();
+                }
+            }
         }
 
         private void LoadTable()
         {
             pnl_tbl.Controls.Add(new CustomTable(Controller.Teilnehmer));
+        }
+
+        protected void ddl_selection_SelectedIndexChanged(object sender, EventArgs e)
+        {
         }
     }
 }
