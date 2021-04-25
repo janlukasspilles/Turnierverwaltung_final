@@ -4,6 +4,7 @@
 //Datum:        19.11.2020
 //Beschreibung: Kümmert sich um den Programmablauf
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Turnierverwaltung
 {
@@ -14,6 +15,7 @@ namespace Turnierverwaltung
         private string _name;
         #endregion
         #region Properties
+        [Display(Name="ID", Order = 1)]
         public long Id { get => _id; set => _id = value; }
         public string Name { get => _name; set => _name = value; }
         #endregion

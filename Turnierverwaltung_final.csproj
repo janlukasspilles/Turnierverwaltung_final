@@ -152,14 +152,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="About.aspx" />
-    <Content Include="Mannschaften.aspx" />
+    <Content Include="View\About.aspx" />
+    <Content Include="View\Mannschaften.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="Default.aspx" />
+    <Content Include="View\Startseite.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -171,7 +171,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="Einstellungen.aspx" />
+    <Content Include="View\Einstellungen.aspx" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <EmbeddedResource Include="Ressources\SQL\ExampleData\inserts.sql" />
     <EmbeddedResource Include="Ressources\queries.sql" />
@@ -217,36 +217,35 @@
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="ViewSwitcher.ascx" />
-    <Content Include="Personen.aspx" />
-    <Content Include="View\View.aspx" />
+    <Content Include="View\Personen.aspx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About.aspx.cs">
+    <Compile Include="View\About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="About.aspx.designer.cs">
+    <Compile Include="View\About.aspx.designer.cs">
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Helper\TurnierverwaltungTypes.cs" />
-    <Compile Include="Mannschaften.aspx.cs">
+    <Compile Include="View\Mannschaften.aspx.cs">
       <DependentUpon>Mannschaften.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Mannschaften.aspx.designer.cs">
+    <Compile Include="View\Mannschaften.aspx.designer.cs">
       <DependentUpon>Mannschaften.aspx</DependentUpon>
     </Compile>
     <Compile Include="Controller\Controller.cs" />
-    <Compile Include="Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
+    <Compile Include="View\Startseite.aspx.cs">
+      <DependentUpon>Startseite.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
+    <Compile Include="View\Startseite.aspx.designer.cs">
+      <DependentUpon>Startseite.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -257,13 +256,13 @@
     <Compile Include="Helper\DatabaseCreator.cs" />
     <Compile Include="Helper\Viewhelpers.cs" />
     <Compile Include="Model\Mannschaft.cs" />
-    <Compile Include="Model\Perosnen\Physio.cs" />
-    <Compile Include="Model\Perosnen\Person.cs" />
-    <Compile Include="Model\Perosnen\Spieler.cs" />
-    <Compile Include="Model\Sportart.cs" />
-    <Compile Include="Model\SportartDetailTabelle.cs" />
+    <Compile Include="Model\Personen\Fussballspieler.cs" />
+    <Compile Include="Model\Personen\Handballspieler.cs" />
+    <Compile Include="Model\Personen\Physio.cs" />
+    <Compile Include="Model\Personen\Person.cs" />
+    <Compile Include="Model\Personen\Tennisspieler.cs" />
     <Compile Include="Model\Teilnehmer.cs" />
-    <Compile Include="Model\Perosnen\Trainer.cs" />
+    <Compile Include="Model\Personen\Trainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
@@ -286,25 +285,18 @@
     <Compile Include="ViewSwitcher.ascx.designer.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Personen.aspx.cs">
+    <Compile Include="View\Personen.aspx.cs">
       <DependentUpon>Personen.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Personen.aspx.designer.cs">
+    <Compile Include="View\Personen.aspx.designer.cs">
       <DependentUpon>Personen.aspx</DependentUpon>
     </Compile>
-    <Compile Include="View\View.aspx.cs">
-      <DependentUpon>View.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="View\View.aspx.designer.cs">
-      <DependentUpon>View.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Einstellungen.aspx.cs">
+    <Compile Include="View\Einstellungen.aspx.cs">
       <DependentUpon>Einstellungen.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Einstellungen.aspx.designer.cs">
+    <Compile Include="View\Einstellungen.aspx.designer.cs">
       <DependentUpon>Einstellungen.aspx</DependentUpon>
     </Compile>
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Einstellungen.aspx.cs" Inherits="Turnierverwaltung_final.Einstellungen" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Einstellungen.aspx.cs" Inherits="Turnierverwaltung_final.View.Einstellungen" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <h1>Neue Sportart hinzufügen</h1>

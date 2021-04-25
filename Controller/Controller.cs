@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Model.Perosnen;
+using Turnierverwaltung_final.Model.Personen;
 using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung.ControllerNS
@@ -10,14 +12,16 @@ namespace Turnierverwaltung.ControllerNS
     {
         #region Attributes
         private List<Teilnehmer> _teilnehmer;
+        private Teilnehmer _neuerTeilnehmer;
         #endregion
         #region Properties
         public List<Teilnehmer> Teilnehmer { get => _teilnehmer; set => _teilnehmer = value; }
+        public Teilnehmer NeuerTeilnehmer { get => _neuerTeilnehmer; set => _neuerTeilnehmer = value; }
         #endregion
         #region Constructors
         public Controller()
         {
-            Teilnehmer = new List<Teilnehmer>();            
+            Teilnehmer = new List<Teilnehmer>();
         }
         #endregion
         #region Methods
@@ -77,10 +81,10 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
-        public void GetAlleSpieler()
+        public void GetAlleFussballspieler()
         {
             Teilnehmer.Clear();
-            string sql = "SELECT P.ID FROM PERSON P JOIN SPIELER SP ON P.ID = SP.PERSON_ID";
+            string sql = "SELECT P.ID FROM PERSON P JOIN FUSSBALLSPIELER FS ON P.ID = FS.PERSON_ID";
             MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try
             {
@@ -91,9 +95,9 @@ namespace Turnierverwaltung.ControllerNS
 
                 while (reader.Read())
                 {
-                    Spieler s = new Spieler();
-                    s.SelektionId(reader.GetInt64("ID"));
-                    Teilnehmer.Add(s);
+                    Fussballspieler t = new Fussballspieler();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(t);
                 }
                 reader.Close();
             }
@@ -105,18 +109,76 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
+        public void GetAlleHandballspieler()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT P.ID FROM PERSON P JOIN HANDBALLSPIELER HS ON P.ID = HS.PERSON_ID";
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
 
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Handballspieler t = new Handballspieler();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(t);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+        public void GetAlleTennisspieler()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT P.ID FROM PERSON P JOIN TENNISSPIELER TS ON P.ID = TS.PERSON_ID";
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Tennisspieler t = new Tennisspieler();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(t);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
         public void GetAllePersonen()
         {
             Teilnehmer.Clear();
             Person p = null;
-            string sql = "SELECT P.ID," +
-                " case " +
-                "when((SELECT 1 from TRAINER T where T.PERSON_ID = P.id) is not null) then 'Trainer' " +
-                "when((SELECT 1 from SPIELER SP where SP.PERSON_ID = P.id) is not null) then 'Spieler' " +
-                "when((SELECT 1 from PHYSIO PH where PH.PERSON_ID = P.id) is not null) then 'Physio' " +
-                "end as Profession " +
+            string sql = "SELECT P.ID, " +
+                "case " +
+                "when((SELECT 1 FROM TRAINER T WHERE T.PERSON_ID = P.ID) IS NOT NULL) THEN 'Trainer' " +
+                "when((SELECT 1 FROM PHYSIO PH WHERE PH.PERSON_ID = P.ID) IS NOT NULL) THEN 'Physio' " +
+                "when((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Fussballspieler' " +
+                "when((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Handballspieler' " +
+                "when((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Tennisspieler' " +
+                "END AS Profession " +
                 "FROM PERSON P";
+
             MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try
             {
@@ -129,134 +191,35 @@ namespace Turnierverwaltung.ControllerNS
                 {
                     switch (reader.GetString("Profession"))
                     {
-                        case "Spieler":
-                            p = new Spieler();
-                            break;
                         case "Trainer":
                             p = new Trainer();
                             break;
                         case "Physio":
                             p = new Physio();
                             break;
+                        case "Fussballspieler":
+                            p = new Fussballspieler();
+                            break;
+                        case "Handballspieler":
+                            p = new Handballspieler();
+                            break;
+                        case "Tennisspieler":
+                            p = new Tennisspieler();
+                            break;
                     }
                     p.SelektionId(reader.GetInt64("ID"));
                     Teilnehmer.Add(p);
                 }
-                reader.Close();
             }
             catch (Exception e)
             {
+
             }
             finally
             {
                 con.Close();
             }
-        }
-        public bool TeilnehmerAendern(long id)
-        {
-            foreach (Teilnehmer t in Teilnehmer)
-            {
-                if (t.Id == id)
-                {
-                    return t.Speichern();
-                }
-                else
-                {
-                    //Nichts
-                }
-            }
-            return false;
-        }
-        public bool TeilnehmerLoeschen(long id)
-        {
-            foreach (Teilnehmer t in Teilnehmer)
-            {
-                if (t.Id == id)
-                {
-                    if (t.Loeschen())
-                    {
-                        Teilnehmer.Remove(t);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    //Nichts
-                }
-            }
-            return false;
-        }
-        public List<Teilnehmer> GetAlleTeilnehmer()
-        {
-            return _teilnehmer;
-        }
 
-        public bool MannschaftHinzufuegen(Mannschaft m)
-        {
-            if (m.Neuanlage())
-            {
-                Teilnehmer.Add(m);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public bool MannschaftAendern(long id)
-        {
-            foreach (Mannschaft m in Teilnehmer)
-            {
-                if (m.Id == id)
-                {
-                    return m.Speichern();
-                }
-                else
-                {
-                    //Nichts
-                }
-            }
-            return false;
-        }
-
-        public bool MannschaftLoeschen(long id)
-        {
-            foreach (Mannschaft m in Teilnehmer)
-            {
-                if (m.Id == id)
-                {
-                    if (m.Loeschen())
-                    {
-                        Teilnehmer.Remove(m);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    //Nichts
-                }
-            }
-            return false;
-        }
-
-        public List<Teilnehmer> GetAlleMannschaften()
-        {
-            List<Teilnehmer> res = new List<Teilnehmer>();
-            foreach (Teilnehmer t in Teilnehmer)
-            {
-                if (t is Mannschaft)
-                    res.Add(t);
-            }
-            return res;
         }
         #endregion
     }

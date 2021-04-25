@@ -7,20 +7,11 @@
 // </automatisch generiert>
 //------------------------------------------------------------------------------
 
-namespace Turnierverwaltung_final
+namespace Turnierverwaltung_final.View
 {
 
 
-    public partial class Mannschaften
+    public partial class Startseite
     {
-
-        /// <summary>
-        /// pnl_tbl-Steuerelement
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnl_tbl;
     }
 }

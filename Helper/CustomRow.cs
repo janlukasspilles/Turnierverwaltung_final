@@ -53,12 +53,12 @@ namespace Turnierverwaltung_final.Helper
                     }
                     else if(RowState == RowState.rsEdit)
                     {
-                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}", CssClass = "form-control" };
                         (newControl as TextBox).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
                     }
                     else if (RowState == RowState.rsInsert)
                     {
-                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}", CssClass = "form-control" };
                     }
                     newCell.Controls.Add(newControl);
                     Cells.Add(newCell);
@@ -84,12 +84,12 @@ namespace Turnierverwaltung_final.Helper
                     }
                     else if (RowState == RowState.rsEdit)
                     {
-                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}", CssClass = "form-control" };
                         (newControl as TextBox).Text = contentMember.GetType().GetProperty(displayFields[counter].Name).GetValue(contentMember, null).ToString();
                     }
                     else if(RowState == RowState.rsInsert)
                     {
-                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                        newControl = new TextBox() { ID = $"txt{counter}Row{pos}", CssClass = "form-control" };
                     }
                     newCell.Controls.Add(newControl);
                     Cells.Add(newCell);
@@ -106,6 +106,7 @@ namespace Turnierverwaltung_final.Helper
             EditButton.ID = $"btnEdit{pos}";
             EditButton.Text = "Edit";
             EditButton.Click += editButton_Click;
+            EditButton.CssClass = "btn btn-success";
             newCell.Controls.Add(EditButton);
             Cells.Add(newCell);
             //CheckBox
@@ -162,6 +163,7 @@ namespace Turnierverwaltung_final.Helper
                         {
                             ID = (c as Label).ID.Replace("lbl", "txt"),
                             Text = (c as Label).Text,
+                            CssClass = "form-control",
                         };
                         Cells[counter].Controls.Remove(c);
                         Cells[counter].Controls.Add(txtTmp);

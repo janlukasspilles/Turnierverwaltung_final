@@ -69,7 +69,7 @@ namespace Turnierverwaltung
                     switch (reader.GetString("Profession"))
                     {
                         case "Spieler":
-                            p = new Spieler();
+                            //p = new Spieler();
                             break;
                         case "Trainer":
                             p = new Trainer();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Turnierverwaltung;
@@ -14,6 +15,7 @@ namespace Turnierverwaltung_final.Model.Spieler
         private string _geburtstag;
         #endregion
         #region Properties
+        [Display(Name = "Vorname", Order = 2)]
         public string Vorname
         {
             get => _vorname;
@@ -23,6 +25,7 @@ namespace Turnierverwaltung_final.Model.Spieler
                 Name = Vorname + " " + Nachname;
             }
         }
+        [Display(Name = "Nachname", Order = 3)]
         public string Nachname
         {
             get => _nachname;
@@ -32,6 +35,7 @@ namespace Turnierverwaltung_final.Model.Spieler
                 Name = Vorname + " " + Nachname;
             }
         }
+        [Display(Name = "Geburtstag", Order = 4)]
         public string Geburtstag { get => _geburtstag; set => _geburtstag = value; }
         #endregion
         #region Constructs

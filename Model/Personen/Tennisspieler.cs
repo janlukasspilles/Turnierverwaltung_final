@@ -1,24 +1,29 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using Turnierverwaltung_final.Model.Spieler;
 
-namespace Turnierverwaltung
+namespace Turnierverwaltung_final.Model.Personen
 {
-    public class Spieler : Person
+    public class Tennisspieler : Person
     {
-        #region Attributes      
-        private bool _verletzt;
+        #region Attributes
+        private int _anzahlSpiele;
+        private int _anzahlGewonnen;
         #endregion
-        #region Properties        
-        public bool Verletzt { get => _verletzt; set => _verletzt = value; }
+        #region Properties
+        public int AnzahlSpiele { get => _anzahlSpiele; set => _anzahlSpiele = value; }
+        public int AnzahlGewonnen { get => _anzahlGewonnen; set => _anzahlGewonnen = value; }
         #endregion
         #region Constructors
-        public Spieler() : base()
+        public Tennisspieler() : base()
         {
 
         }
         #endregion
-        #region Methods       
+        #region Methods         
         public override bool Speichern()
         {
             bool res = true;
@@ -34,7 +39,7 @@ namespace Turnierverwaltung
                     $"WHERE ID = {Id}";
                 cmd.CommandText = updatePerson;
                 cmd.ExecuteNonQuery();
-                string updateSpieler = $"UPDATE SPIELER SET VERLETZT = {Convert.ToInt32(Verletzt)} WHERE PERSON_ID = '{Id}'";
+                string updateSpieler = $"UPDATE TENNISSPIELER SET ANZAHL_SPIELE = {AnzahlSpiele}, ANZAHL_GEWONNEN = '{AnzahlGewonnen}' WHERE PERSON_ID = '{Id}'";
                 cmd.CommandText = updateSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
@@ -57,10 +62,10 @@ namespace Turnierverwaltung
             try
             {
                 con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, SP.VERLETZT " +
+                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, TS.ANZAHL_SPIELE, TS.ANZAHL_GEWONNEN" +
                     $"FROM PERSON P " +
-                    $"JOIN SPIELER SP " +
-                    $"ON P.ID = SP.PERSON_ID " +
+                    $"JOIN TENNISSPIELER TS " +
+                    $"ON P.ID = TS.PERSON_ID " +
                     $"WHERE P.ID = '{id}'";
 
                 MySqlCommand cmd = new MySqlCommand(selectionString, con);
@@ -72,7 +77,8 @@ namespace Turnierverwaltung
                     Vorname = reader.GetString("VORNAME");
                     Nachname = reader.GetString("NACHNAME");
                     Geburtstag = reader.GetDateTime("GEBURTSTAG").ToString("yyyy-MM-dd");
-                    Verletzt = reader.GetBoolean("VERLETZT");
+                    AnzahlSpiele = reader.GetInt32("ANZAHL_SPIELE");
+                    AnzahlGewonnen = reader.GetInt32("ANZAHL_GEWONNEN");
                 }
                 reader.Close();
             }
@@ -96,7 +102,7 @@ namespace Turnierverwaltung
                 string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
-                string insertSpieler = $"INSERT INTO SPIELER (PERSON_ID, VERLETZT) VALUES ('{cmd.LastInsertedId}', '{Convert.ToInt32(Verletzt)}')";
+                string insertSpieler = $"INSERT INTO TENNISSPIELER (PERSON_ID, ANZAHL_SPIELE, ANZAHL_GEWONNEN) VALUES ('{cmd.LastInsertedId}', {AnzahlSpiele}, {AnzahlGewonnen})";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
@@ -116,12 +122,12 @@ namespace Turnierverwaltung
         public override bool Loeschen()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");            
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try
             {
                 con.Open();
                 string deleteSql = $"DELETE FROM PERSON WHERE ID = '{Id}'";
-                MySqlCommand cmd = new MySqlCommand(deleteSql, con);                
+                MySqlCommand cmd = new MySqlCommand(deleteSql, con);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception e)

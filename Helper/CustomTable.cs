@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -13,6 +14,7 @@ using System.Web.UI.WebControls;
 using Turnierverwaltung;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using Turnierverwaltung_final.Model.Spieler;
+using Turnierverwaltung_final.View;
 
 namespace Turnierverwaltung_final.Helper
 {
@@ -22,6 +24,7 @@ namespace Turnierverwaltung_final.Helper
         private List<Teilnehmer> _content;
         private List<PropertyInfo> _displayFields;
         private Type _listDataType;
+        private bool _hasNewEntry;
         #endregion
         #region Properties
         public List<Teilnehmer> Content
@@ -41,10 +44,22 @@ namespace Turnierverwaltung_final.Helper
                 _listDataType = value;
             }
         }
+
+        public bool HasNewEntry
+        {
+            get
+            {
+                if (ViewState["HasNewEntry"] == null)
+                    return false;
+                return (bool)ViewState["HasNewEntry"];
+            }
+            set => ViewState["HasNewEntry"] = value;
+        }
         #endregion
         #region Constructors
         public CustomTable(List<Teilnehmer> content) : base()
         {
+            CssClass = "table table-bordered";
             DisplayFields = new List<PropertyInfo>();
             Content = content;
             ID = "tbl_custom";
@@ -55,9 +70,10 @@ namespace Turnierverwaltung_final.Helper
                 {
                     foreach (PropertyInfo propertyInfo in ListDataType.GetProperties())
                     {
-                        if (!Attribute.IsDefined(propertyInfo, typeof(DisplayNameAttribute)))
+                        if (Attribute.IsDefined(propertyInfo, typeof(DisplayAttribute)))
                             DisplayFields.Add(propertyInfo);
                     }
+                    DisplayFields = DisplayFields.OrderBy(p => (p.GetCustomAttribute(typeof(DisplayAttribute), true) as DisplayAttribute).Order).ToList();
                 }
             }
             CreateTable();
@@ -105,6 +121,12 @@ namespace Turnierverwaltung_final.Helper
             }
         }
 
+        public void GenerateNewEntryRow()
+        {
+            CustomRow newRow = new CustomRow(null, Rows.Count - 2, DisplayFields, RowState.rsInsert);
+            Rows.AddAt(Rows.Count - 2, newRow);
+        }
+
         private void GenerateButtonRow()
         {
             TableRow tr = new TableRow();
@@ -115,6 +137,7 @@ namespace Turnierverwaltung_final.Helper
             {
                 Text = "Änderungen speichern",
                 Visible = true,
+                CssClass = "btn btn-secondary",
                 ID = "btnAccept",
             };
             btn.Click += acceptButton_Click;
@@ -128,6 +151,7 @@ namespace Turnierverwaltung_final.Helper
                 Text = "Ausgewählte löschen",
                 Visible = true,
                 ID = "btnDelete",
+                CssClass = "btn btn-secondary",
             };
             btn.Click += deleteButton_Click;
             tc.Controls.Add(btn);
@@ -140,15 +164,19 @@ namespace Turnierverwaltung_final.Helper
                 Text = "Änderungen verwerfen",
                 Visible = true,
                 ID = "btnCancel",
+                CssClass = "btn btn-secondary",
             };
             btn.Click += cancelButton_Click;
             tc.Controls.Add(btn);
+
+            tc = new TableCell();
             //Add Button
             btn = new Button()
             {
                 Text = "Hinzufügen",
                 Visible = true,
                 ID = "btnAdd",
+                CssClass = "btn btn-secondary",
             };
             btn.Click += addButton_Click;
             tc.Controls.Add(btn);
@@ -161,6 +189,7 @@ namespace Turnierverwaltung_final.Helper
         {
             Teilnehmer t = (Teilnehmer)Activator.CreateInstance(ListDataType);
             Content.Add(t);
+            HasNewEntry = true;
             CreateTable();
         }
 
@@ -211,7 +240,7 @@ namespace Turnierverwaltung_final.Helper
                         for (int i = 0; i < DisplayFields.Count; i++)
                         {
                             var cur = Content[Rows.GetRowIndex(tmp) - 1];
-                            if(DisplayFields[i].Name != "Id")
+                            if (DisplayFields[i].Name != "Id")
                             {
                                 ListDataType.GetProperty(DisplayFields[i].Name).SetValue(Content[Rows.GetRowIndex(tmp) - 1], Convert.ChangeType((tmp.Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
                             }

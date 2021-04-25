@@ -5,10 +5,11 @@ using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung_final.Helper;
 using System.Linq;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
+using System.Web.UI;
 
 namespace Turnierverwaltung_final.View
 {
-    public partial class Personen : System.Web.UI.Page
+    public partial class Personen : Page
     {
         private Controller _controller;
 
@@ -20,11 +21,8 @@ namespace Turnierverwaltung_final.View
 
             switch (ddl_selection.SelectedValue)
             {
-                case "Personen":
+                case "Alle":
                     Controller.GetAllePersonen();
-                    break;
-                case "Spieler":
-                    Controller.GetAlleSpieler();
                     break;
                 case "Trainer":
                     Controller.GetAlleTrainer();
@@ -32,15 +30,28 @@ namespace Turnierverwaltung_final.View
                 case "Physio":
                     Controller.GetAllePhysios();
                     break;
+                case "Fussballspieler":
+                    Controller.GetAlleFussballspieler();
+                    break;
+                case "Handballspieler":
+                    Controller.GetAlleHandballspieler();
+                    break;
+                case "Tennisspieler":
+                    Controller.GetAlleTennisspieler();
+                    break;
             }
             LoadTable();
 
             if (IsPostBack)
             {
+                if((pnl_tbl.FindControl("tbl_custom") as CustomTable).HasNewEntry)
+                {
+                    (pnl_tbl.FindControl("tbl_custom") as CustomTable).GenerateNewEntryRow();
+                }
                 foreach (TableRow r in (pnl_tbl.FindControl("tbl_custom") as CustomTable).Rows)
                 {
                     if (r is CustomRow)
-                        if ((r as CustomRow).RowState == RowState.rsEdit || (r as CustomRow).RowState == RowState.rsInsert)
+                        if ((r as CustomRow).RowState == RowState.rsEdit)
                             (r as CustomRow).RefreshRow();
                 }
             }
