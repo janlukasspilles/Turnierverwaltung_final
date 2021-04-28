@@ -14,10 +14,31 @@ namespace Turnierverwaltung_final.View
 {
     public partial class Personen : Page
     {
+        #region Attributes
         private Controller _controller;
-
+        private readonly string[] _ignoreFields = { "Name" };
+        private readonly string[] _readonlyFields = { "Id" };
+        #endregion
+        #region Properties
         public Controller Controller { get => _controller; set => _controller = value; }
+        public int InEdit
+        {
+            get
+            {
+                if (ViewState["InEdit"] == null)
+                    return -1;
+                return (int)ViewState["InEdit"];
+            }
+            set => ViewState["InEdit"] = value;
+        }
+        #endregion
+        #region Constructors
+        public Personen() : base()
+        {
 
+        }
+        #endregion
+        #region Methods
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
@@ -48,7 +69,6 @@ namespace Turnierverwaltung_final.View
                 LoadTable();
             }
         }
-
         private void LoadTable()
         {
             tbl_persontest.Rows.Clear();
@@ -61,9 +81,9 @@ namespace Turnierverwaltung_final.View
             //Datarows
             for (int memberNum = 0; memberNum < Controller.Teilnehmer.Count; memberNum++)
             {
-                tbl_persontest.Rows.Add(GetDataRow(Controller.Teilnehmer[memberNum], DisplayFields, memberNum + 1, false));
+                tbl_persontest.Rows.Add(GetDataRow(Controller.Teilnehmer[memberNum], DisplayFields, memberNum + 1, memberNum + 1 == InEdit));
             }
-            //Hinzufügen wurde gedrückt
+            //Es wird ein neuer Teilnehmer hinzugefügt
             if (Controller.NeuerTeilnehmer != null)
             {
                 tbl_persontest.Rows.Add(GetDataRow(Controller.NeuerTeilnehmer, DisplayFields, Controller.Teilnehmer.Count + 1, true));
@@ -77,6 +97,8 @@ namespace Turnierverwaltung_final.View
             TableHeaderRow headerRow = new TableHeaderRow();
             foreach (PropertyInfo shownPropertyInfo in displayFields)
             {
+                //if (_ignoreFields.Any(shownPropertyInfo.Name.Contains))
+                //    continue;
                 TableHeaderCell newHeaderCell = new TableHeaderCell();
                 Button newBtn = new Button();
                 newBtn.Text = shownPropertyInfo.Name;
@@ -95,16 +117,18 @@ namespace Turnierverwaltung_final.View
             TableCell newCell = null;
             for (int counter = 0; counter < displayFields.Count; counter++)
             {
+                //if (_ignoreFields.Any(displayFields[counter].Name.Contains))
+                    //continue;
                 newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
                 Control newControl = null;
-                if (!editable)
+                if (!editable || _readonlyFields.Any(displayFields[counter].Name.Contains))
                 {
-                    newControl = new Label() { ID = $"lbl{counter}Row{pos}" };
+                    newControl = new Label() { ID = $"con{counter}Row{pos}" };
                     (newControl as Label).Text = T.GetType().GetProperty(displayFields[counter].Name).GetValue(T, null)?.ToString() ?? "";
                 }
                 else
                 {
-                    newControl = new TextBox() { ID = $"txt{counter}Row{pos}" };
+                    newControl = new TextBox() { ID = $"con{counter}Row{pos}" };
                     (newControl as TextBox).Text = T.GetType().GetProperty(displayFields[counter].Name).GetValue(T, null)?.ToString() ?? "";
                 }
                 newCell.Controls.Add(newControl);
@@ -115,7 +139,7 @@ namespace Turnierverwaltung_final.View
             Button EditButton = new Button();
             EditButton.ID = $"btnEdit{pos}";
             EditButton.Text = "Editieren";
-            EditButton.Click += OnEditButton_Click;
+            EditButton.Command += OnEditButton_Click;
             EditButton.CssClass = "btn btn-success";
             EditButton.CommandArgument = pos.ToString();
             newCell.Controls.Add(EditButton);
@@ -184,29 +208,10 @@ namespace Turnierverwaltung_final.View
             tr.Cells.Add(tc);
             return tr;
         }
-        private void OnEditButton_Click(object sender, EventArgs e)
+        private void OnEditButton_Click(object sender, CommandEventArgs e)
         {
-            SetRowEditable(tbl_persontest.Rows[Convert.ToInt32((sender as Button).CommandArgument)]);
-        }
-        private void SetRowEditable(TableRow tr)
-        {
-            foreach (TableCell tc in tr.Cells)
-            {
-                foreach (Control c in tc.Controls)
-                {
-                    if (c is Label label)
-                    {
-                        TextBox txtTmp = new TextBox()
-                        {
-                            ID = label.ID.Replace("lbl", "txt"),
-                            Text = label.Text,
-                            CssClass = "form-control",
-                        };
-                        tc.Controls.Remove(c);
-                        tc.Controls.Add(txtTmp);
-                    }
-                }
-            }
+            InEdit = Convert.ToInt32(e.CommandArgument);
+            LoadTable();
         }
         private void OnDeleteButton_Click(object sender, EventArgs e)
         {
@@ -225,11 +230,32 @@ namespace Turnierverwaltung_final.View
         {
             //Wurde Hinzugefügt wird das hier Rückgängig gemacht
             Controller.NeuerTeilnehmer = null;
+            //Es gibt keine Editrow mehr
+            InEdit = -1;
             LoadTable();
         }
         private void OnSubmitButton_Click(object sender, EventArgs e)
         {
+            //Bei der Neuanlage wird zunächst der Teilnehmer der Datenbank
+            //hinzugefügt. Anschließend wird dieser Datensatz wie ein normal
+            //editierter behandelt und mittels Update werden die Werte über-
+            //tragen.
+            if (Controller.NeuerTeilnehmer != null)
+            {
+                Controller.NeuerTeilnehmer.Neuanlage();
+                Controller.Teilnehmer.Add(Controller.NeuerTeilnehmer);
+                Controller.NeuerTeilnehmer = null;
+            }
+            //Updatelogik
+            Type ListDataType = GetListDatatype(Controller.Teilnehmer);
+            List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
 
+            Teilnehmer toBeUpdated = Controller.Teilnehmer[InEdit - 1];
+            for (int i = 0; i < DisplayFields.Count; i++)
+                ListDataType.GetProperty(DisplayFields[i].Name).SetValue(toBeUpdated, Convert.ChangeType((tbl_persontest.Rows[InEdit].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
+            toBeUpdated.Speichern();
+
+            InEdit = -1;
             LoadTable();
         }
         private void OnAddButton_Click(object sender, EventArgs e)
@@ -237,6 +263,7 @@ namespace Turnierverwaltung_final.View
             Type listDataType = GetListDatatype(Controller.Teilnehmer);
             Teilnehmer t = (Teilnehmer)Activator.CreateInstance(listDataType);
             Controller.NeuerTeilnehmer = t;
+            InEdit = tbl_persontest.Rows.Count - 1;
             LoadTable();
         }
         private Type GetListDatatype(List<Teilnehmer> content)
@@ -267,12 +294,13 @@ namespace Turnierverwaltung_final.View
             {
                 foreach (PropertyInfo propertyInfo in ListDataType.GetProperties())
                 {
-                    if (Attribute.IsDefined(propertyInfo, typeof(DisplayAttribute)))
+                    if (Attribute.IsDefined(propertyInfo, typeof(DisplayAttribute)) && !_ignoreFields.Any(propertyInfo.Name.Contains))
                         result.Add(propertyInfo);
                 }
                 result = result.OrderBy(p => (p.GetCustomAttribute(typeof(DisplayAttribute), true) as DisplayAttribute).Order).ToList();
             }
             return result;
         }
+        #endregion
     }
 }

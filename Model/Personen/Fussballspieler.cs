@@ -105,6 +105,7 @@ namespace Turnierverwaltung_final.Model.Perosnen
                 string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
+                Id = cmd.LastInsertedId;
                 string insertSpieler = $"INSERT INTO FUSSBALLSPIELER (PERSON_ID, TORE, POSITION) VALUES ('{cmd.LastInsertedId}', {Tore}, '{Position}')";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
@@ -113,6 +114,7 @@ namespace Turnierverwaltung_final.Model.Perosnen
             catch (Exception e)
             {
                 res = false;
+                Id = 0;
                 trans.Rollback();
             }
             finally
