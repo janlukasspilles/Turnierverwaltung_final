@@ -1,9 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.ComponentModel.DataAnnotations;
-using Turnierverwaltung_final.Model.Spieler;
 
-namespace Turnierverwaltung
+namespace Turnierverwaltung_final.Model.Personen
 {
     public class Trainer : Person
     {
@@ -103,6 +102,7 @@ namespace Turnierverwaltung
                 string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
+                Id = cmd.LastInsertedId;
                 string insertSpieler = $"INSERT INTO TRAINER (PERSON_ID, ERFAHRUNG, LIZENZ) VALUES ('{cmd.LastInsertedId}', '{JahreErfahrung}', '{Lizenz}')";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
@@ -110,6 +110,7 @@ namespace Turnierverwaltung
             }
             catch (Exception e)
             {
+                Id = 0;
                 res = false;
                 trans.Rollback();
             }

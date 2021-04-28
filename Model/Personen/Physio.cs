@@ -1,8 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using Turnierverwaltung_final.Model.Spieler;
 
-namespace Turnierverwaltung
+namespace Turnierverwaltung_final.Model.Personen
 {
     public class Physio : Person
     {

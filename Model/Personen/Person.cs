@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Turnierverwaltung;
+using Turnierverwaltung.Model;
 
-namespace Turnierverwaltung_final.Model.Spieler
+namespace Turnierverwaltung_final.Model.Personen
 {
     public abstract class Person : Teilnehmer
     {

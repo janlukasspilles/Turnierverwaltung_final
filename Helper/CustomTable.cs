@@ -5,16 +5,12 @@
 //Beschreibung: Unterklasse von Table, zum dynamischen Anzeigen von Daten.
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
-using Turnierverwaltung;
+using Turnierverwaltung.Model;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
-using Turnierverwaltung_final.Model.Spieler;
-using Turnierverwaltung_final.View;
 
 namespace Turnierverwaltung_final.Helper
 {

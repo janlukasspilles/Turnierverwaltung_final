@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Turnierverwaltung_final.Model.Perosnen;
 using Turnierverwaltung_final.Model.Personen;
-using Turnierverwaltung_final.Model.Spieler;
 
-namespace Turnierverwaltung
+namespace Turnierverwaltung.Model
 {
     public class Mannschaft : Teilnehmer
     {

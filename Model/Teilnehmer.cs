@@ -6,7 +6,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Turnierverwaltung
+namespace Turnierverwaltung.Model
 {
     public abstract class Teilnehmer
     {

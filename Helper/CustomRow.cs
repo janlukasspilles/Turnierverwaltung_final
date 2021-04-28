@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung;
+using Turnierverwaltung.Model;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Helper

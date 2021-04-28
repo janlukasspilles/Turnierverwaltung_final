@@ -9,7 +9,7 @@
     <br />
 
     <div class="btn-group">
-        <asp:DropDownList CssClass="btn btn-primary dropdown-toggle" runat="server" ID="ddl_selection" AutoPostBack="true">
+        <asp:DropDownList CssClass="btn btn-primary dropdown-toggle" runat="server" ID="ddl_selection" AutoPostBack="true" OnSelectedIndexChanged="ddl_selection_SelectedIndexChanged">
             <asp:ListItem runat="server" ID="li_Empty"></asp:ListItem>
             <asp:ListItem runat="server" ID="li_Alle">Alle</asp:ListItem>
             <asp:ListItem runat="server" ID="li_Trainer">Trainer</asp:ListItem>

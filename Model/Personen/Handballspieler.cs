@@ -1,10 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung_final.Model.Personen
 {
@@ -105,6 +101,7 @@ namespace Turnierverwaltung_final.Model.Personen
                 string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
+                Id = cmd.LastInsertedId;
                 string insertSpieler = $"INSERT INTO HANDBALLSPIELER (PERSON_ID, TORE, POSITION) VALUES ('{cmd.LastInsertedId}', {Tore}, '{Position}')";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
@@ -112,6 +109,7 @@ namespace Turnierverwaltung_final.Model.Personen
             }
             catch (Exception e)
             {
+                Id = 0;
                 res = false;
                 trans.Rollback();
             }

@@ -1,12 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using Turnierverwaltung_final.Model.Spieler;
 
-namespace Turnierverwaltung_final.Model.Perosnen
+namespace Turnierverwaltung_final.Model.Personen
 {
     public class Fussballspieler : Person
     {

@@ -1,10 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using Turnierverwaltung.Model;
 using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Model.Perosnen;
 using Turnierverwaltung_final.Model.Personen;
-using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung.ControllerNS
 {

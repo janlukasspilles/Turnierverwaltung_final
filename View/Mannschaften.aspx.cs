@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Turnierverwaltung;
 using Turnierverwaltung.ControllerNS;
+using Turnierverwaltung.Model;
 using Turnierverwaltung_final.Helper;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
-using Turnierverwaltung_final.Model.Spieler;
+using Turnierverwaltung_final.Model.Personen;
 
 namespace Turnierverwaltung_final.View
 {

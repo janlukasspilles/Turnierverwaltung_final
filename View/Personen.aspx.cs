@@ -9,6 +9,7 @@ using System.Web.UI;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
+using Turnierverwaltung.Model;
 
 namespace Turnierverwaltung_final.View
 {
@@ -42,37 +43,13 @@ namespace Turnierverwaltung_final.View
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-
-            switch (ddl_selection.SelectedValue)
-            {
-                case "Alle":
-                    Controller.GetAllePersonen();
-                    break;
-                case "Trainer":
-                    Controller.GetAlleTrainer();
-                    break;
-                case "Physio":
-                    Controller.GetAllePhysios();
-                    break;
-                case "Fussballspieler":
-                    Controller.GetAlleFussballspieler();
-                    break;
-                case "Handballspieler":
-                    Controller.GetAlleHandballspieler();
-                    break;
-                case "Tennisspieler":
-                    Controller.GetAlleTennisspieler();
-                    break;
-            }
-            if (Controller.Teilnehmer.Count > 0)
-            {
-                LoadTable();
-            }
+            LoadTable();
         }
         private void LoadTable()
         {
             tbl_persontest.Rows.Clear();
-            Type ListDataType = GetListDatatype(Controller.Teilnehmer);
+
+            Type ListDataType = Controller.Teilnehmer.Count > 0 ? GetListDatatype(Controller.Teilnehmer) : Type.GetType($"Turnierverwaltung_final.Model.Personen.{ddl_selection.SelectedValue}");
             List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
 
             //Headerrow
@@ -90,15 +67,14 @@ namespace Turnierverwaltung_final.View
             }
 
             //Footerrow
-            tbl_persontest.Rows.Add(GetFooterRow());
+            if(DisplayFields.Count > 0)
+                tbl_persontest.Rows.Add(GetFooterRow());
         }
         private TableHeaderRow GetHeaderRow(List<PropertyInfo> displayFields)
         {
             TableHeaderRow headerRow = new TableHeaderRow();
             foreach (PropertyInfo shownPropertyInfo in displayFields)
             {
-                //if (_ignoreFields.Any(shownPropertyInfo.Name.Contains))
-                //    continue;
                 TableHeaderCell newHeaderCell = new TableHeaderCell();
                 Button newBtn = new Button();
                 newBtn.Text = shownPropertyInfo.Name;
@@ -106,6 +82,8 @@ namespace Turnierverwaltung_final.View
                 newBtn.BorderStyle = BorderStyle.None;
                 newBtn.ID = $"btn{shownPropertyInfo.Name}";
                 newBtn.Style.Add("text-align", "left");
+                newBtn.CommandArgument = shownPropertyInfo.Name;
+                newBtn.Command += OnHeaderButton_Click;
                 newHeaderCell.Controls.Add(newBtn);
                 headerRow.Cells.Add(newHeaderCell);
             }
@@ -118,7 +96,7 @@ namespace Turnierverwaltung_final.View
             for (int counter = 0; counter < displayFields.Count; counter++)
             {
                 //if (_ignoreFields.Any(displayFields[counter].Name.Contains))
-                    //continue;
+                //continue;
                 newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
                 Control newControl = null;
                 if (!editable || _readonlyFields.Any(displayFields[counter].Name.Contains))
@@ -135,20 +113,23 @@ namespace Turnierverwaltung_final.View
                 tr.Cells.Add(newCell);
             }
             newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-            //Edit-Button
-            Button EditButton = new Button();
-            EditButton.ID = $"btnEdit{pos}";
-            EditButton.Text = "Editieren";
-            EditButton.Command += OnEditButton_Click;
-            EditButton.CssClass = "btn btn-success";
-            EditButton.CommandArgument = pos.ToString();
-            newCell.Controls.Add(EditButton);
-            tr.Cells.Add(newCell);
-            //CheckBox
-            newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-            CheckBox SelectedCheckBox = new CheckBox() { ID = $"cbSelected{pos}" };
-            newCell.Controls.Add(SelectedCheckBox);
-            tr.Cells.Add(newCell);
+            if (InEdit == -1)
+            {
+                //Edit-Button
+                Button EditButton = new Button();
+                EditButton.ID = $"btnEdit{pos}";
+                EditButton.Text = "Editieren";
+                EditButton.Command += OnEditButton_Click;
+                EditButton.CssClass = "btn btn-success";
+                EditButton.CommandArgument = pos.ToString();
+                newCell.Controls.Add(EditButton);
+                tr.Cells.Add(newCell);
+                //CheckBox
+                newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
+                CheckBox SelectedCheckBox = new CheckBox() { ID = $"cbSelected{pos}" };
+                newCell.Controls.Add(SelectedCheckBox);
+                tr.Cells.Add(newCell);
+            }
             return tr;
         }
         private TableFooterRow GetFooterRow()
@@ -156,56 +137,62 @@ namespace Turnierverwaltung_final.View
             TableFooterRow tr = new TableFooterRow();
             TableCell tc = new TableCell();
 
-            //Submit Button
-            Button SubmitButton = new Button()
+            if (InEdit == -1)
             {
-                Text = "Änderungen speichern",
-                Visible = true,
-                CssClass = "btn btn-secondary",
-                ID = "btnAccept",
-            };
-            SubmitButton.Click += OnSubmitButton_Click;
-            tc.Controls.Add(SubmitButton);
-            tr.Cells.Add(tc);
+                tc = new TableCell();
+                //Delete Button
+                Button DeleteButton = new Button()
+                {
+                    Text = "Ausgewählte löschen",
+                    Visible = true,
+                    ID = "btnDelete",
+                    CssClass = "btn btn-secondary",
+                };
+                DeleteButton.Click += OnDeleteButton_Click;
+                tc.Controls.Add(DeleteButton);
+                tr.Cells.Add(tc);
 
-            tc = new TableCell();
-            //Delete Button
-            Button DeleteButton = new Button()
+                tc = new TableCell();
+                //Add Button
+                Button AddButton = new Button()
+                {
+                    Text = "Hinzufügen",
+                    Visible = true,
+                    ID = "btnAdd",
+                    CssClass = "btn btn-secondary",
+                };
+                AddButton.Click += OnAddButton_Click;
+                tc.Controls.Add(AddButton);
+                tr.Cells.Add(tc);
+            }
+            else
             {
-                Text = "Ausgewählte löschen",
-                Visible = true,
-                ID = "btnDelete",
-                CssClass = "btn btn-secondary",
-            };
-            DeleteButton.Click += OnDeleteButton_Click;
-            tc.Controls.Add(DeleteButton);
-            tr.Cells.Add(tc);
+                //Submit Button
+                Button SubmitButton = new Button()
+                {
+                    Text = "Änderungen speichern",
+                    Visible = true,
+                    CssClass = "btn btn-secondary",
+                    ID = "btnAccept",
+                };
+                SubmitButton.Click += OnSubmitButton_Click;
+                tc.Controls.Add(SubmitButton);
+                tr.Cells.Add(tc);
 
-            tc = new TableCell();
-            //Cancel Button
-            Button CancelButton = new Button()
-            {
-                Text = "Änderungen verwerfen",
-                Visible = true,
-                ID = "btnCancel",
-                CssClass = "btn btn-secondary",
-            };
-            CancelButton.Click += OnCancelButton_Click;
-            tc.Controls.Add(CancelButton);
-            tr.Cells.Add(tc);
+                tc = new TableCell();
+                //Cancel Button
+                Button CancelButton = new Button()
+                {
+                    Text = "Änderungen verwerfen",
+                    Visible = true,
+                    ID = "btnCancel",
+                    CssClass = "btn btn-secondary",
+                };
+                CancelButton.Click += OnCancelButton_Click;
+                tc.Controls.Add(CancelButton);
+                tr.Cells.Add(tc);
+            }
 
-            tc = new TableCell();
-            //Add Button
-            Button AddButton = new Button()
-            {
-                Text = "Hinzufügen",
-                Visible = true,
-                ID = "btnAdd",
-                CssClass = "btn btn-secondary",
-            };
-            AddButton.Click += OnAddButton_Click;
-            tc.Controls.Add(AddButton);
-            tr.Cells.Add(tc);
             return tr;
         }
         private void OnEditButton_Click(object sender, CommandEventArgs e)
@@ -252,7 +239,8 @@ namespace Turnierverwaltung_final.View
 
             Teilnehmer toBeUpdated = Controller.Teilnehmer[InEdit - 1];
             for (int i = 0; i < DisplayFields.Count; i++)
-                ListDataType.GetProperty(DisplayFields[i].Name).SetValue(toBeUpdated, Convert.ChangeType((tbl_persontest.Rows[InEdit].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
+                if (!_readonlyFields.Any(DisplayFields[i].Name.Contains))
+                    ListDataType.GetProperty(DisplayFields[i].Name).SetValue(toBeUpdated, Convert.ChangeType((tbl_persontest.Rows[InEdit].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
             toBeUpdated.Speichern();
 
             InEdit = -1;
@@ -260,11 +248,15 @@ namespace Turnierverwaltung_final.View
         }
         private void OnAddButton_Click(object sender, EventArgs e)
         {
-            Type listDataType = GetListDatatype(Controller.Teilnehmer);
+            Type listDataType = Controller.Teilnehmer.Count > 0 ? GetListDatatype(Controller.Teilnehmer) : Type.GetType($"Turnierverwaltung_final.Model.Personen.{ddl_selection.SelectedValue}");
             Teilnehmer t = (Teilnehmer)Activator.CreateInstance(listDataType);
             Controller.NeuerTeilnehmer = t;
             InEdit = tbl_persontest.Rows.Count - 1;
             LoadTable();
+        }
+        private void OnHeaderButton_Click(object sender, CommandEventArgs e)
+        {
+            Controller.Teilnehmer = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
         }
         private Type GetListDatatype(List<Teilnehmer> content)
         {
@@ -301,6 +293,31 @@ namespace Turnierverwaltung_final.View
             }
             return result;
         }
-        #endregion
+        protected void ddl_selection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (ddl_selection.SelectedValue)
+            {
+                case "Alle":
+                    Controller.GetAllePersonen();
+                    break;
+                case "Trainer":
+                    Controller.GetAlleTrainer();
+                    break;
+                case "Physio":
+                    Controller.GetAllePhysios();
+                    break;
+                case "Fussballspieler":
+                    Controller.GetAlleFussballspieler();
+                    break;
+                case "Handballspieler":
+                    Controller.GetAlleHandballspieler();
+                    break;
+                case "Tennisspieler":
+                    Controller.GetAlleTennisspieler();
+                    break;
+            }
+            LoadTable();
+        }
+        #endregion        
     }
 }
