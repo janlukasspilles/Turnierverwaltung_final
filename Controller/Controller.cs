@@ -221,6 +221,34 @@ namespace Turnierverwaltung.ControllerNS
             }
 
         }
+        public void GetAlleMannschaften()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT M.ID FROM MANNSCHAFT M";
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Mannschaft m = new Mannschaft();
+                    m.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(m);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
         #endregion
     }
 }

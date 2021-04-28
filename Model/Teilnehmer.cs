@@ -15,8 +15,9 @@ namespace Turnierverwaltung
         private string _name;
         #endregion
         #region Properties
-        [Display(Name="ID", Order = 1)]
+        [Display(Name="ID", Order = 0)]
         public long Id { get => _id; set => _id = value; }
+        [Display(Name = "Name", Order = 1)]
         public string Name { get => _name; set => _name = value; }
         #endregion
         #region Constructors

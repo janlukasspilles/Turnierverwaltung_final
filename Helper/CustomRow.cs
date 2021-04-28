@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
-using Turnierverwaltung_final.View;
 
 namespace Turnierverwaltung_final.Helper
 {
@@ -16,7 +13,6 @@ namespace Turnierverwaltung_final.Helper
         #region Attributes        
         private Button _editButton;
         private CheckBox _selectedCheckBox;
-        private bool _inEditMode;
         #endregion
         #region Properties
         public Button EditButton { get => _editButton; set => _editButton = value; }
@@ -107,6 +103,7 @@ namespace Turnierverwaltung_final.Helper
             EditButton.Text = "Edit";
             EditButton.Click += editButton_Click;
             EditButton.CssClass = "btn btn-success";
+            EditButton.CommandArgument = pos.ToString();
             newCell.Controls.Add(EditButton);
             Cells.Add(newCell);
             //CheckBox

@@ -45,6 +45,10 @@ namespace Turnierverwaltung_final.Model.Spieler
         public abstract override bool Neuanlage();
         public abstract override void SelektionId(long id);
         public abstract override bool Speichern();
+        public override string ToString()
+        {
+            return Name;
+        }
         #endregion
     }
 }

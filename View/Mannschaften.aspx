@@ -2,4 +2,6 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <asp:Panel runat="server" ID="pnl_tbl"></asp:Panel> 
+    <asp:Panel runat="server" ID="pnl_mitgliederswitch">
+    </asp:Panel>
 </asp:Content>

@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Turnierverwaltung_final.Model.Spieler;
@@ -14,7 +15,9 @@ namespace Turnierverwaltung_final.Model.Personen
         private string _position;
         #endregion
         #region Properties
+        [Display(Name = "Tore", Order = 7)]
         public int Tore { get => _tore; set => _tore = value; }
+        [Display(Name = "Position", Order = 8)]
         public string Position { get => _position; set => _position = value; }
         #endregion
         #region Constructors

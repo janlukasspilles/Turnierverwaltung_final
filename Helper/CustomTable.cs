@@ -24,7 +24,10 @@ namespace Turnierverwaltung_final.Helper
         private List<Teilnehmer> _content;
         private List<PropertyInfo> _displayFields;
         private Type _listDataType;
-        private bool _hasNewEntry;
+        private Button _deleteButton;
+        private Button _cancelButton;
+        private Button _addButton;
+        private Button _submitButton;
         #endregion
         #region Properties
         public List<Teilnehmer> Content
@@ -55,14 +58,19 @@ namespace Turnierverwaltung_final.Helper
             }
             set => ViewState["HasNewEntry"] = value;
         }
+
+        public Button DeleteButton { get => _deleteButton; set => _deleteButton = value; }
+        public Button CancelButton { get => _cancelButton; set => _cancelButton = value; }
+        public Button AddButton { get => _addButton; set => _addButton = value; }
+        public Button SubmitButton { get => _submitButton; set => _submitButton = value; }
         #endregion
         #region Constructors
-        public CustomTable(List<Teilnehmer> content) : base()
-        {
+        public CustomTable(List<Teilnehmer> content, string tableId) : base()
+        {            
             CssClass = "table table-bordered";
             DisplayFields = new List<PropertyInfo>();
             Content = content;
-            ID = "tbl_custom";
+            ID = tableId;
             if (Content != null && Content.Count > 0)
             {
                 ListDataType = GetListDatatype();
@@ -123,7 +131,7 @@ namespace Turnierverwaltung_final.Helper
 
         public void GenerateNewEntryRow()
         {
-            CustomRow newRow = new CustomRow(null, Rows.Count - 2, DisplayFields, RowState.rsInsert);
+            CustomRow newRow = new CustomRow(null, Rows.Count, DisplayFields, RowState.rsInsert);
             Rows.AddAt(Rows.Count - 2, newRow);
         }
 
@@ -132,54 +140,55 @@ namespace Turnierverwaltung_final.Helper
             TableRow tr = new TableRow();
             TableCell tc = new TableCell();
 
-            //Accept Button
-            Button btn = new Button()
+            //Submit Button
+            SubmitButton = new Button()
             {
                 Text = "Änderungen speichern",
                 Visible = true,
                 CssClass = "btn btn-secondary",
                 ID = "btnAccept",
             };
-            btn.Click += acceptButton_Click;
-            tc.Controls.Add(btn);
+            SubmitButton.Click += acceptButton_Click;
+            tc.Controls.Add(SubmitButton);
             tr.Cells.Add(tc);
 
             tc = new TableCell();
             //Delete Button
-            btn = new Button()
+            DeleteButton = new Button()
             {
                 Text = "Ausgewählte löschen",
                 Visible = true,
                 ID = "btnDelete",
                 CssClass = "btn btn-secondary",
             };
-            btn.Click += deleteButton_Click;
-            tc.Controls.Add(btn);
+            DeleteButton.Click += deleteButton_Click;
+            tc.Controls.Add(DeleteButton);
             tr.Cells.Add(tc);
 
             tc = new TableCell();
             //Cancel Button
-            btn = new Button()
+            CancelButton = new Button()
             {
                 Text = "Änderungen verwerfen",
                 Visible = true,
                 ID = "btnCancel",
                 CssClass = "btn btn-secondary",
             };
-            btn.Click += cancelButton_Click;
-            tc.Controls.Add(btn);
+            CancelButton.Click += cancelButton_Click;
+            tc.Controls.Add(CancelButton);
+            tr.Cells.Add(tc);
 
             tc = new TableCell();
             //Add Button
-            btn = new Button()
+            AddButton = new Button()
             {
                 Text = "Hinzufügen",
                 Visible = true,
                 ID = "btnAdd",
                 CssClass = "btn btn-secondary",
             };
-            btn.Click += addButton_Click;
-            tc.Controls.Add(btn);
+            AddButton.Click += addButton_Click;
+            tc.Controls.Add(AddButton);
             tr.Cells.Add(tc);
 
             Rows.Add(tr);

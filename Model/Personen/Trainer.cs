@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.ComponentModel.DataAnnotations;
 using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung
@@ -11,7 +12,9 @@ namespace Turnierverwaltung
         private string _lizenz;
         #endregion
         #region Properties
+        [Display(Name = "Jahre an Erfahrung", Order = 11)]
         public int JahreErfahrung { get => _jahreErfahrung; set => _jahreErfahrung = value; }
+        [Display(Name = "Lizenz", Order = 12)]
         public string Lizenz { get => _lizenz; set => _lizenz = value; }
         #endregion
         #region Constructors

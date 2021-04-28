@@ -1,6 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Turnierverwaltung_final.Model.Perosnen;
+using Turnierverwaltung_final.Model.Personen;
 using Turnierverwaltung_final.Model.Spieler;
 
 namespace Turnierverwaltung
@@ -14,7 +17,9 @@ namespace Turnierverwaltung
         #endregion
         #region Properties
         public List<Person> Mitglieder { get => _mitglieder; set => _mitglieder = value; }
+        [Display(Name = "Stadt", Order = 13)]
         public string Stadt { get => _stadt; set => _stadt = value; }
+        [Display(Name = "Gründungsjahr", Order = 14)]
         public string Gruendungsjahr { get => _gruendungsjahr; set => _gruendungsjahr = value; }
         #endregion
         #region Constructors
@@ -44,16 +49,18 @@ namespace Turnierverwaltung
         {
             Person p = null;
             string sql = "SELECT P.ID," +
-                " case " +
-                "when((SELECT 1 from TRAINER T where T.PERSON_ID = P.id) is not null) then 'Trainer' " +
-                "when((SELECT 1 from SPIELER SP where SP.PERSON_ID = P.id) is not null) then 'Spieler' " +
-                "when((SELECT 1 from PHYSIO PH where PH.PERSON_ID = P.id) is not null) then 'Physio' " +
-                "end as Profession " +
-                "FROM PERSON P " + 
+                "case " +
+                "when((SELECT 1 FROM TRAINER T WHERE T.PERSON_ID = P.ID) IS NOT NULL) THEN 'Trainer' " +
+                "when((SELECT 1 FROM PHYSIO PH WHERE PH.PERSON_ID = P.ID) IS NOT NULL) THEN 'Physio' " +
+                "when((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Fussballspieler' " +
+                "when((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Handballspieler' " +
+                "when((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Tennisspieler' " +
+                "END AS Profession " +
+                "FROM PERSON P " +
                 "JOIN PERSONEN_MANNSCHAFTEN PM " +
-                "ON P.ID = PM.PERSON_ID " + 
-                "JOIN MANNSCHAFT M " + 
-                "ON PM.MANNSCHAFT_ID = M.ID " + 
+                "ON P.ID = PM.PERSON_ID " +
+                "JOIN MANNSCHAFT M " +
+                "ON PM.MANNSCHAFT_ID = M.ID " +
                 $"WHERE M.ID = {Id}";
 
             MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
@@ -66,22 +73,31 @@ namespace Turnierverwaltung
 
                 while (reader.Read())
                 {
-                    switch (reader.GetString("Profession"))
+                    while (reader.Read())
                     {
-                        case "Spieler":
-                            //p = new Spieler();
-                            break;
-                        case "Trainer":
-                            p = new Trainer();
-                            break;
-                        case "Physio":
-                            p = new Physio();
-                            break;
+                        switch (reader.GetString("Profession"))
+                        {
+                            case "Trainer":
+                                p = new Trainer();
+                                break;
+                            case "Physio":
+                                p = new Physio();
+                                break;
+                            case "Fussballspieler":
+                                p = new Fussballspieler();
+                                break;
+                            case "Handballspieler":
+                                p = new Handballspieler();
+                                break;
+                            case "Tennisspieler":
+                                p = new Tennisspieler();
+                                break;
+                        }
+                        p.SelektionId(reader.GetInt64("ID"));
+                        Mitglieder.Add(p);
                     }
-                    p.SelektionId(reader.GetInt64("ID"));
-                    Mitglieder.Add(p);
+                    reader.Close();
                 }
-                reader.Close();
             }
             catch (Exception e)
             {
