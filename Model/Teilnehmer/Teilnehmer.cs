@@ -3,11 +3,14 @@
 //Datei:        Controller.cs
 //Datum:        19.11.2020
 //Beschreibung: Kümmert sich um den Programmablauf
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Turnierverwaltung_final.Helper;
 
-namespace Turnierverwaltung.Model
+namespace Turnierverwaltung.Model.TeilnehmerNS
 {
+    [Serializable]
     public abstract class Teilnehmer
     {
         #region Attributes
@@ -15,22 +18,22 @@ namespace Turnierverwaltung.Model
         private string _name;
         #endregion
         #region Properties
-        [Display(Name="ID", Order = 0)]
+        [DisplayMetaInformation("ID", 0, false, ControlType.ctEdit)]
         public long Id { get => _id; set => _id = value; }
-        [Display(Name = "Name", Order = 1)]
+        [DisplayMetaInformation("Name", 1, true, ControlType.ctEdit)]
         public string Name { get => _name; set => _name = value; }
         #endregion
         #region Constructors
         public Teilnehmer()
         {
-            
+
         }
         #endregion
         #region Methods
         public abstract bool Speichern();
         public abstract void SelektionId(long id);
         public abstract bool Neuanlage();
-        public abstract bool Loeschen();        
+        public abstract bool Loeschen();
         #endregion
     }
 }

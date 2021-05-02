@@ -1,9 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using Turnierverwaltung.Model;
-using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Model.Personen;
+using Turnierverwaltung.Model.TeilnehmerNS;
+using Turnierverwaltung_final.Model;
+using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 
 namespace Turnierverwaltung.ControllerNS
 {
@@ -12,18 +12,55 @@ namespace Turnierverwaltung.ControllerNS
         #region Attributes
         private List<Teilnehmer> _teilnehmer;
         private Teilnehmer _neuerTeilnehmer;
+        private List<Sportart> _sportarten;
+        private List<Person> _moeglicheMitglieder;
         #endregion
         #region Properties
         public List<Teilnehmer> Teilnehmer { get => _teilnehmer; set => _teilnehmer = value; }
         public Teilnehmer NeuerTeilnehmer { get => _neuerTeilnehmer; set => _neuerTeilnehmer = value; }
+        public List<Sportart> Sportarten { get => _sportarten; set => _sportarten = value; }
         #endregion
         #region Constructors
         public Controller()
         {
             Teilnehmer = new List<Teilnehmer>();
+            Sportarten = new List<Sportart>();
+            GetAlleSportenarten();
         }
         #endregion
         #region Methods
+        public List<Teilnehmer> GetMoeglicheMitglieder(long mannschaftId, int sportart)
+        {
+            //
+            return null;
+        }
+        public void GetAlleSportenarten()
+        {
+            Sportarten.Clear();
+            string sql = "SELECT ID FROM SPORTART";
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Sportart s = new Sportart();
+                    s.SelektionId(reader.GetInt64("ID"));
+                    Sportarten.Add(s);
+                }
+                reader.Close();
+            }
+            catch(Exception e)
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
         public void GetAllePhysios()
         {
             Teilnehmer.Clear();

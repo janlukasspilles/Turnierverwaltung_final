@@ -1,23 +1,25 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.ComponentModel.DataAnnotations;
+using Turnierverwaltung_final.Helper;
 
-namespace Turnierverwaltung_final.Model.Personen
+namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {
-    public class Fussballspieler : Person
+    [Serializable]
+    public class Handballspieler : Person
     {
         #region Attributes
         private int _tore;
         private string _position;
         #endregion
         #region Properties
-        [Display(Name = "Tore", Order = 5)]
+        [DisplayMetaInformation("Tore", 7, true, ControlType.ctEdit)]
         public int Tore { get => _tore; set => _tore = value; }
-        [Display(Name = "Position", Order = 6)]
+        [DisplayMetaInformation("Position", 8, true, ControlType.ctEdit)]
         public string Position { get => _position; set => _position = value; }
         #endregion
         #region Constructors
-        public Fussballspieler() : base()
+        public Handballspieler() : base()
         {
 
         }
@@ -38,7 +40,7 @@ namespace Turnierverwaltung_final.Model.Personen
                     $"WHERE ID = {Id}";
                 cmd.CommandText = updatePerson;
                 cmd.ExecuteNonQuery();
-                string updateSpieler = $"UPDATE FUSSBALLSPIELER SET TORE = {Tore}, POSITION = '{Position}' WHERE PERSON_ID = '{Id}'";
+                string updateSpieler = $"UPDATE HANDBALLSPIELER SET TORE = {Tore}, POSITION = '{Position}' WHERE PERSON_ID = '{Id}'";
                 cmd.CommandText = updateSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
@@ -61,10 +63,10 @@ namespace Turnierverwaltung_final.Model.Personen
             try
             {
                 con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, FS.TORE, FS.POSITION " +
+                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, HS.TORE, HS.POSITION " +
                     $"FROM PERSON P " +
-                    $"JOIN FUSSBALLSPIELER FS " +
-                    $"ON P.ID = FS.PERSON_ID " +
+                    $"JOIN HANDBALLSPIELER HS " +
+                    $"ON P.ID = HS.PERSON_ID " +
                     $"WHERE P.ID = '{id}'";
 
                 MySqlCommand cmd = new MySqlCommand(selectionString, con);
@@ -102,15 +104,15 @@ namespace Turnierverwaltung_final.Model.Personen
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
                 Id = cmd.LastInsertedId;
-                string insertSpieler = $"INSERT INTO FUSSBALLSPIELER (PERSON_ID, TORE, POSITION) VALUES ('{cmd.LastInsertedId}', {Tore}, '{Position}')";
+                string insertSpieler = $"INSERT INTO HANDBALLSPIELER (PERSON_ID, TORE, POSITION) VALUES ('{cmd.LastInsertedId}', {Tore}, '{Position}')";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
             }
             catch (Exception e)
             {
-                res = false;
                 Id = 0;
+                res = false;
                 trans.Rollback();
             }
             finally

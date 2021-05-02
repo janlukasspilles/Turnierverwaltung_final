@@ -1,29 +1,30 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.ComponentModel.DataAnnotations;
+using Turnierverwaltung_final.Helper;
 
-namespace Turnierverwaltung_final.Model.Personen
+namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {
-    public class Trainer : Person
+    [Serializable]
+    public class Tennisspieler : Person
     {
         #region Attributes
-        private int _jahreErfahrung;
-        private string _lizenz;
+        private int _anzahlSpiele;
+        private int _anzahlGewonnen;
         #endregion
         #region Properties
-        [Display(Name = "Jahre an Erfahrung", Order = 11)]
-        public int JahreErfahrung { get => _jahreErfahrung; set => _jahreErfahrung = value; }
-        [Display(Name = "Lizenz", Order = 12)]
-        public string Lizenz { get => _lizenz; set => _lizenz = value; }
+        [DisplayMetaInformation("Anzahl Spiele", 9, true, ControlType.ctEdit)]
+        public int AnzahlSpiele { get => _anzahlSpiele; set => _anzahlSpiele = value; }
+        [DisplayMetaInformation("Anzahl Gewonnene Spiele", 10, true, ControlType.ctEdit)]
+        public int AnzahlGewonnen { get => _anzahlGewonnen; set => _anzahlGewonnen = value; }
         #endregion
         #region Constructors
-        public Trainer() : base()
+        public Tennisspieler() : base()
         {
 
         }
         #endregion
-        #region Methods
-
+        #region Methods         
         public override bool Speichern()
         {
             bool res = true;
@@ -39,8 +40,8 @@ namespace Turnierverwaltung_final.Model.Personen
                     $"WHERE ID = {Id}";
                 cmd.CommandText = updatePerson;
                 cmd.ExecuteNonQuery();
-                string updateTrainer = $"UPDATE TRAINER SET ERFAHRUNG = {JahreErfahrung}, LIZENZ = '{Lizenz}' WHERE PERSON_ID = '{Id}'";
-                cmd.CommandText = updateTrainer;
+                string updateSpieler = $"UPDATE TENNISSPIELER SET ANZAHL_SPIELE = {AnzahlSpiele}, ANZAHL_GEWONNEN = '{AnzahlGewonnen}' WHERE PERSON_ID = '{Id}'";
+                cmd.CommandText = updateSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
             }
@@ -62,10 +63,10 @@ namespace Turnierverwaltung_final.Model.Personen
             try
             {
                 con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, T.ERFAHRUNG, T.LIZENZ " +
+                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, TS.ANZAHL_SPIELE, TS.ANZAHL_GEWONNEN" +
                     $"FROM PERSON P " +
-                    $"JOIN TRAINER T " +
-                    $"ON P.ID = T.PERSON_ID " +
+                    $"JOIN TENNISSPIELER TS " +
+                    $"ON P.ID = TS.PERSON_ID " +
                     $"WHERE P.ID = '{id}'";
 
                 MySqlCommand cmd = new MySqlCommand(selectionString, con);
@@ -77,8 +78,8 @@ namespace Turnierverwaltung_final.Model.Personen
                     Vorname = reader.GetString("VORNAME");
                     Nachname = reader.GetString("NACHNAME");
                     Geburtstag = reader.GetDateTime("GEBURTSTAG").ToString("yyyy-MM-dd");
-                    JahreErfahrung = reader.GetInt32("ERFAHRUNG");
-                    Lizenz = reader.GetString("Lizenz");
+                    AnzahlSpiele = reader.GetInt32("ANZAHL_SPIELE");
+                    AnzahlGewonnen = reader.GetInt32("ANZAHL_GEWONNEN");
                 }
                 reader.Close();
             }
@@ -103,7 +104,7 @@ namespace Turnierverwaltung_final.Model.Personen
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
                 Id = cmd.LastInsertedId;
-                string insertSpieler = $"INSERT INTO TRAINER (PERSON_ID, ERFAHRUNG, LIZENZ) VALUES ('{cmd.LastInsertedId}', '{JahreErfahrung}', '{Lizenz}')";
+                string insertSpieler = $"INSERT INTO TENNISSPIELER (PERSON_ID, ANZAHL_SPIELE, ANZAHL_GEWONNEN) VALUES ('{cmd.LastInsertedId}', {AnzahlSpiele}, {AnzahlGewonnen})";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();

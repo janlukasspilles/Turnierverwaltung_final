@@ -1,16 +1,25 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.ComponentModel.DataAnnotations;
+using Turnierverwaltung_final.Helper;
 
-namespace Turnierverwaltung_final.Model.Personen
+namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {
-    public class Physio : Person
+    [Serializable]
+    public class Trainer : Person
     {
-        #region Attributes 
+        #region Attributes
+        private int _jahreErfahrung;
+        private string _lizenz;
         #endregion
         #region Properties
+        [DisplayMetaInformation("Jahre an Erfahrung", 11, true, ControlType.ctEdit)]
+        public int JahreErfahrung { get => _jahreErfahrung; set => _jahreErfahrung = value; }
+        [DisplayMetaInformation("Lizenz", 12, true, ControlType.ctEdit)]
+        public string Lizenz { get => _lizenz; set => _lizenz = value; }
         #endregion
         #region Constructors
-        public Physio() : base()
+        public Trainer() : base()
         {
 
         }
@@ -32,9 +41,9 @@ namespace Turnierverwaltung_final.Model.Personen
                     $"WHERE ID = {Id}";
                 cmd.CommandText = updatePerson;
                 cmd.ExecuteNonQuery();
-                //string updateSpieler = $"UPDATE SPIELER SET VERLETZT = {Convert.ToInt32(Verletzt)} WHERE PERSON_ID = '{Id}'";
-                //cmd.CommandText = updateSpieler;
-                //cmd.ExecuteNonQuery();
+                string updateTrainer = $"UPDATE TRAINER SET ERFAHRUNG = {JahreErfahrung}, LIZENZ = '{Lizenz}' WHERE PERSON_ID = '{Id}'";
+                cmd.CommandText = updateTrainer;
+                cmd.ExecuteNonQuery();
                 trans.Commit();
             }
             catch (Exception e)
@@ -55,10 +64,10 @@ namespace Turnierverwaltung_final.Model.Personen
             try
             {
                 con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG " +
+                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, T.ERFAHRUNG, T.LIZENZ " +
                     $"FROM PERSON P " +
-                    $"JOIN PHYSIO PH " +
-                    $"ON P.ID = PH.PERSON_ID " +
+                    $"JOIN TRAINER T " +
+                    $"ON P.ID = T.PERSON_ID " +
                     $"WHERE P.ID = '{id}'";
 
                 MySqlCommand cmd = new MySqlCommand(selectionString, con);
@@ -70,6 +79,8 @@ namespace Turnierverwaltung_final.Model.Personen
                     Vorname = reader.GetString("VORNAME");
                     Nachname = reader.GetString("NACHNAME");
                     Geburtstag = reader.GetDateTime("GEBURTSTAG").ToString("yyyy-MM-dd");
+                    JahreErfahrung = reader.GetInt32("ERFAHRUNG");
+                    Lizenz = reader.GetString("Lizenz");
                 }
                 reader.Close();
             }
@@ -93,13 +104,15 @@ namespace Turnierverwaltung_final.Model.Personen
                 string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
-                //string insertSpieler = $"INSERT INTO SPIELER (PERSON_ID, VERLETZT) VALUES ('{cmd.LastInsertedId}', '{Convert.ToInt32(Verletzt)}')";
-                //cmd.CommandText = insertSpieler;
-                //cmd.ExecuteNonQuery();
+                Id = cmd.LastInsertedId;
+                string insertSpieler = $"INSERT INTO TRAINER (PERSON_ID, ERFAHRUNG, LIZENZ) VALUES ('{cmd.LastInsertedId}', '{JahreErfahrung}', '{Lizenz}')";
+                cmd.CommandText = insertSpieler;
+                cmd.ExecuteNonQuery();
                 trans.Commit();
             }
             catch (Exception e)
             {
+                Id = 0;
                 res = false;
                 trans.Rollback();
             }

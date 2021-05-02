@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Turnierverwaltung_final.Model.Personen;
+using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 
-namespace Turnierverwaltung.Model
+namespace Turnierverwaltung.Model.TeilnehmerNS
 {
     public class Mannschaft : Teilnehmer
     {
@@ -12,13 +13,16 @@ namespace Turnierverwaltung.Model
         private List<Person> _mitglieder;
         private string _stadt;
         private string _gruendungsjahr;
+        private int _sportart;
         #endregion
         #region Properties
         public List<Person> Mitglieder { get => _mitglieder; set => _mitglieder = value; }
-        [Display(Name = "Stadt", Order = 13)]
+        [DisplayMetaInformation("Stadt", 13, true, ControlType.ctEdit)]
         public string Stadt { get => _stadt; set => _stadt = value; }
-        [Display(Name = "Gründungsjahr", Order = 14)]
+        [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctEdit)]
         public string Gruendungsjahr { get => _gruendungsjahr; set => _gruendungsjahr = value; }
+        [DisplayMetaInformation("Sportart", 15, true, ControlType.ctEdit)]
+        public int Sportart { get => _sportart; set => _sportart = value; }
         #endregion
         #region Constructors
         public Mannschaft()
@@ -170,6 +174,7 @@ namespace Turnierverwaltung.Model
                     Name = reader.GetString("NAME");
                     Stadt = reader.GetString("STADT");
                     Gruendungsjahr = reader.GetDateTime("GRUENDUNGSJAHR").ToString("yyyy-MM-dd");
+                    Sportart = reader.GetInt32("SPORTART_ID");
                 }
                 reader.Close();
                 GetMitglieder();
@@ -183,7 +188,7 @@ namespace Turnierverwaltung.Model
             }
         }
 
-        public bool SelektiereMitgliederInListe()
+        public bool SelektiereMitgliederListe()
         {
             MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             try

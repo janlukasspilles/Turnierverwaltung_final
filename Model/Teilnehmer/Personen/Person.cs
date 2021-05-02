@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using Turnierverwaltung;
-using Turnierverwaltung.Model;
+using Turnierverwaltung.Model.TeilnehmerNS;
+using Turnierverwaltung_final.Helper;
 
-namespace Turnierverwaltung_final.Model.Personen
+namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {
+    [Serializable]
     public abstract class Person : Teilnehmer
     {
         #region Attributes      
@@ -16,7 +14,7 @@ namespace Turnierverwaltung_final.Model.Personen
         private string _geburtstag;
         #endregion
         #region Properties
-        [Display(Name = "Vorname", Order = 2)]
+        [DisplayMetaInformation("Vorname", 2, true, ControlType.ctEdit)]
         public string Vorname
         {
             get => _vorname;
@@ -26,7 +24,7 @@ namespace Turnierverwaltung_final.Model.Personen
                 Name = Vorname + " " + Nachname;
             }
         }
-        [Display(Name = "Nachname", Order = 3)]
+        [DisplayMetaInformation("Nachname", 3, true, ControlType.ctEdit)]
         public string Nachname
         {
             get => _nachname;
@@ -36,7 +34,7 @@ namespace Turnierverwaltung_final.Model.Personen
                 Name = Vorname + " " + Nachname;
             }
         }
-        [Display(Name = "Geburtstag", Order = 4)]
+        [DisplayMetaInformation("Geburtstag", 4, true, ControlType.ctEdit)]
         public string Geburtstag { get => _geburtstag; set => _geburtstag = value; }
         #endregion
         #region Constructs

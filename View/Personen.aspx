@@ -7,21 +7,18 @@
     </div>
     <br />
     <br />
-
     <div class="btn-group">
-        <asp:DropDownList CssClass="btn btn-primary dropdown-toggle" runat="server" ID="ddl_selection" AutoPostBack="true" OnSelectedIndexChanged="ddl_selection_SelectedIndexChanged">
-            <asp:ListItem runat="server" ID="li_Empty"></asp:ListItem>
-            <asp:ListItem runat="server" ID="li_Alle">Alle</asp:ListItem>
-            <asp:ListItem runat="server" ID="li_Trainer">Trainer</asp:ListItem>
-            <asp:ListItem runat="server" ID="li_Physio">Physio</asp:ListItem>
-            <asp:ListItem runat="server" ID="li_Fussballspieler">Fussballspieler</asp:ListItem>
-            <asp:ListItem runat="server" ID="li_Handballspieler">Handballspieler</asp:ListItem>
-            <asp:ListItem runat="server" ID="li_Tennisspieler">Tennisspieler</asp:ListItem>
-        </asp:DropDownList> 
+        <asp:DropDownList CssClass="btn btn-primary dropdown-toggle" runat="server" ID="ddl_selection" AutoPostBack="true" OnSelectedIndexChanged="OnSelectionChanged">
+            <asp:ListItem></asp:ListItem>
+            <asp:ListItem>Alle</asp:ListItem>
+            <asp:ListItem>Trainer</asp:ListItem>
+            <asp:ListItem>Physio</asp:ListItem>
+            <asp:ListItem>Fussballspieler</asp:ListItem>
+            <asp:ListItem>Handballspieler</asp:ListItem>
+            <asp:ListItem>Tennisspieler</asp:ListItem>
+        </asp:DropDownList>
     </div>
- 
     <br />
     <br />
-    <asp:Panel runat="server" ID="pnl_tbl"></asp:Panel>
-    <asp:Table runat="server" ID="tbl_persontest" CssClass="table table-bordered"></asp:Table>
+    <asp:Table runat="server" ID="tbl_personen" CssClass="table table-bordered"></asp:Table>
 </asp:Content>

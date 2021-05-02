@@ -1,23 +1,25 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.ComponentModel.DataAnnotations;
+using Turnierverwaltung_final.Helper;
 
-namespace Turnierverwaltung_final.Model.Personen
+namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {
-    public class Tennisspieler : Person
+    [Serializable]
+    public class Fussballspieler : Person
     {
         #region Attributes
-        private int _anzahlSpiele;
-        private int _anzahlGewonnen;
+        private int _tore;
+        private string _position;
         #endregion
         #region Properties
-        [Display(Name = "Anzahl Spiele", Order = 9)]
-        public int AnzahlSpiele { get => _anzahlSpiele; set => _anzahlSpiele = value; }
-        [Display(Name = "Anzahl Gewonnene Spiele", Order = 10)]
-        public int AnzahlGewonnen { get => _anzahlGewonnen; set => _anzahlGewonnen = value; }
+        [DisplayMetaInformation("Tore", 5, true, ControlType.ctEdit)]
+        public int Tore { get => _tore; set => _tore = value; }
+        [DisplayMetaInformation("Position", 6, true, ControlType.ctEdit)]
+        public string Position { get => _position; set => _position = value; }
         #endregion
         #region Constructors
-        public Tennisspieler() : base()
+        public Fussballspieler() : base()
         {
 
         }
@@ -38,7 +40,7 @@ namespace Turnierverwaltung_final.Model.Personen
                     $"WHERE ID = {Id}";
                 cmd.CommandText = updatePerson;
                 cmd.ExecuteNonQuery();
-                string updateSpieler = $"UPDATE TENNISSPIELER SET ANZAHL_SPIELE = {AnzahlSpiele}, ANZAHL_GEWONNEN = '{AnzahlGewonnen}' WHERE PERSON_ID = '{Id}'";
+                string updateSpieler = $"UPDATE FUSSBALLSPIELER SET TORE = {Tore}, POSITION = '{Position}' WHERE PERSON_ID = '{Id}'";
                 cmd.CommandText = updateSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
@@ -61,10 +63,10 @@ namespace Turnierverwaltung_final.Model.Personen
             try
             {
                 con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, TS.ANZAHL_SPIELE, TS.ANZAHL_GEWONNEN" +
+                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, FS.TORE, FS.POSITION " +
                     $"FROM PERSON P " +
-                    $"JOIN TENNISSPIELER TS " +
-                    $"ON P.ID = TS.PERSON_ID " +
+                    $"JOIN FUSSBALLSPIELER FS " +
+                    $"ON P.ID = FS.PERSON_ID " +
                     $"WHERE P.ID = '{id}'";
 
                 MySqlCommand cmd = new MySqlCommand(selectionString, con);
@@ -76,8 +78,8 @@ namespace Turnierverwaltung_final.Model.Personen
                     Vorname = reader.GetString("VORNAME");
                     Nachname = reader.GetString("NACHNAME");
                     Geburtstag = reader.GetDateTime("GEBURTSTAG").ToString("yyyy-MM-dd");
-                    AnzahlSpiele = reader.GetInt32("ANZAHL_SPIELE");
-                    AnzahlGewonnen = reader.GetInt32("ANZAHL_GEWONNEN");
+                    Tore = reader.GetInt32("TORE");
+                    Position = reader.GetString("POSITION");
                 }
                 reader.Close();
             }
@@ -102,15 +104,15 @@ namespace Turnierverwaltung_final.Model.Personen
                 cmd.CommandText = insertPerson;
                 cmd.ExecuteNonQuery();
                 Id = cmd.LastInsertedId;
-                string insertSpieler = $"INSERT INTO TENNISSPIELER (PERSON_ID, ANZAHL_SPIELE, ANZAHL_GEWONNEN) VALUES ('{cmd.LastInsertedId}', {AnzahlSpiele}, {AnzahlGewonnen})";
+                string insertSpieler = $"INSERT INTO FUSSBALLSPIELER (PERSON_ID, TORE, POSITION) VALUES ('{cmd.LastInsertedId}', {Tore}, '{Position}')";
                 cmd.CommandText = insertSpieler;
                 cmd.ExecuteNonQuery();
                 trans.Commit();
             }
             catch (Exception e)
             {
-                Id = 0;
                 res = false;
+                Id = 0;
                 trans.Rollback();
             }
             finally

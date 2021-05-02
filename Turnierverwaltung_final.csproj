@@ -222,6 +222,8 @@
     <Content Include="Bundle.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\DisplayInformationAttribute.cs" />
+    <Compile Include="Model\Sportart.cs" />
     <Compile Include="View\About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -255,14 +257,14 @@
     <Compile Include="Helper\CustomTable.cs" />
     <Compile Include="Helper\DatabaseCreator.cs" />
     <Compile Include="Helper\Viewhelpers.cs" />
-    <Compile Include="Model\Mannschaft.cs" />
-    <Compile Include="Model\Personen\Fussballspieler.cs" />
-    <Compile Include="Model\Personen\Handballspieler.cs" />
-    <Compile Include="Model\Personen\Physio.cs" />
-    <Compile Include="Model\Personen\Person.cs" />
-    <Compile Include="Model\Personen\Tennisspieler.cs" />
-    <Compile Include="Model\Teilnehmer.cs" />
-    <Compile Include="Model\Personen\Trainer.cs" />
+    <Compile Include="Model\Teilnehmer\Mannschaft.cs" />
+    <Compile Include="Model\Teilnehmer\Personen\Fussballspieler.cs" />
+    <Compile Include="Model\Teilnehmer\Personen\Handballspieler.cs" />
+    <Compile Include="Model\Teilnehmer\Personen\Physio.cs" />
+    <Compile Include="Model\Teilnehmer\Personen\Person.cs" />
+    <Compile Include="Model\Teilnehmer\Personen\Tennisspieler.cs" />
+    <Compile Include="Model\Teilnehmer\Teilnehmer.cs" />
+    <Compile Include="Model\Teilnehmer\Personen\Trainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
