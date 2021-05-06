@@ -124,6 +124,7 @@ namespace Turnierverwaltung_final.View
                     ID = $"btnEdit{pos}",
                     Text = "Editieren"
                 };
+                
                 EditButton.Command += OnEditButton_Click;
                 EditButton.CssClass = "btn btn-success";
                 EditButton.CommandArgument = pos.ToString();

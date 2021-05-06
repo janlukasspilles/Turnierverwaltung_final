@@ -13,9 +13,9 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         private string _position;
         #endregion
         #region Properties
-        [DisplayMetaInformation("Tore", 7, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Tore", 7, true, ControlType.ctEditText)]
         public int Tore { get => _tore; set => _tore = value; }
-        [DisplayMetaInformation("Position", 8, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Position", 8, true, ControlType.ctEditText)]
         public string Position { get => _position; set => _position = value; }
         #endregion
         #region Constructors

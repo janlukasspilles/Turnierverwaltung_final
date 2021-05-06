@@ -13,9 +13,9 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         private int _anzahlGewonnen;
         #endregion
         #region Properties
-        [DisplayMetaInformation("Anzahl Spiele", 9, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Anzahl Spiele", 9, true, ControlType.ctEditText)]
         public int AnzahlSpiele { get => _anzahlSpiele; set => _anzahlSpiele = value; }
-        [DisplayMetaInformation("Anzahl Gewonnene Spiele", 10, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Anzahl Gewonnene Spiele", 10, true, ControlType.ctEditText)]
         public int AnzahlGewonnen { get => _anzahlGewonnen; set => _anzahlGewonnen = value; }
         #endregion
         #region Constructors

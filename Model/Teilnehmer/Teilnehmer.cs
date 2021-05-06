@@ -18,9 +18,9 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         private string _name;
         #endregion
         #region Properties
-        [DisplayMetaInformation("ID", 0, false, ControlType.ctEdit)]
+        [DisplayMetaInformation("ID", 0, false, ControlType.ctEditText)]
         public long Id { get => _id; set => _id = value; }
-        [DisplayMetaInformation("Name", 1, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Name", 1, true, ControlType.ctEditText)]
         public string Name { get => _name; set => _name = value; }
         #endregion
         #region Constructors
@@ -34,6 +34,12 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         public abstract void SelektionId(long id);
         public abstract bool Neuanlage();
         public abstract bool Loeschen();
+        public override bool Equals(object obj) 
+            => obj != null && GetType().Equals(obj.GetType()) && ((Teilnehmer)obj).Id == Id;
+        public override string ToString() 
+            => Name;
+        public override int GetHashCode() 
+            => Id.GetHashCode();
         #endregion
     }
 }

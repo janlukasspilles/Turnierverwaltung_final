@@ -13,9 +13,9 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         private string _lizenz;
         #endregion
         #region Properties
-        [DisplayMetaInformation("Jahre an Erfahrung", 11, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Jahre an Erfahrung", 11, true, ControlType.ctEditText)]
         public int JahreErfahrung { get => _jahreErfahrung; set => _jahreErfahrung = value; }
-        [DisplayMetaInformation("Lizenz", 12, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Lizenz", 12, true, ControlType.ctEditText)]
         public string Lizenz { get => _lizenz; set => _lizenz = value; }
         #endregion
         #region Constructors

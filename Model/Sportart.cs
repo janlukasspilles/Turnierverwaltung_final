@@ -60,6 +60,10 @@ namespace Turnierverwaltung_final.Model
 
             return res;
         }
+        public override string ToString()
+        {
+            return Bezeichnung;
+        }
         public void SelektionId(long id)
         {
             MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
@@ -68,7 +72,7 @@ namespace Turnierverwaltung_final.Model
                 con.Open();
                 string selectionString = $"SELECT * " +
                     $"FROM SPORTART " +
-                    $"WHERE P.ID = '{id}'";
+                    $"WHERE ID = '{id}'";
 
                 MySqlCommand cmd = new MySqlCommand(selectionString, con);
                 MySqlDataReader reader = cmd.ExecuteReader();

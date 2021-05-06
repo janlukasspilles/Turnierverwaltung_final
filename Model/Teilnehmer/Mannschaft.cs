@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung_final.Helper;
 using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 
@@ -17,11 +19,11 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         #endregion
         #region Properties
         public List<Person> Mitglieder { get => _mitglieder; set => _mitglieder = value; }
-        [DisplayMetaInformation("Stadt", 13, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Stadt", 13, true, ControlType.ctEditText)]
         public string Stadt { get => _stadt; set => _stadt = value; }
-        [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctEditText)]
         public string Gruendungsjahr { get => _gruendungsjahr; set => _gruendungsjahr = value; }
-        [DisplayMetaInformation("Sportart", 15, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Sportart", 15, true, ControlType.ctDomain, ddlList.dlSportarten)]
         public int Sportart { get => _sportart; set => _sportart = value; }
         #endregion
         #region Constructors
@@ -30,25 +32,10 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             Mitglieder = new List<Person>();
         }
         #endregion
-        #region Methods
-
-        public bool NeuesMannschaftsMitglied(Teilnehmer teilnehmer)
+        #region Methods       
+        private List<Person> GetMitglieder()
         {
-            //teilnehmer.Mannschaft = Name;
-            //if (teilnehmer.Speichern())
-            //{
-            //    Mitglieder.Add(teilnehmer);
-            //    return true;
-            //}
-            //else
-            //{
-            //    return false;
-            //}
-            return true;
-        }
-
-        private void GetMitglieder()
-        {
+            List<Person> result = new List<Person>();
             Person p = null;
             string sql = "SELECT P.ID," +
                 "case " +
@@ -96,7 +83,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                                 break;
                         }
                         p.SelektionId(reader.GetInt64("ID"));
-                        Mitglieder.Add(p);
+                        result.Add(p);
                     }
                     reader.Close();
                 }
@@ -108,30 +95,13 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             {
                 con.Close();
             }
-        }
-
-        public Teilnehmer MitgliedVerlaesstMannschaft(string name)
-        {
-            //foreach (Teilnehmer t in Mitglieder)
-            //{
-            //    if (t.Name == name)
-            //    {
-            //        Teilnehmer res = t;
-            //        Mitglieder.Remove(t);
-            //        return res;
-            //    }
-            //    else
-            //    {
-            //        //Nichts
-            //    }
-            //}
-            throw new Exception("Kein Mitglied dieses Teams hat diesen Namen!");
+            return result;
         }
 
         public override bool Speichern()
         {
             bool res = true;
-            string updateMannschaft = $"UPDATE MANNSCHAFT SET NAME='{Name}', STADT='{Stadt}', GRUENDUNGSJAHR='{Gruendungsjahr}' WHERE ID='{Id}'";
+            string updateMannschaft = $"UPDATE MANNSCHAFT SET NAME='{Name}', STADT='{Stadt}', GRUENDUNGSJAHR='{Gruendungsjahr}', SPORTART_ID={Sportart} WHERE ID='{Id}'";
 
             MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
             Connection.Open();
@@ -145,8 +115,9 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             {
                 command.CommandText = updateMannschaft;
                 res = command.ExecuteNonQuery() == 1;
+                SpeicherMitglieder();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 res = false;
             }
@@ -177,7 +148,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                     Sportart = reader.GetInt32("SPORTART_ID");
                 }
                 reader.Close();
-                GetMitglieder();
+                Mitglieder = GetMitglieder();
             }
             catch (Exception)
             {
@@ -187,34 +158,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                 Connection.Close();
             }
         }
-
-        public bool SelektiereMitgliederListe()
-        {
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
-            try
-            {
-                Connection.Open();
-
-                string selektionstring = $"SELECT ID FROM SPIELER WHERE MANNSCHAFT_ID = '{Id}'";
-                MySqlCommand command = new MySqlCommand(selektionstring, Connection);
-                MySqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    //Mitglieder.Add(new Teilnehmer().SelektionId(reader.GetInt64("ID")));
-                }
-                reader.Close();
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                Connection.Close();
-            }
-            return true;
-        }
-
+        
         public override bool Neuanlage()
         {
             bool res = true;
@@ -273,6 +217,44 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                 Connection.Close();
             }
             return res;
+        }
+
+        private void SpeicherMitglieder()
+        {
+            List<Person> oldMembers = GetMitglieder();
+            //Löschen
+            List<Person> remove = oldMembers.Except(Mitglieder).ToList();
+            List<Person> add = Mitglieder.Except(oldMembers).ToList();
+            string deleteSql = $"DELETE FROM PERSONEN_MANNSCHAFTEN WHERE MANNSCHAFT_ID = '{Id}' AND PERSON_ID IN('{string.Join("', '", remove.Select(x => x.Id))}')";
+            
+
+            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            Connection.Open();
+
+            MySqlCommand command = new MySqlCommand
+            {
+                Connection = Connection
+            };
+
+            try
+            {
+                command.CommandText = deleteSql;
+                command.ExecuteNonQuery();
+                foreach(Person p in add)
+                {
+                    string insertSql = $"INSERT INTO PERSONEN_MANNSCHAFTEN (MANNSCHAFT_ID, PERSON_ID) VALUES ({Id}, {p.Id})";
+                    command.CommandText = insertSql;
+                    command.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
         #endregion
     }

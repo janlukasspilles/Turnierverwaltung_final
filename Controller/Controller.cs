@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Turnierverwaltung.Model.TeilnehmerNS;
 using Turnierverwaltung_final.Model;
@@ -29,10 +30,67 @@ namespace Turnierverwaltung.ControllerNS
         }
         #endregion
         #region Methods
-        public List<Teilnehmer> GetMoeglicheMitglieder(long mannschaftId, int sportart)
+        public List<Person> GetMoeglicheMitglieder(long mannschaftId)
         {
-            //
-            return null;
+            List<Person> result = new List<Person>();
+            Person p = null;
+            string sql = "SELECT P.ID, " +
+                "CASE " +
+                "WHEN((SELECT 1 FROM TRAINER T WHERE T.PERSON_ID = P.iD) IS NOT NULL) THEN 'Trainer' " +
+                "WHEN((SELECT 1 FROM PHYSIO PH WHERE PH.PERSON_ID = P.iD) IS NOT NULL) THEN 'Physio' " +
+                "WHEN((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Fussballspieler' " +
+                "WHEN((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Handballspieler' " +
+                "WHEN((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Tennisspieler' " +
+                "ELSE 'Der Hund hat keine Detailtabelle' " +
+                "END AS Profession " +
+                "FROM PERSON P " +
+                "LEFT OUTER JOIN personen_mannschaften pm " +
+                "ON P.ID = pm.PERSON_ID " +
+                $"WHERE pm.MANNSCHAFT_ID <> {mannschaftId} " +
+                "OR pm.PERSON_ID IS NULL";
+
+            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    switch (reader.GetString("Profession"))
+                    {
+                        case "Trainer":
+                            p = new Trainer();
+                            break;
+                        case "Physio":
+                            p = new Physio();
+                            break;
+                        case "Fussballspieler":
+                            p = new Fussballspieler();
+                            break;
+                        case "Handballspieler":
+                            p = new Handballspieler();
+                            break;
+                        case "Tennisspieler":
+                            p = new Tennisspieler();
+                            break;
+                    }
+                    p.SelektionId(reader.GetInt64("ID"));
+                    result.Add(p);
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return result;
         }
         public void GetAlleSportenarten()
         {
@@ -52,7 +110,7 @@ namespace Turnierverwaltung.ControllerNS
                 }
                 reader.Close();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
@@ -285,6 +343,20 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
+
+        public IList GetDomainList(ddlList listname)
+        {
+            switch (listname)
+            {
+                case ddlList.dlSportarten:
+                    return Sportarten;
+                default: return null;
+            }
+        }
         #endregion
+    }
+    public enum ddlList
+    {
+        dlSportarten
     }
 }

@@ -14,7 +14,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         private string _geburtstag;
         #endregion
         #region Properties
-        [DisplayMetaInformation("Vorname", 2, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Vorname", 2, true, ControlType.ctEditText)]
         public string Vorname
         {
             get => _vorname;
@@ -24,7 +24,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
                 Name = Vorname + " " + Nachname;
             }
         }
-        [DisplayMetaInformation("Nachname", 3, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Nachname", 3, true, ControlType.ctEditText)]
         public string Nachname
         {
             get => _nachname;
@@ -34,7 +34,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
                 Name = Vorname + " " + Nachname;
             }
         }
-        [DisplayMetaInformation("Geburtstag", 4, true, ControlType.ctEdit)]
+        [DisplayMetaInformation("Geburtstag", 4, true, ControlType.ctEditText)]
         public string Geburtstag { get => _geburtstag; set => _geburtstag = value; }
         #endregion
         #region Constructs
@@ -46,7 +46,11 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         public abstract override bool Speichern();
         public override string ToString()
         {
-            return Name;
+            return base.ToString();
+        }
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
         }
         #endregion
     }

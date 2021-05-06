@@ -23,5 +23,11 @@ namespace Turnierverwaltung_final.Helper
                 default: throw new FormatException("Es können nur Strings mit dem Wert Ja oder Nein umgewandelt werden.");
             }
         }
+
+        public static void MoveTo<T>(this List<T> value, T item, List<T> targetList)
+        {
+            value.Remove(item);
+            targetList.Add(item);
+        }
     }
 }
