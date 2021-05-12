@@ -174,20 +174,13 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="View\Einstellungen.aspx" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
-    <EmbeddedResource Include="Ressources\SQL\ExampleData\inserts.sql" />
-    <EmbeddedResource Include="Ressources\queries.sql" />
-    <EmbeddedResource Include="Ressources\turnierverwaltung.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_Old\CreateDatabase.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_Old\CreateProcedures.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_Old\CreateTables.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_Old\CreateTriggers.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_Old\CreateViews.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateDatabase.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateProcedures.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateTables.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateTriggers.sql" />
-    <EmbeddedResource Include="Ressources\SQL\Structure_New\CreateViews.sql" />
-    <EmbeddedResource Include="Ressources\SQL\ExampleData\inserts_new.sql" />
+    <EmbeddedResource Include="Resources\queries.sql" />
+    <EmbeddedResource Include="Resources\SQL\Structure\CreateDatabase.sql" />
+    <EmbeddedResource Include="Resources\SQL\Structure\CreateProcedures.sql" />
+    <EmbeddedResource Include="Resources\SQL\Structure\CreateTables.sql" />
+    <EmbeddedResource Include="Resources\SQL\Structure\CreateTriggers.sql" />
+    <EmbeddedResource Include="Resources\SQL\Structure\CreateViews.sql" />
+    <EmbeddedResource Include="Resources\SQL\ExampleData.sql" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.4.1-vsdoc.js" />
@@ -254,8 +247,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\ExtensionHelpers.cs" />
-    <Compile Include="Helper\CustomRow.cs" />
-    <Compile Include="Helper\CustomTable.cs" />
     <Compile Include="Helper\DatabaseCreator.cs" />
     <Compile Include="Helper\Viewhelpers.cs" />
     <Compile Include="Model\Teilnehmer\Mannschaft.cs" />

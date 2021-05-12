@@ -1,7 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {
@@ -28,120 +30,132 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         public override bool Speichern()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
-            con.Open();
-            MySqlTransaction trans = con.BeginTransaction();
-            try
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {
-                MySqlCommand cmd = new MySqlCommand() { Connection = con, Transaction = trans };
-                string updatePerson = $"UPDATE PERSON SET VORNAME = '{Vorname}', " +
-                    $"NACHNAME = '{Nachname}', " +
-                    $"GEBURTSTAG = '{Geburtstag}' " +
-                    $"WHERE ID = {Id}";
-                cmd.CommandText = updatePerson;
-                cmd.ExecuteNonQuery();
-                string updateSpieler = $"UPDATE FUSSBALLSPIELER SET TORE = {Tore}, POSITION = '{Position}' WHERE PERSON_ID = '{Id}'";
-                cmd.CommandText = updateSpieler;
-                cmd.ExecuteNonQuery();
-                trans.Commit();
+                try
+                {
+                    con.Open();
+                    using (MySqlTransaction trans = con.BeginTransaction())
+                    {
+                        using (MySqlCommand cmd = new MySqlCommand() { Connection = con, Transaction = trans })
+                        {
+                            string updatePerson = $"UPDATE PERSON SET VORNAME = '{Vorname}', " +
+                                $"NACHNAME = '{Nachname}', " +
+                                $"GEBURTSTAG = '{Geburtstag}' " +
+                                $"WHERE ID = {Id}";
+                            cmd.CommandText = updatePerson;
+                            cmd.ExecuteNonQuery();
+                            string updateSpieler = $"UPDATE FUSSBALLSPIELER SET TORE = {Tore}, POSITION = '{Position}' WHERE PERSON_ID = '{Id}'";
+                            cmd.CommandText = updateSpieler;
+                            cmd.ExecuteNonQuery();
+                        }
+                        trans.Commit();
+                    }
+                }
+                catch (Exception e)
+                {
+                    res = false;
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                }                
             }
-            catch (Exception e)
-            {
-                res = false;
-                trans.Rollback();
-            }
-            finally
-            {
-                con.Close();
-            }
-
             return res;
         }
+
         public override void SelektionId(long id)
         {
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
-            try
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {
-                con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, FS.TORE, FS.POSITION " +
-                    $"FROM PERSON P " +
-                    $"JOIN FUSSBALLSPIELER FS " +
-                    $"ON P.ID = FS.PERSON_ID " +
-                    $"WHERE P.ID = '{id}'";
-
-                MySqlCommand cmd = new MySqlCommand(selectionString, con);
-                MySqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                try
                 {
-                    Id = reader.GetInt64("ID");
-                    Vorname = reader.GetString("VORNAME");
-                    Nachname = reader.GetString("NACHNAME");
-                    Geburtstag = reader.GetDateTime("GEBURTSTAG").ToString("yyyy-MM-dd");
-                    Tore = reader.GetInt32("TORE");
-                    Position = reader.GetString("POSITION");
+                    con.Open();
+                    string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, FS.TORE, FS.POSITION " +
+                        $"FROM PERSON P " +
+                        $"JOIN FUSSBALLSPIELER FS " +
+                        $"ON P.ID = FS.PERSON_ID " +
+                        $"WHERE P.ID = '{id}'";
+
+                    using (MySqlCommand cmd = new MySqlCommand(selectionString, con))
+                    {
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Id = reader.GetInt64("ID");
+                                Vorname = reader.GetString("VORNAME");
+                                Nachname = reader.GetString("NACHNAME");
+                                Geburtstag = reader.GetDateTime("GEBURTSTAG").ToString("yyyy-MM-dd");
+                                Tore = reader.GetInt32("TORE");
+                                Position = reader.GetString("POSITION");
+                            }
+                        }
+                    }                    
                 }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-            }
-            finally
-            {
-                con.Close();
+                catch (Exception e)
+                {
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                }
             }
         }
         public override bool Neuanlage()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
-            con.Open();
-            MySqlTransaction trans = con.BeginTransaction();
-            try
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {
-                MySqlCommand cmd = new MySqlCommand() { Connection = con, Transaction = trans };
-                string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
-                cmd.CommandText = insertPerson;
-                cmd.ExecuteNonQuery();
-                Id = cmd.LastInsertedId;
-                string insertSpieler = $"INSERT INTO FUSSBALLSPIELER (PERSON_ID, TORE, POSITION) VALUES ('{cmd.LastInsertedId}', {Tore}, '{Position}')";
-                cmd.CommandText = insertSpieler;
-                cmd.ExecuteNonQuery();
-                trans.Commit();
+                try
+                {
+                    con.Open();
+                    using (MySqlTransaction trans = con.BeginTransaction())
+                    {
+                        using (MySqlCommand cmd = new MySqlCommand() { Connection = con, Transaction = trans })
+                        {
+                            string insertPerson = $"INSERT INTO PERSON (VORNAME, NACHNAME, GEBURTSTAG) VALUES ('{Vorname}', '{Nachname}', '{Geburtstag}')";
+                            cmd.CommandText = insertPerson;
+                            cmd.ExecuteNonQuery();
+                            Id = cmd.LastInsertedId;
+                            string insertSpieler = $"INSERT INTO FUSSBALLSPIELER (PERSON_ID, TORE, POSITION) VALUES ('{cmd.LastInsertedId}', {Tore}, '{Position}')";
+                            cmd.CommandText = insertSpieler;
+                            cmd.ExecuteNonQuery();
+                        }
+                        trans.Commit();
+                    }                    
+                }
+                catch (Exception e)
+                {
+                    res = false;
+                    Id = 0;
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                }
             }
-            catch (Exception e)
-            {
-                res = false;
-                Id = 0;
-                trans.Rollback();
-            }
-            finally
-            {
-                con.Close();
-            }
-
             return res;
         }
         public override bool Loeschen()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
-            try
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {
-                con.Open();
-                string deleteSql = $"DELETE FROM PERSON WHERE ID = '{Id}'";
-                MySqlCommand cmd = new MySqlCommand(deleteSql, con);
-                cmd.ExecuteNonQuery();
+                try
+                {
+                    con.Open();
+                    string deleteSql = $"DELETE FROM PERSON WHERE ID = '{Id}'";
+                    using (MySqlCommand cmd = new MySqlCommand(deleteSql, con))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception e)
+                {
+                    res = false;
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                }
             }
-            catch (Exception e)
-            {
-                res = false;
-            }
-            finally
-            {
-                con.Close();
-            }
-
             return res;
         }
         #endregion

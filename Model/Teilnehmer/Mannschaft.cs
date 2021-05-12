@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 
 namespace Turnierverwaltung.Model.TeilnehmerNS
@@ -52,7 +53,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                 "ON PM.MANNSCHAFT_ID = M.ID " +
                 $"WHERE M.ID = {Id}";
 
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -103,7 +104,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             bool res = true;
             string updateMannschaft = $"UPDATE MANNSCHAFT SET NAME='{Name}', STADT='{Stadt}', GRUENDUNGSJAHR='{Gruendungsjahr}', SPORTART_ID={Sportart} WHERE ID='{Id}'";
 
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection(GlobalConstants.connectionString);
             Connection.Open();
 
             MySqlCommand command = new MySqlCommand
@@ -130,7 +131,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
 
         public override void SelektionId(long id)
         {
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 Connection.Open();
@@ -164,7 +165,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             bool res = true;
             string insertMannschaft = $"INSERT INTO MANNSCHAFT (NAME, STADT, GRUENDUNGSJAHR) VALUES ('{Name}', '{Stadt}', '{Gruendungsjahr}')";
 
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection(GlobalConstants.connectionString);
             Connection.Open();
 
             MySqlCommand command = new MySqlCommand
@@ -194,7 +195,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             bool res = true;
             string deleteMannschaft = $"DELETE FROM MANNSCHAFT WHERE ID='{Id}'";
 
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection(GlobalConstants.connectionString);
             Connection.Open();
 
             MySqlCommand command = new MySqlCommand
@@ -228,7 +229,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             string deleteSql = $"DELETE FROM PERSONEN_MANNSCHAFTEN WHERE MANNSCHAFT_ID = '{Id}' AND PERSON_ID IN('{string.Join("', '", remove.Select(x => x.Id))}')";
             
 
-            MySqlConnection Connection = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection Connection = new MySqlConnection(GlobalConstants.connectionString);
             Connection.Open();
 
             MySqlCommand command = new MySqlCommand

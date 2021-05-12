@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Turnierverwaltung.Model.TeilnehmerNS;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using Turnierverwaltung_final.Model;
 using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 
@@ -49,7 +50,7 @@ namespace Turnierverwaltung.ControllerNS
                 $"WHERE pm.MANNSCHAFT_ID <> {mannschaftId} " +
                 "OR pm.PERSON_ID IS NULL";
 
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -96,7 +97,7 @@ namespace Turnierverwaltung.ControllerNS
         {
             Sportarten.Clear();
             string sql = "SELECT ID FROM SPORTART";
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -123,7 +124,7 @@ namespace Turnierverwaltung.ControllerNS
         {
             Teilnehmer.Clear();
             string sql = "SELECT P.ID FROM PERSON P JOIN PHYSIO PH ON P.ID = PH.PERSON_ID";
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -151,7 +152,7 @@ namespace Turnierverwaltung.ControllerNS
         {
             Teilnehmer.Clear();
             string sql = "SELECT P.ID FROM PERSON P JOIN TRAINER T ON P.ID = T.PERSON_ID";
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -179,7 +180,7 @@ namespace Turnierverwaltung.ControllerNS
         {
             Teilnehmer.Clear();
             string sql = "SELECT P.ID FROM PERSON P JOIN FUSSBALLSPIELER FS ON P.ID = FS.PERSON_ID";
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -207,7 +208,7 @@ namespace Turnierverwaltung.ControllerNS
         {
             Teilnehmer.Clear();
             string sql = "SELECT P.ID FROM PERSON P JOIN HANDBALLSPIELER HS ON P.ID = HS.PERSON_ID";
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -235,7 +236,7 @@ namespace Turnierverwaltung.ControllerNS
         {
             Teilnehmer.Clear();
             string sql = "SELECT P.ID FROM PERSON P JOIN TENNISSPIELER TS ON P.ID = TS.PERSON_ID";
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -273,7 +274,7 @@ namespace Turnierverwaltung.ControllerNS
                 "END AS Profession " +
                 "FROM PERSON P";
 
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -319,7 +320,7 @@ namespace Turnierverwaltung.ControllerNS
         {
             Teilnehmer.Clear();
             string sql = "SELECT M.ID FROM MANNSCHAFT M";
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();

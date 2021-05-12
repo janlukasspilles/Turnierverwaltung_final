@@ -6,17 +6,15 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Helper
 {
     public static class DatabaseCreator
     {
-        private const string _connectionString = "Server=127.0.0.1;Uid=user;Pwd=user;";
-        private static string _structurePath;
         public static void GenerateDatabase(bool newStructure)
         {
-            _structurePath = newStructure ? "Turnierverwaltung_final.Ressources.SQL.Structure_New" : "Turnierverwaltung_final.Ressources.SQL.Structure_Old";
-            using (MySqlConnection con = new MySqlConnection(_connectionString))
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {
                 con.Open();
                 using (MySqlTransaction trans = con.BeginTransaction())
@@ -53,7 +51,7 @@ namespace Turnierverwaltung_final.Helper
                             cmd.CommandText = currentStatement;
                             cmd.ExecuteNonQuery();
                         }
-                        currentStatement = InsertExampleData(newStructure);
+                        currentStatement = InsertExampleData();
                         if (currentStatement != "")
                         {
                             cmd.CommandText = currentStatement;
@@ -70,7 +68,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateDatabase()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateDatabase.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{GlobalConstants.resourceSQLStructurePath}.CreateDatabase.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -81,7 +79,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateTables()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateTables.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{GlobalConstants.resourceSQLStructurePath}.CreateTables.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -92,7 +90,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateTriggers()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateTriggers.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{GlobalConstants.resourceSQLStructurePath}.CreateTriggers.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -103,7 +101,7 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateProcedures()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateProcedures.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{GlobalConstants.resourceSQLStructurePath}.CreateProcedures.sql"))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
@@ -114,17 +112,17 @@ namespace Turnierverwaltung_final.Helper
         private static string CreateViews()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream($"{_structurePath}.CreateViews.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{GlobalConstants.resourceSQLStructurePath}.CreateViews.sql"))
             using (StreamReader sr = new StreamReader(s))
             {
                 return sr.ReadToEnd();
             }
         }
 
-        private static string InsertExampleData(bool newStructure)
+        private static string InsertExampleData()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using (Stream s = assembly.GetManifestResourceStream(newStructure ? "Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts_new.sql" : "Turnierverwaltung_final.Ressources.SQL.ExampleData.inserts.sql"))
+            using (Stream s = assembly.GetManifestResourceStream($"{GlobalConstants.resourceSQLPath}.ExampleData.sql"))
             using (StreamReader sr = new StreamReader(s))
             {
                 return sr.ReadToEnd();

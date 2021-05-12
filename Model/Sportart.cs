@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Model
 {
@@ -34,7 +35,7 @@ namespace Turnierverwaltung_final.Model
         public bool Speichern()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             con.Open();
             try
             {
@@ -66,7 +67,7 @@ namespace Turnierverwaltung_final.Model
         }
         public void SelektionId(long id)
         {
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -99,7 +100,7 @@ namespace Turnierverwaltung_final.Model
         public bool Neuanlage()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             con.Open();
             try
             {
@@ -124,7 +125,7 @@ namespace Turnierverwaltung_final.Model
         public bool Loeschen()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();

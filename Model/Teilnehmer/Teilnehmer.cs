@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung.Model.TeilnehmerNS
 {

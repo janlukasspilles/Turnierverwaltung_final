@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Turnierverwaltung.ControllerNS;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Helper
 {
@@ -41,14 +42,5 @@ namespace Turnierverwaltung_final.Helper
         #endregion
         #region Methods
         #endregion
-    }
-
-    public enum ControlType
-    {
-        ctDomain,
-        ctEditText,
-        ctEditNumber,
-        ctDatepicker,
-        ctCheck
-    }
+    }    
 }

@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {
@@ -28,7 +29,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         public override bool Speichern()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             con.Open();
             MySqlTransaction trans = con.BeginTransaction();
             try
@@ -59,7 +60,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         }
         public override void SelektionId(long id)
         {
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
@@ -94,7 +95,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         public override bool Neuanlage()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             con.Open();
             MySqlTransaction trans = con.BeginTransaction();
             try
@@ -125,7 +126,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         public override bool Loeschen()
         {
             bool res = true;
-            MySqlConnection con = new MySqlConnection("Server=127.0.0.1;Database=turnierverwaltung;Uid=user;Pwd=user;");
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
             try
             {
                 con.Open();
