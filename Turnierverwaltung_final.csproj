@@ -217,7 +217,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\DisplayInformationAttribute.cs" />
+    <Compile Include="Model\Turniere\Einzelturnier.cs" />
+    <Compile Include="Model\Turniere\Mannschaftsturnier.cs" />
+    <Compile Include="Model\Turniere\Spiel.cs" />
     <Compile Include="Model\Sportart.cs" />
+    <Compile Include="Model\Turniere\Turnier.cs" />
     <Compile Include="View\About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -296,6 +300,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Helper\Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

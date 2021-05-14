@@ -52,12 +52,13 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
                         trans.Commit();
                     }
                 }
-                catch (Exception e)
+                catch (MySqlException e)
                 {
                     res = false;
 #if DEBUG
                     Debug.WriteLine(e.Message);
 #endif
+                    throw e;
                 }                
             }
             return res;
@@ -92,11 +93,12 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
                         }
                     }                    
                 }
-                catch (Exception e)
+                catch (MySqlException e)
                 {
 #if DEBUG
                     Debug.WriteLine(e.Message);
 #endif
+                    throw e;
                 }
             }
         }
@@ -123,13 +125,14 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
                         trans.Commit();
                     }                    
                 }
-                catch (Exception e)
+                catch (MySqlException e)
                 {
                     res = false;
                     Id = 0;
 #if DEBUG
                     Debug.WriteLine(e.Message);
 #endif
+                    throw e;
                 }
             }
             return res;
@@ -148,12 +151,13 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
                         cmd.ExecuteNonQuery();
                     }
                 }
-                catch (Exception e)
+                catch (MySqlException e)
                 {
                     res = false;
 #if DEBUG
                     Debug.WriteLine(e.Message);
 #endif
+                    throw e;
                 }
             }
             return res;

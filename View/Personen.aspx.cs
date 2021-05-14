@@ -11,6 +11,7 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using Turnierverwaltung.Model;
 using Turnierverwaltung.Model.TeilnehmerNS;
+using MySql.Data.MySqlClient;
 
 namespace Turnierverwaltung_final.View
 {
@@ -112,7 +113,7 @@ namespace Turnierverwaltung_final.View
                 }
                 newCell.Controls.Add(newControl);
                 tr.Cells.Add(newCell);
-            }            
+            }
             if (InEdit == -1)
             {
                 newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
@@ -124,7 +125,7 @@ namespace Turnierverwaltung_final.View
                     ID = $"btnEdit{pos}",
                     Text = "Editieren"
                 };
-                
+
                 EditButton.Command += OnEditButton_Click;
                 EditButton.CssClass = "btn btn-success";
                 EditButton.CommandArgument = pos.ToString();
@@ -231,27 +232,28 @@ namespace Turnierverwaltung_final.View
         }
         private void OnSubmitButton_Click(object sender, EventArgs e)
         {
-            //Bei der Neuanlage wird zunächst der Teilnehmer der Datenbank
-            //hinzugefügt. Anschließend wird dieser Datensatz wie ein normal
-            //editierter behandelt und mittels Update werden die Werte über-
-            //tragen.
-            if (Controller.NeuerTeilnehmer != null)
-            {
-                Controller.NeuerTeilnehmer.Neuanlage();
-                Controller.Teilnehmer.Add(Controller.NeuerTeilnehmer);
-                Controller.NeuerTeilnehmer = null;
-            }
-            //Updatelogik
             Type ListDataType = GetListDatatype(Controller.Teilnehmer);
             List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
+            Teilnehmer t = Controller.NeuerTeilnehmer ?? Controller.Teilnehmer[InEdit - 1];
 
-            Teilnehmer toBeUpdated = Controller.Teilnehmer[InEdit - 1];
             for (int i = 0; i < DisplayFields.Count; i++)
                 if ((DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Editable)
-                    ListDataType.GetProperty(DisplayFields[i].Name).SetValue(toBeUpdated, Convert.ChangeType((tbl_personen.Rows[InEdit].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
-            toBeUpdated.Speichern();
+                    ListDataType.GetProperty(DisplayFields[i].Name).SetValue(t, Convert.ChangeType((tbl_personen.Rows[InEdit].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
 
+            if (Controller.NeuerTeilnehmer != null)
+            {
+                //Insertlogik
+                t.Neuanlage();
+                Controller.Teilnehmer.Add(t);
+                Controller.NeuerTeilnehmer = null;
+            }
+            else
+            {
+                //Updatelogik                
+                t.Speichern();
+            }
             InEdit = -1;
+
             LoadTable();
         }
         private void OnAddButton_Click(object sender, EventArgs e)

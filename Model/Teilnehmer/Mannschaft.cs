@@ -116,7 +116,8 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             {
                 command.CommandText = updateMannschaft;
                 res = command.ExecuteNonQuery() == 1;
-                SpeicherMitglieder();
+                if(Mitglieder != null)
+                    SpeicherMitglieder();
             }
             catch (Exception e)
             {
@@ -163,7 +164,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         public override bool Neuanlage()
         {
             bool res = true;
-            string insertMannschaft = $"INSERT INTO MANNSCHAFT (NAME, STADT, GRUENDUNGSJAHR) VALUES ('{Name}', '{Stadt}', '{Gruendungsjahr}')";
+            string insertMannschaft = $"INSERT INTO MANNSCHAFT (NAME, STADT, GRUENDUNGSJAHR, SPORTART_ID) VALUES ('{Name}', '{Stadt}', '{Gruendungsjahr}', '{Sportart}')";
 
             MySqlConnection Connection = new MySqlConnection(GlobalConstants.connectionString);
             Connection.Open();
@@ -179,7 +180,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                 res = command.ExecuteNonQuery() == 1;
                 Id = command.LastInsertedId;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 res = false;
             }

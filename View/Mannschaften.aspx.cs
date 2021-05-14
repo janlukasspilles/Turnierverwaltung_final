@@ -100,7 +100,8 @@ namespace Turnierverwaltung_final.View
             if (EditableRow != -1)
             {
                 pnl_mitglieder.Controls.Clear();
-                pnl_mitglieder.Controls.Add(GetSwitchPanel());
+                if(Controller.NeuerTeilnehmer == null)
+                    pnl_mitglieder.Controls.Add(GetSwitchPanel());
             }
         }
         private TableHeaderRow GetHeaderRow(List<PropertyInfo> displayFields)
@@ -329,21 +330,10 @@ namespace Turnierverwaltung_final.View
         }
         private void OnSubmitButton_Click(object sender, EventArgs e)
         {
-            // Bei der Neuanlage wird zunächst der Teilnehmer der Datenbank
-            // hinzugefügt. Anschließend wird dieser Datensatz wie ein normal
-            // editierter behandelt und mittels Update werden die Werte über-
-            // tragen.
-            if (Controller.NeuerTeilnehmer != null)
-            {
-                Controller.NeuerTeilnehmer.Neuanlage();
-                Controller.Teilnehmer.Add(Controller.NeuerTeilnehmer);
-                Controller.NeuerTeilnehmer = null;
-            }
-            //Updatelogik
             Type ListDataType = GetListDatatype(Controller.Teilnehmer);
             List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
+            Teilnehmer t = Controller.NeuerTeilnehmer ?? Controller.Teilnehmer[EditableRow - 1];
 
-            Teilnehmer toBeUpdated = Controller.Teilnehmer[EditableRow - 1];
             for (int i = 0; i < DisplayFields.Count; i++)
             {
                 DisplayMetaInformation dmi = DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
@@ -352,18 +342,29 @@ namespace Turnierverwaltung_final.View
                     switch (dmi.ControlType)
                     {
                         case ControlType.ctEditText:
-                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(toBeUpdated, Convert.ChangeType((tbl_mannschaften.Rows[EditableRow].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
+                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(t, Convert.ChangeType((tbl_mannschaften.Rows[EditableRow].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
                             break;
                         case ControlType.ctDomain:
                             int domainId = (tbl_mannschaften.Rows[EditableRow].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
-                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(toBeUpdated, Convert.ChangeType(domainId, DisplayFields[i].PropertyType));
+                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(t, Convert.ChangeType(domainId, DisplayFields[i].PropertyType));
                             break;
                     }
                 }
             }
-            (toBeUpdated as Mannschaft).Mitglieder = Mitglieder;
-            toBeUpdated.Speichern();
-
+            //Insertlogik
+            if (Controller.NeuerTeilnehmer != null)
+            {
+                t.Neuanlage();
+                Controller.Teilnehmer.Add(t);
+                Controller.NeuerTeilnehmer = null;
+            }
+            //Updatelogik
+            else
+            {
+                (t as Mannschaft).Mitglieder = Mitglieder;
+                t.Speichern();
+            }       
+                        
             EditableRow = -1;
             LoadTable();
         }
