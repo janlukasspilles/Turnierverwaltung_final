@@ -23,6 +23,10 @@ namespace Turnierverwaltung_final.Model.Turniere
         public List<Teilnehmer> Teilnehmer { get => _teilnehmer; set => _teilnehmer = value; }
         #endregion
         #region Constructors
+        public Turnier()
+        {
+
+        }
         #endregion
         #region Methods
         #endregion
