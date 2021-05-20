@@ -7,12 +7,12 @@
         public const string resourceSQLPath = resourcePath + ".SQL";
         public const string resourceSQLStructurePath = resourceSQLPath + ".Structure";
     }
-        public enum ControlType
+    public enum ControlType
     {
         ctDomain,
         ctEditText,
         ctEditNumber,
         ctDatepicker,
         ctCheck
-    }
+    }    
 }

@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using MySql.Data.MySqlClient;
+using System;
+using System.Diagnostics;
 using Turnierverwaltung.Model.TeilnehmerNS;
+using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Model.Turniere
 {
     public class Spiel
     {
         #region Attributes
-        private int _id;
+        private long _id;
         private int _turnierId;
         private int _punkteTeilnehmer1;
         private int _punkteTeilnehmer2;
@@ -19,15 +20,66 @@ namespace Turnierverwaltung_final.Model.Turniere
         #region Properties
         public int PunkteTeilnehmer1 { get => _punkteTeilnehmer1; set => _punkteTeilnehmer1 = value; }
         public int PunkteTeilnehmer2 { get => _punkteTeilnehmer2; set => _punkteTeilnehmer2 = value; }
-        public int Id { get => _id; set => _id = value; }
+        public long Id { get => _id; set => _id = value; }
         public int TurnierId { get => _turnierId; set => _turnierId = value; }
         public Teilnehmer Teilnehmer1 { get => _teilnehmer1; set => _teilnehmer1 = value; }
         public Teilnehmer Teilnehmer2 { get => _teilnehmer2; set => _teilnehmer2 = value; }
         #endregion
         #region Constructors
-
         #endregion
         #region Methods
+        public void SelektionId(long id, string turnierart)
+        {
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    string from = turnierart == "Mannschaftsspiel" ? "MANNSCHAFTSSPIEL" : turnierart == "Einzelspiel" ? "EINZELSPIEL" : "";
+                    string selectionString = $"SELECT S.* " +
+                            $"FROM {from} S " +
+                            $"WHERE S.ID = '{id}'";
+
+                    using (MySqlCommand cmd = new MySqlCommand(selectionString, con))
+                    {
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Id = reader.GetInt64("ID");
+                                TurnierId = reader.GetInt32("TURNIER_ID");
+                                switch (turnierart)
+                                {
+                                    case "Mannschaftsspiel":
+                                        PunkteTeilnehmer1 = reader.GetInt32("PUNKTE_MANNSCHAFT1");
+                                        PunkteTeilnehmer2 = reader.GetInt32("PUNKTE_MANNSCHAFT1");
+                                        Teilnehmer1 = new Mannschaft();
+                                        Teilnehmer1.SelektionId(reader.GetInt64("MANNSCHAFT1_ID"));
+                                        Teilnehmer2 = new Mannschaft();
+                                        Teilnehmer2.SelektionId(reader.GetInt64("MANNSCHAFT2_ID"));
+                                        break;
+                                    case "Einzelspiel":
+                                        PunkteTeilnehmer1 = reader.GetInt32("PUNKTE_PERSON1");
+                                        PunkteTeilnehmer2 = reader.GetInt32("PUNKTE_PERSON2");
+                                        Teilnehmer1 = (Teilnehmer)Activator.CreateInstance(DatabaseHelper.GibTyp(reader.GetInt32("PERSON1_ID")));
+                                        Teilnehmer1.SelektionId(reader.GetInt64("PERSON1_ID"));
+                                        Teilnehmer2 = (Teilnehmer)Activator.CreateInstance(DatabaseHelper.GibTyp(reader.GetInt32("PERSON2_ID")));
+                                        Teilnehmer2.SelektionId(reader.GetInt64("PERSON2_ID"));
+                                        break;
+                                }                                
+                            }
+                        }
+                    }
+                }
+                catch (MySqlException e)
+                {
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                    throw e;
+                }
+            }
+        }
         #endregion
     }
 }
