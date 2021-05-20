@@ -56,7 +56,7 @@ namespace Turnierverwaltung_final.Model
             }
             finally
             {
-                con.Close();
+                con.Close(); 
             }
 
             return res;
