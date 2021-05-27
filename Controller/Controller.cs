@@ -7,6 +7,7 @@ using Turnierverwaltung.Model.TeilnehmerNS;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using Turnierverwaltung_final.Model;
 using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
+using Turnierverwaltung_final.Model.TurniereNS;
 
 namespace Turnierverwaltung.ControllerNS
 {
@@ -17,21 +18,58 @@ namespace Turnierverwaltung.ControllerNS
         private Teilnehmer _neuerTeilnehmer;
         private List<Sportart> _sportarten;
         private List<Person> _moeglicheMitglieder;
+        private List<Turnierart> _turnierarten;
+        private List<Turnier> _turniere;
+        private Turnier _neuesTurnier;
         #endregion
         #region Properties
         public List<Teilnehmer> Teilnehmer { get => _teilnehmer; set => _teilnehmer = value; }
         public Teilnehmer NeuerTeilnehmer { get => _neuerTeilnehmer; set => _neuerTeilnehmer = value; }
         public List<Sportart> Sportarten { get => _sportarten; set => _sportarten = value; }
+        public List<Turnierart> Turnierarten { get => _turnierarten; set => _turnierarten = value; }
+        public List<Turnier> Turniere { get => _turniere; set => _turniere = value; }
+        public Turnier NeuesTurnier { get => _neuesTurnier; set => _neuesTurnier = value; }
         #endregion
         #region Constructors
         public Controller()
         {
             Teilnehmer = new List<Teilnehmer>();
             Sportarten = new List<Sportart>();
+            Turnierarten = new List<Turnierart>();
+            Turniere = new List<Turnier>();
             GetAlleSportenarten();
+            GetAlleTurnierArten();
         }
         #endregion
-        #region Methods        
+        #region Methods     
+        public void GetAlleTurniere()
+        {
+            Turniere.Clear();
+            string sql = "SELECT T.ID FROM TURNIER T";
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Turnier t = new Turnier();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Turniere.Add(t);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
         public List<Person> GetMoeglicheMitglieder(long mannschaftId)
         {
             List<Person> result = new List<Person>();
@@ -109,6 +147,34 @@ namespace Turnierverwaltung.ControllerNS
                     Sportart s = new Sportart();
                     s.SelektionId(reader.GetInt64("ID"));
                     Sportarten.Add(s);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        public void GetAlleTurnierArten()
+        {
+            Turnierarten.Clear();
+            string sql = "SELECT ID FROM TURNIERART";
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Turnierart t = new Turnierart();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Turnierarten.Add(t);
                 }
                 reader.Close();
             }
@@ -346,19 +412,22 @@ namespace Turnierverwaltung.ControllerNS
             }
         }
 
-        public IList GetDomainList(ddlList listname)
+        public IList GetDomainList(DdlList listname)
         {
             switch (listname)
             {
-                case ddlList.dlSportarten:
+                case DdlList.dlSportarten:
                     return Sportarten;
+                case DdlList.dlTurnierarten:
+                    return Turnierarten;
                 default: return null;
             }
         }
         #endregion
     }
-    public enum ddlList
+    public enum DdlList
     {
-        dlSportarten
+        dlSportarten,
+        dlTurnierarten
     }
 }

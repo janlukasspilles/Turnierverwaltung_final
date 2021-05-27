@@ -5,7 +5,7 @@ using Turnierverwaltung.Model.TeilnehmerNS;
 using Turnierverwaltung_final.Helper;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
-namespace Turnierverwaltung_final.Model.Turniere
+namespace Turnierverwaltung_final.Model.TurniereNS
 {
     public class Spiel
     {
@@ -26,8 +26,115 @@ namespace Turnierverwaltung_final.Model.Turniere
         public Teilnehmer Teilnehmer2 { get => _teilnehmer2; set => _teilnehmer2 = value; }
         #endregion
         #region Constructors
+        public Spiel()
+        {
+
+        }
         #endregion
         #region Methods
+        public void Speichern()
+        {
+
+        }
+        public void Neuanlage(string turnierart)
+        {
+            string sql = "";
+            switch (turnierart)
+            {
+                case "Mannschaftsturnier":
+                    using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+                    {
+                        try
+                        {
+                            con.Open();
+                            sql = $"INSERT INTO MANNSCHAFTSSPIEL (MANNSCHAFT1_ID, MANNSCHAFT2_ID, PUNKTE_MANNSCHAFT1, PUNKTE_MANNSCHAFT2, TURNIER_ID) VALUES ('{Teilnehmer1.Id}', '{Teilnehmer2.Id}', '{PunkteTeilnehmer1}', '{PunkteTeilnehmer2}', '{TurnierId}')";
+                            using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch (MySqlException e)
+                        {
+#if DEBUG
+                            Debug.WriteLine(e.Message);
+#endif
+                            throw e;
+                        }
+                    }
+                    break;
+                case "Einzelturnier":
+                    using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+                    {
+                        try
+                        {
+                            con.Open();
+                            sql = $"INSERT INTO EINZELSPIEL (PERSON1_ID, PERSON2_ID, PUNKTE_PERSON1, PUNKTE_PERSON2, TURNIER_ID) VALUES ('{Teilnehmer1.Id}', '{Teilnehmer2.Id}', '{PunkteTeilnehmer1}', '{PunkteTeilnehmer2}', '{TurnierId}')";
+                            using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch (MySqlException e)
+                        {
+#if DEBUG
+                            Debug.WriteLine(e.Message);
+#endif
+                            throw e;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        public void Loeschen()
+        {
+            string turnierart = DatabaseHelper.ReturnSingleValue($"SELECT * FROM TURNIER T JOIN TURNIERART TA ON TA.ID = T.TURNIERART_ID WHERE T.ID = '{Id}'").ToString();
+            switch (turnierart)
+            {
+                case "Mannschaftsturnier":
+                    using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+                    {
+                        try
+                        {
+                            con.Open();
+                            string deleteSql = $"DELETE FROM MANNSCHAFTSSPIEL WHERE ID = '{Id}'";
+                            using (MySqlCommand cmd = new MySqlCommand(deleteSql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch (MySqlException e)
+                        {
+#if DEBUG
+                            Debug.WriteLine(e.Message);
+#endif
+                            throw e;
+                        }
+                    }
+                    break;
+                case "Einzelturnier":
+                    using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+                    {
+                        try
+                        {
+                            con.Open();
+                            string deleteSql = $"DELETE FROM EINZELSPIEL WHERE ID = '{Id}'";
+                            using (MySqlCommand cmd = new MySqlCommand(deleteSql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch (MySqlException e)
+                        {
+#if DEBUG
+                            Debug.WriteLine(e.Message);
+#endif
+                            throw e;
+                        }
+                    }
+                    break;
+            }
+        }
         public void SelektionId(long id, string turnierart)
         {
             using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
@@ -66,7 +173,7 @@ namespace Turnierverwaltung_final.Model.Turniere
                                         Teilnehmer2 = (Teilnehmer)Activator.CreateInstance(DatabaseHelper.GibTyp(reader.GetInt32("PERSON2_ID")));
                                         Teilnehmer2.SelektionId(reader.GetInt64("PERSON2_ID"));
                                         break;
-                                }                                
+                                }
                             }
                         }
                     }

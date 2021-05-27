@@ -24,7 +24,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         public string Stadt { get => _stadt; set => _stadt = value; }
         [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctEditText)]
         public string Gruendungsjahr { get => _gruendungsjahr; set => _gruendungsjahr = value; }
-        [DisplayMetaInformation("Sportart", 15, true, ControlType.ctDomain, ddlList.dlSportarten)]
+        [DisplayMetaInformation("Sportart", 15, true, ControlType.ctDomain, DdlList.dlSportarten)]
         public int Sportart { get => _sportart; set => _sportart = value; }
         #endregion
         #region Constructors

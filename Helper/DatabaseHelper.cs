@@ -10,6 +10,50 @@ namespace Turnierverwaltung_final.Helper
 {
     public static class DatabaseHelper
     {
+        public static object ReturnSingleValue(string fieldname, string tablename, long id)
+        {
+            string sql = $"SELECT {fieldname} FROM {tablename} WHERE ID = '{id}'";
+            using (MySqlConnection con = new MySqlConnection())
+            {
+                try
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        return cmd.ExecuteScalar();
+                    }
+                }
+                catch (MySqlException e)
+                {
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                    throw e;
+                }
+            }
+        }
+
+        public static object ReturnSingleValue(string sql)
+        {
+            using (MySqlConnection con = new MySqlConnection())
+            {
+                try
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        return cmd.ExecuteScalar();
+                    }
+                }
+                catch (MySqlException e)
+                {
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                    throw e;
+                }
+            }
+        }
         public static Type GibTyp(long id)
         {
             string sql = "SELEC case " +

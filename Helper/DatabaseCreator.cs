@@ -62,6 +62,7 @@ namespace Turnierverwaltung_final.Helper
                     catch (Exception e)
                     {
                         trans.Rollback();
+                        throw e;
                     }
             }
         }

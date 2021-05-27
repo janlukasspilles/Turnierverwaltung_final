@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="View\About.aspx" />
+    <Content Include="View\Turniere.aspx" />
     <Content Include="View\Mannschaften.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -216,12 +217,14 @@
     <Content Include="Bundle.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\DatabaseHelper.cs" />
     <Compile Include="Helper\DisplayInformationAttribute.cs" />
     <Compile Include="Model\Turniere\Einzelturnier.cs" />
     <Compile Include="Model\Turniere\Mannschaftsturnier.cs" />
     <Compile Include="Model\Turniere\Spiel.cs" />
     <Compile Include="Model\Sportart.cs" />
     <Compile Include="Model\Turniere\Turnier.cs" />
+    <Compile Include="Model\Turniere\Turnierart.cs" />
     <Compile Include="View\About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -232,6 +235,13 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Helper\TurnierverwaltungTypes.cs" />
+    <Compile Include="View\Turniere.aspx.cs">
+      <DependentUpon>Turniere.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="View\Turniere.aspx.designer.cs">
+      <DependentUpon>Turniere.aspx</DependentUpon>
+    </Compile>
     <Compile Include="View\Mannschaften.aspx.cs">
       <DependentUpon>Mannschaften.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
