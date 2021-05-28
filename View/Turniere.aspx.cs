@@ -264,6 +264,7 @@ namespace Turnierverwaltung_final.View
         private void OnEditButton_Click(object sender, CommandEventArgs e)
         {
             EditableRow = Convert.ToInt32(e.CommandArgument);
+            //Spieler hinzufügen
             LoadTable();
         }
         private void OnDeleteButton_Click(object sender, EventArgs e)
@@ -338,6 +339,18 @@ namespace Turnierverwaltung_final.View
         {
             Controller.Teilnehmer = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
         }
+        private void OnTurnierDurchfuehren_Click(object sender, EventArgs e)
+        {
+            //Abfrage, ob man manuell eintragen will
+            //Nein: Random Spielergebnisse
+            //Ja: Tabelle öffnet, in der man die Werte eintragen kann
+        }
+
+        private void OnZeigeSpiele_Click(object sender, EventArgs e)
+        {
+            //Zeigt die gespielten Spiele an
+        }
+
         private Type GetListDatatype(List<Turnier> content)
         {
             Type t = content.First().GetType();

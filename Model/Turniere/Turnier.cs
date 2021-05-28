@@ -24,9 +24,9 @@ namespace Turnierverwaltung_final.Model.TurniereNS
         #endregion
         #region Properties
         public List<Spiel> Spiele { get => _spiele; set => _spiele = value; }
-        [DisplayMetaInformation("Sportart", 16, true, ControlType.ctDomain, DdlList.dlSportarten)]
+        [DisplayMetaInformation("Sportart", 17, true, ControlType.ctDomain, DdlList.dlSportarten)]
         public int SportartId { get => _sportartId; set => _sportartId = value; }
-        [DisplayMetaInformation("Bezeichnung", 17, true, ControlType.ctEditText)]
+        [DisplayMetaInformation("Bezeichnung", 16, true, ControlType.ctEditText)]
         public string Turniername { get => _turnierName; set => _turnierName = value; }
         public long Id { get => _id; set => _id = value; }
         public List<Teilnehmer> TurnierTeilnehmer { get => _turnierTeilnehmer; set => _turnierTeilnehmer = value; }
