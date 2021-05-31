@@ -18,11 +18,15 @@ namespace Turnierverwaltung_final.Model.TurniereNS
         private Teilnehmer _teilnehmer2;
         #endregion
         #region Properties
+        [DisplayMetaInformation("Punkte Teilnehmer 1", 23, true, ControlType.ctEditText)]
         public int PunkteTeilnehmer1 { get => _punkteTeilnehmer1; set => _punkteTeilnehmer1 = value; }
+        [DisplayMetaInformation("Punkte Teilnehmer 2", 25, true, ControlType.ctEditText)]
         public int PunkteTeilnehmer2 { get => _punkteTeilnehmer2; set => _punkteTeilnehmer2 = value; }
         public long Id { get => _id; set => _id = value; }
         public int TurnierId { get => _turnierId; set => _turnierId = value; }
+        [DisplayMetaInformation("Teilnehmer 1", 22, false, ControlType.ctEditText)]
         public Teilnehmer Teilnehmer1 { get => _teilnehmer1; set => _teilnehmer1 = value; }
+        [DisplayMetaInformation("Teilnehmer 2", 24, false, ControlType.ctEditText)]
         public Teilnehmer Teilnehmer2 { get => _teilnehmer2; set => _teilnehmer2 = value; }
         #endregion
         #region Constructors

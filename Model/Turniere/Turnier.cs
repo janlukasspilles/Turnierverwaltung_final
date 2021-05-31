@@ -38,7 +38,8 @@ namespace Turnierverwaltung_final.Model.TurniereNS
         #region Constructors
         public Turnier()
         {
-
+            Spiele = new List<Spiel>();
+            TurnierTeilnehmer = new List<Teilnehmer>();
         }
         #endregion
         #region Methods
@@ -143,6 +144,8 @@ namespace Turnierverwaltung_final.Model.TurniereNS
                             }
                         }
                     }
+                    Spiele = GetSpiele();
+                    TurnierTeilnehmer = GetTeilnehmer();
                 }
                 catch (MySqlException e)
                 {
@@ -176,7 +179,7 @@ namespace Turnierverwaltung_final.Model.TurniereNS
                                     {
                                         Spiel s = new Spiel();
                                         s.SelektionId(reader.GetInt64("ID"), "Mannschaftsspiel");
-                                        Spiele.Add(s);
+                                        result.Add(s);
                                     }
                                 }
                             }
@@ -204,7 +207,7 @@ namespace Turnierverwaltung_final.Model.TurniereNS
                                     {
                                         Spiel s = new Spiel();
                                         s.SelektionId(reader.GetInt64("ID"), "Einzelspiel");
-                                        Spiele.Add(s);
+                                        result.Add(s);
                                     }
                                 }
                             }
@@ -229,7 +232,7 @@ namespace Turnierverwaltung_final.Model.TurniereNS
             switch (turnierart)
             {
                 case "Mannschaftsturnier":
-                    sql = $"SELECT * FROM TURNIER_MANNSCHAFT TM JOIN TURNIER T ON T.ID = TM.TURNIER_ID JOIN MANNSCHAFT M ON TM.MANNSCHAFT_ID = M.ID WHERE T.ID = '{Id}'";
+                    sql = $"SELECT M.ID as ID FROM TURNIER_MANNSCHAFT TM JOIN TURNIER T ON T.ID = TM.TURNIER_ID JOIN MANNSCHAFT M ON TM.MANNSCHAFT_ID = M.ID WHERE T.ID = '{Id}'";
                     using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
                     {
                         con.Open();
@@ -243,7 +246,7 @@ namespace Turnierverwaltung_final.Model.TurniereNS
                                     {
                                         Mannschaft m = new Mannschaft();
                                         m.SelektionId(reader.GetInt64("ID"));
-                                        TurnierTeilnehmer.Add(m);
+                                        result.Add(m);
                                     }
                                 }
                             }
@@ -257,7 +260,7 @@ namespace Turnierverwaltung_final.Model.TurniereNS
                     }
                     break;
                 case "Einzelturnier":
-                    sql = $"SELECT * FROM TURNIER_PERSON TP JOIN TURNIER T ON T.ID = TP.TURNIER_ID JOIN PERSON P ON TM.PERSON_ID = P.ID WHERE T.ID = '{Id}'";
+                    sql = $"SELECT P.ID as ID FROM TURNIER_PERSON TP JOIN TURNIER T ON T.ID = TP.TURNIER_ID JOIN PERSON P ON TP.PERSON_ID = P.ID WHERE T.ID = '{Id}'";
                     using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
                     {
                         con.Open();
@@ -271,7 +274,7 @@ namespace Turnierverwaltung_final.Model.TurniereNS
                                     {
                                         Teilnehmer t = (Teilnehmer)Activator.CreateInstance(DatabaseHelper.GibTyp(reader.GetInt32("ID")));
                                         t.SelektionId(reader.GetInt64("ID"));
-                                        TurnierTeilnehmer.Add(t);
+                                        result.Add(t);
                                     }
                                 }
                             }
@@ -320,6 +323,28 @@ namespace Turnierverwaltung_final.Model.TurniereNS
                         s.Neuanlage("Einzelturnier");
                     }
                     break;
+            }
+        }
+
+        public void ErzeugeSpiele(bool mitRueckspiel)
+        {
+            //n!/(k! * (n-k)!)
+            for (int i = 0; i < TurnierTeilnehmer.Count; i++)
+            {
+                for (int j = i + 1; j < TurnierTeilnehmer.Count; j++)
+                {
+                    Spiele.Add(new Spiel { Teilnehmer1 = TurnierTeilnehmer[i], Teilnehmer2 = TurnierTeilnehmer[j] });
+                }
+            }
+            if (mitRueckspiel)
+            {
+                for (int i = TurnierTeilnehmer.Count - 1; i >= 0; i--)
+                {
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        Spiele.Add(new Spiel { Teilnehmer1 = TurnierTeilnehmer[i], Teilnehmer2 = TurnierTeilnehmer[j] });
+                    }
+                }
             }
         }
 

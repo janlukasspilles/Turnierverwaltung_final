@@ -64,7 +64,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
             try
             {
                 con.Open();
-                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, TS.ANZAHL_SPIELE, TS.ANZAHL_GEWONNEN" +
+                string selectionString = $"SELECT P.ID, P.VORNAME, P.NACHNAME, P.GEBURTSTAG, TS.ANZAHL_SPIELE, TS.ANZAHL_GEWONNEN " +
                     $"FROM PERSON P " +
                     $"JOIN TENNISSPIELER TS " +
                     $"ON P.ID = TS.PERSON_ID " +

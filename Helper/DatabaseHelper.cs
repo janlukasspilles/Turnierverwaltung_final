@@ -13,7 +13,7 @@ namespace Turnierverwaltung_final.Helper
         public static object ReturnSingleValue(string fieldname, string tablename, long id)
         {
             string sql = $"SELECT {fieldname} FROM {tablename} WHERE ID = '{id}'";
-            using (MySqlConnection con = new MySqlConnection())
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {
                 try
                 {
@@ -56,7 +56,7 @@ namespace Turnierverwaltung_final.Helper
         }
         public static Type GibTyp(long id)
         {
-            string sql = "SELEC case " +
+            string sql = "SELECT case " +
                 "when((SELECT 1 FROM TRAINER T WHERE T.PERSON_ID = P.ID) IS NOT NULL) THEN 'Trainer' " +
                 "when((SELECT 1 FROM PHYSIO PH WHERE PH.PERSON_ID = P.ID) IS NOT NULL) THEN 'Physio' " +
                 "when((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Fussballspieler' " +
