@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlLibrary;
+using System;
 using System.ComponentModel.DataAnnotations;
 using Turnierverwaltung.Model.TeilnehmerNS;
 using Turnierverwaltung_final.Helper;
@@ -52,6 +53,10 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
         #endregion
     }

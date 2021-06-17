@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -354,9 +355,11 @@ namespace Turnierverwaltung_final.View
 
             pnl_spiele.Controls.Clear();
 
-            HtmlGenericControl headline = new HtmlGenericControl("h2");
-            headline.InnerText = $"Spiele von Turnier: {actTurnier.Turniername}";
-            headline.ID = "headlineMitgliederSwitch";
+            HtmlGenericControl headline = new HtmlGenericControl("h2")
+            {
+                InnerText = $"Spiele von Turnier: {actTurnier.Turniername}",
+                ID = "headlineMitgliederSwitch"
+            };
             pnl_spiele.Controls.Add(headline);
 
             Table spieleTable = new Table
@@ -397,9 +400,11 @@ namespace Turnierverwaltung_final.View
             //Zeigt die gespielten Spiele an
             pnl_spiele.Controls.Clear();
 
-            HtmlGenericControl headline = new HtmlGenericControl("h2");
-            headline.InnerText = $"Spiele von Turnier: {actTurnier.Turniername}";
-            headline.ID = "headlineMitgliederSwitch";
+            HtmlGenericControl headline = new HtmlGenericControl("h2")
+            {
+                InnerText = $"Spiele von Turnier: {actTurnier.Turniername}",
+                ID = "headlineMitgliederSwitch"
+            };
             pnl_spiele.Controls.Add(headline);
 
             Table spieleTable = new Table

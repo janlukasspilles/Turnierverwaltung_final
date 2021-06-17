@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -100,7 +101,7 @@ namespace Turnierverwaltung_final.View
             if (EditableRow != -1)
             {
                 pnl_mitglieder.Controls.Clear();
-                if(Controller.NeuerTeilnehmer == null)
+                if (Controller.NeuerTeilnehmer == null)
                     pnl_mitglieder.Controls.Add(GetSwitchPanel());
             }
         }
@@ -258,40 +259,52 @@ namespace Turnierverwaltung_final.View
         {
             Panel result = new Panel();
             //Headline
-            HtmlGenericControl headline = new HtmlGenericControl("h2");
-            headline.InnerText = $"Mitgliederliste für {(Controller.Teilnehmer[EditableRow - 1] as Mannschaft).Name}";
-            headline.ID = "headlineMitgliederSwitch";
+            HtmlGenericControl headline = new HtmlGenericControl("h2")
+            {
+                InnerText = $"Mitgliederliste für {(Controller.Teilnehmer[EditableRow - 1] as Mannschaft).Name}",
+                ID = "headlineMitgliederSwitch"
+            };
             result.Controls.Add(headline);
 
             //Switcher
-            Panel switcher = new Panel();
-            switcher.ID = "switcherPanel";
+            Panel switcher = new Panel
+            {
+                ID = "switcherPanel"
+            };
 
-            ListBox lb = new ListBox();
-            lb.ID = "lbMitglieder";
-            lb.CssClass = "form-control";
-            lb.DataSource = Mitglieder;
+            ListBox lb = new ListBox
+            {
+                ID = "lbMitglieder",
+                CssClass = "form-control",
+                DataSource = Mitglieder
+            };
             lb.DataBind();
             switcher.Controls.Add(lb);
 
-            Button btn = new Button();
-            btn.CssClass = "btn";
-            btn.Text = "Add";
+            Button btn = new Button
+            {
+                CssClass = "btn",
+                Text = "Add",
+                ID = "btnAddMitglied"
+            };
             btn.Click += OnAddMitgliedButton_Click;
-            btn.ID = "btnAddMitglied";
             switcher.Controls.Add(btn);
 
-            btn = new Button();
-            btn.CssClass = "btn";
-            btn.Text = "Remove";
+            btn = new Button
+            {
+                CssClass = "btn",
+                Text = "Remove",
+                ID = "btnRemoveMitglied"
+            };
             btn.Click += OnRemoveMitgliedButton_Click;
-            btn.ID = "btnRemoveMitglied";
             switcher.Controls.Add(btn);
 
-            lb = new ListBox();
-            lb.ID = "lbMoeglicheMitglieder";
-            lb.CssClass = "form-control";
-            lb.DataSource = MoeglicheMitglieder;
+            lb = new ListBox
+            {
+                ID = "lbMoeglicheMitglieder",
+                CssClass = "form-control",
+                DataSource = MoeglicheMitglieder
+            };
             lb.DataBind();
             switcher.Controls.Add(lb);
 
@@ -363,8 +376,8 @@ namespace Turnierverwaltung_final.View
             {
                 (t as Mannschaft).Mitglieder = Mitglieder;
                 t.Speichern();
-            }       
-                        
+            }
+
             EditableRow = -1;
             LoadTable();
         }

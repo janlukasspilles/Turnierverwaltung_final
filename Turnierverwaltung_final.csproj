@@ -218,7 +218,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\DatabaseHelper.cs" />
-    <Compile Include="Helper\DisplayInformationAttribute.cs" />
     <Compile Include="Model\Turniere\Einzelturnier.cs" />
     <Compile Include="Model\Turniere\Mannschaftsturnier.cs" />
     <Compile Include="Model\Turniere\Spiel.cs" />
@@ -262,7 +261,6 @@
     </Compile>
     <Compile Include="Helper\ExtensionHelpers.cs" />
     <Compile Include="Helper\DatabaseCreator.cs" />
-    <Compile Include="Helper\Viewhelpers.cs" />
     <Compile Include="Model\Teilnehmer\Mannschaft.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Fussballspieler.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Handballspieler.cs" />
@@ -310,7 +308,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Helper\Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -324,6 +321,12 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ControlLibrary\ControlLibrary.csproj">
+      <Project>{d0803ba4-ca27-4557-9c78-4b4c5be562f4}</Project>
+      <Name>ControlLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

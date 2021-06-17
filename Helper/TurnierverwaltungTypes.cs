@@ -6,13 +6,5 @@
         public const string resourcePath = "Turnierverwaltung_final.Resources";
         public const string resourceSQLPath = resourcePath + ".SQL";
         public const string resourceSQLStructurePath = resourceSQLPath + ".Structure";
-    }
-    public enum ControlType
-    {
-        ctDomain,
-        ctEditText,
-        ctEditNumber,
-        ctDatepicker,
-        ctCheck
-    }    
+    } 
 }

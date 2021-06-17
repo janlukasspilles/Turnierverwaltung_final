@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
@@ -39,7 +40,7 @@ namespace Turnierverwaltung_final.Model
             con.Open();
             try
             {
-                MySqlCommand cmd = new MySqlCommand() { Connection = con};
+                MySqlCommand cmd = new MySqlCommand() { Connection = con };
                 string updateSportart = $"UPDATE SPORTART SET BEZEICHNUNG = '{Bezeichnung}', " +
                     $"ANZAHL_PUNKTE_SIEG = {AnzahlPunkteSieg}, " +
                     $"ANZAHL_PUNKTE_VERLUST = {AnzahlPunkteVerlust}, " +
@@ -48,15 +49,18 @@ namespace Turnierverwaltung_final.Model
                     $"WHERE ID = {Id}";
                 cmd.CommandText = updateSportart;
                 cmd.ExecuteNonQuery();
-                
+
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
                 res = false;
             }
             finally
             {
-                con.Close(); 
+                con.Close();
             }
 
             return res;
@@ -91,6 +95,10 @@ namespace Turnierverwaltung_final.Model
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -104,7 +112,7 @@ namespace Turnierverwaltung_final.Model
             con.Open();
             try
             {
-                MySqlCommand cmd = new MySqlCommand() { Connection = con};
+                MySqlCommand cmd = new MySqlCommand() { Connection = con };
                 string insertSportart = $"INSERT INTO SPORTART (BEZEICHNUNG, ANZAHL_PUNKTE_SIEG, ANZAHL_PUNKTE_VERLUST, ANZAHL_PUNKTE_PATT, ANZAHL_SPIELER_PRO_TEAM) VALUES ('{Bezeichnung}', {AnzahlPunkteSieg}, {AnzahlPunkteVerlust}, {AnzahlPunktePatt}, {AnzahlSpielerProTeam})";
                 cmd.CommandText = insertSportart;
                 cmd.ExecuteNonQuery();
@@ -112,6 +120,9 @@ namespace Turnierverwaltung_final.Model
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
                 res = false;
                 Id = 0;
             }
@@ -135,6 +146,9 @@ namespace Turnierverwaltung_final.Model
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
                 res = false;
             }
             finally

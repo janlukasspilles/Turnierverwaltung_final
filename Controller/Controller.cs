@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using ControlLibrary;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace Turnierverwaltung.ControllerNS
         public List<Turnierart> Turnierarten { get => _turnierarten; set => _turnierarten = value; }
         public List<Turnier> Turniere { get => _turniere; set => _turniere = value; }
         public Turnier NeuesTurnier { get => _neuesTurnier; set => _neuesTurnier = value; }
+        public List<Person> MoeglicheMitglieder { get => _moeglicheMitglieder; set => _moeglicheMitglieder = value; }
         #endregion
         #region Constructors
         public Controller()
@@ -64,6 +66,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -123,7 +129,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
-
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -152,7 +161,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
-
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -180,7 +192,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
-
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -209,6 +224,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -237,6 +256,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -265,6 +288,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -293,6 +320,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -321,6 +352,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -375,7 +410,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
-
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -405,6 +443,10 @@ namespace Turnierverwaltung.ControllerNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
             }
             finally
             {
@@ -424,10 +466,5 @@ namespace Turnierverwaltung.ControllerNS
             }
         }
         #endregion
-    }
-    public enum DdlList
-    {
-        dlSportarten,
-        dlTurnierarten
     }
 }

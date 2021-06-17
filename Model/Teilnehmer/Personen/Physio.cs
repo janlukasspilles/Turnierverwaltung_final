@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Diagnostics;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
@@ -41,6 +42,9 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
                 res = false;
                 trans.Rollback();
             }
@@ -77,6 +81,9 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
             }
             finally
             {
@@ -102,6 +109,9 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
                 res = false;
                 trans.Rollback();
             }
@@ -125,6 +135,9 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
                 res = false;
             }
             finally

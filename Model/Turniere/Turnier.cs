@@ -1,10 +1,9 @@
-﻿using MySql.Data.MySqlClient;
+﻿using ControlLibrary;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Web;
-using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung.Model.TeilnehmerNS;
 using Turnierverwaltung_final.Helper;
 using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
@@ -64,6 +63,9 @@ namespace Turnierverwaltung_final.Model.TurniereNS
             }
             catch (Exception e)
             {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
                 res = false;
             }
             finally
@@ -298,8 +300,7 @@ namespace Turnierverwaltung_final.Model.TurniereNS
             List<Spiel> remove = oldMembers.Except(Spiele).ToList();
             List<Spiel> add = Spiele.Except(oldMembers).ToList();
 
-            string turnierart = DatabaseHelper.ReturnSingleValue("Bezeichnung", "turnierart", Turnierart).ToString();
-            string sql = "";
+            string turnierart = DatabaseHelper.ReturnSingleValue("Bezeichnung", "turnierart", Turnierart).ToString();            
 
             switch (turnierart)
             {

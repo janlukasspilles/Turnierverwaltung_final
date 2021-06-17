@@ -3,6 +3,7 @@
 //Datei:        Controller.cs
 //Datum:        19.11.2020
 //Beschreibung: Kümmert sich um den Programmablauf
+using ControlLibrary;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
