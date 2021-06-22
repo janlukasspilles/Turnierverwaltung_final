@@ -15,30 +15,12 @@ namespace Turnierverwaltung_final.View
     {
 
         /// <summary>
-        /// details-Steuerelement
+        /// pnl_tbl-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel details;
-
-        /// <summary>
-        /// tbl_details-Steuerelement
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel tbl_details;
-
-        /// <summary>
-        /// btn_add_property-Steuerelement
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btn_add_property;
+        protected global::System.Web.UI.WebControls.Panel pnl_tbl;
     }
 }

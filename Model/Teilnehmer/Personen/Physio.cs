@@ -1,7 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Diagnostics;
-using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
+using Turnierverwaltung_final.Helper;
 
 namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
 {

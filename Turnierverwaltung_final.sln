@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1082
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turnierverwaltung_final", "Turnierverwaltung_final.csproj", "{FB36A451-97A2-40A8-9F66-A065403C0AD2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlLibrary", "..\ControlLibrary\ControlLibrary.csproj", "{D0803BA4-CA27-4557-9C78-4B4C5BE562F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		{FB36A451-97A2-40A8-9F66-A065403C0AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB36A451-97A2-40A8-9F66-A065403C0AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB36A451-97A2-40A8-9F66-A065403C0AD2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0803BA4-CA27-4557-9C78-4B4C5BE562F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0803BA4-CA27-4557-9C78-4B4C5BE562F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0803BA4-CA27-4557-9C78-4B4C5BE562F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0803BA4-CA27-4557-9C78-4B4C5BE562F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

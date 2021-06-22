@@ -1,4 +1,4 @@
-﻿namespace Turnierverwaltung_final.Helper.TurnierverwaltungTypes
+﻿namespace Turnierverwaltung_final.Helper
 {
     public static class GlobalConstants
     {
@@ -6,5 +6,18 @@
         public const string resourcePath = "Turnierverwaltung_final.Resources";
         public const string resourceSQLPath = resourcePath + ".SQL";
         public const string resourceSQLStructurePath = resourceSQLPath + ".Structure";
-    } 
+    }
+
+    public enum DdlList
+    {
+        dlSportarten,
+        dlTurnierarten
+    }
+    
+    public enum ControlType
+    {
+        ctEditText,
+        ctDomain,
+        ctCheck
+    }
 }

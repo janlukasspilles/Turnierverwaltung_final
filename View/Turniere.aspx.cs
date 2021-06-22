@@ -1,5 +1,4 @@
-﻿using ControlLibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,10 +6,7 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
-using Turnierverwaltung.Model.TeilnehmerNS;
 using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
-using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 using Turnierverwaltung_final.Model.TurniereNS;
 // Es gibt eine Tabelle mit allen Mannschaften analog zur Personenansicht
 // Es gibt einen neuen Button "Spieler hinzufügen" in der Tabelle für jede Mannschaft

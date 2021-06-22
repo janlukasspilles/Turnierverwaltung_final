@@ -1,13 +1,9 @@
-﻿using ControlLibrary;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
-using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 
 namespace Turnierverwaltung.Model.TeilnehmerNS
@@ -26,7 +22,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         public string Stadt { get => _stadt; set => _stadt = value; }
         [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctEditText)]
         public string Gruendungsjahr { get => _gruendungsjahr; set => _gruendungsjahr = value; }
-        [DisplayMetaInformation("Sportart", 15, true, ControlType.ctDomain, DdlList.dlSportarten)]
+        [DisplayMetaInformation("Sportart", 15, true, ControlType.ctDomain, DdlList.dlSportarten, DomainName = "SPORTART")]
         public int Sportart { get => _sportart; set => _sportart = value; }
         #endregion
         #region Constructors
@@ -122,7 +118,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             {
                 command.CommandText = updateMannschaft;
                 res = command.ExecuteNonQuery() == 1;
-                if(Mitglieder != null)
+                if (Mitglieder != null)
                     SpeicherMitglieder();
             }
             catch (Exception e)
@@ -169,7 +165,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                 Connection.Close();
             }
         }
-        
+
         public override bool Neuanlage()
         {
             bool res = true;
@@ -240,7 +236,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             List<Person> remove = oldMembers.Except(Mitglieder).ToList();
             List<Person> add = Mitglieder.Except(oldMembers).ToList();
             string deleteSql = $"DELETE FROM PERSONEN_MANNSCHAFTEN WHERE MANNSCHAFT_ID = '{Id}' AND PERSON_ID IN('{string.Join("', '", remove.Select(x => x.Id))}')";
-            
+
 
             MySqlConnection Connection = new MySqlConnection(GlobalConstants.connectionString);
             Connection.Open();
@@ -254,7 +250,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
             {
                 command.CommandText = deleteSql;
                 command.ExecuteNonQuery();
-                foreach(Person p in add)
+                foreach (Person p in add)
                 {
                     string insertSql = $"INSERT INTO PERSONEN_MANNSCHAFTEN (MANNSCHAFT_ID, PERSON_ID) VALUES ({Id}, {p.Id})";
                     command.CommandText = insertSql;

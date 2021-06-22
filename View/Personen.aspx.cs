@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Web.UI.WebControls;
-using Turnierverwaltung;
 using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung_final.Helper;
 using System.Linq;
-using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 using System.Web.UI;
 using System.Collections.Generic;
 using System.Reflection;
-using System.ComponentModel.DataAnnotations;
-using Turnierverwaltung.Model;
 using Turnierverwaltung.Model.TeilnehmerNS;
-using MySql.Data.MySqlClient;
 
 namespace Turnierverwaltung_final.View
 {

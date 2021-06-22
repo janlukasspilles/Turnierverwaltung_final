@@ -3,17 +3,13 @@
 //Datei:        Controller.cs
 //Datum:        19.11.2020
 //Beschreibung: Kümmert sich um den Programmablauf
-using ControlLibrary;
 using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Helper.TurnierverwaltungTypes;
 
 namespace Turnierverwaltung.Model.TeilnehmerNS
 {
     [Serializable]
-    public abstract class Teilnehmer
+    public abstract class Teilnehmer : IEquatable<Teilnehmer>
     {
         #region Attributes
         private long _id;
@@ -36,12 +32,17 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         public abstract void SelektionId(long id);
         public abstract bool Neuanlage();
         public abstract bool Loeschen();
-        public override bool Equals(object obj) 
-            => obj != null && GetType().Equals(obj.GetType()) && ((Teilnehmer)obj).Id == Id;
+        public override bool Equals(object obj)
+            => Equals(obj as Teilnehmer);
         public override string ToString() 
             => Name;
         public override int GetHashCode() 
             => Id.GetHashCode();
+
+        public bool Equals(Teilnehmer other)
+        {
+            return other != null && GetType().Equals(other.GetType()) && ((Teilnehmer)other).Id == Id;
+        }
         #endregion
     }
 }

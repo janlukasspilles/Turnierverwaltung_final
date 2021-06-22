@@ -217,7 +217,9 @@
     <Content Include="Bundle.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\CustomTable.cs" />
     <Compile Include="Helper\DatabaseHelper.cs" />
+    <Compile Include="Helper\DisplayMetaInformation.cs" />
     <Compile Include="Model\Turniere\Einzelturnier.cs" />
     <Compile Include="Model\Turniere\Mannschaftsturnier.cs" />
     <Compile Include="Model\Turniere\Spiel.cs" />
@@ -321,12 +323,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ControlLibrary\ControlLibrary.csproj">
-      <Project>{d0803ba4-ca27-4557-9c78-4b4c5be562f4}</Project>
-      <Name>ControlLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
