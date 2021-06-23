@@ -19,8 +19,8 @@ namespace Turnierverwaltung_final.Helper
         private CommandEventHandler _onHeaderButton_ClickCommand;
         private EventHandler _deleteButton_ClickCommand;
         private EventHandler _addButton_ClickCommand;
+        private EventHandler _submitButton_ClickCommand;
         private Dictionary<string, IList> _domainDictionary;
-        private List<TableRow> _checkedRows;
         private Type _fallbackType;
         #endregion
         #region Properties
@@ -34,18 +34,14 @@ namespace Turnierverwaltung_final.Helper
         {
             get
             {
-                if (!(ViewState["RowsInEdit"] is List<int>))
-                {
-                    ViewState["RowsInEdit"] = new List<int>();
-                }
                 return (List<int>)ViewState["RowsInEdit"];
-
             }
             set => ViewState["RowsInEdit"] = value;
         }
         public EventHandler DeleteButton_ClickCommand { get => _deleteButton_ClickCommand; set => _deleteButton_ClickCommand = value; }
         public Type FallbackType { get => _fallbackType; set => _fallbackType = value; }
         public EventHandler AddButton_ClickCommand { get => _addButton_ClickCommand; set => _addButton_ClickCommand = value; }
+        public EventHandler SubmitButton_ClickCommand { get => _submitButton_ClickCommand; set => _submitButton_ClickCommand = value; }
         #endregion
         #region Constructors        
         public CustomTable() : base()
@@ -104,7 +100,7 @@ namespace Turnierverwaltung_final.Helper
             for (int i = 0; i < DataSource.Count; i++)
             {
                 //HACK: Alle Klassen haben eine Property ID - Evtl noch eine Vererbungsstufe oder ein Interface bauen
-                if ((DataSource[i].GetType().GetProperty("Id").GetValue(DataSource[i], null)?.ToString() ?? "") == "0")
+                if ((DataSource[i].GetType().GetProperty("Id").GetValue(DataSource[i], null)?.ToString() ?? "") == "0" || (RowsInEdit != null && RowsInEdit.Contains(i)))
                     SetDataRow(DataSource[i], DisplayFields, i + 1, true);
                 else
                     SetDataRow(DataSource[i], DisplayFields, i + 1, false);
@@ -256,6 +252,8 @@ namespace Turnierverwaltung_final.Helper
 
         private void OnEditButton_Click(object sender, CommandEventArgs e)
         {
+            if (RowsInEdit is null)
+                RowsInEdit = new List<int>();
             RowsInEdit.Add(Rows.GetRowIndex((sender as Control).Parent.Parent as TableRow) - 1);
             DataBind();
         }
@@ -263,9 +261,8 @@ namespace Turnierverwaltung_final.Helper
         private void SetFooterRow()
         {
             TableFooterRow tr = new TableFooterRow();
-            TableCell tc = new TableCell();
 
-            tc = new TableCell();
+            TableCell tc = new TableCell();
             //Delete Button
             Button DeleteButton = new Button()
             {
@@ -293,7 +290,30 @@ namespace Turnierverwaltung_final.Helper
             tc.Controls.Add(AddButton);
             tr.Cells.Add(tc);
 
+
+            tc = new TableCell();
+            //Submit Button
+            Button SubmitButton = new Button()
+            {
+                Text = "Änderungen speichern",
+                Visible = true,
+                CssClass = "btn btn-secondary",
+                ID = "btnAccept",
+            };
+            SubmitButton.Click += SubmitButton_ClickCommand;
+            SubmitButton.Click += OnSubmitButton_Click;
+            tc.Controls.Add(SubmitButton);
+            tr.Cells.Add(tc);
+
+
             Rows.Add(tr);
+        }
+
+        private void OnSubmitButton_Click(object sender, EventArgs e)
+        {
+            if (RowsInEdit != null)
+                RowsInEdit.Clear();
+            DataBind();
         }
 
         private void OnDeleteButton_Click(object sender, EventArgs e)

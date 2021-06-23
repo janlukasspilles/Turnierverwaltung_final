@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
@@ -23,6 +24,7 @@ namespace Turnierverwaltung_final.View
             curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
             curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
             curTable.AddButton_ClickCommand += OnAddButton_Click;
+            curTable.SubmitButton_ClickCommand += OnSubmitButton_Click;
             if (!IsPostBack)
             {
                 Controller.GetAlleMannschaften();
@@ -52,6 +54,41 @@ namespace Turnierverwaltung_final.View
 
             curTable.DataSource = Controller.Teilnehmer;
             curTable.DataBind();
+        }
+
+        private void OnSubmitButton_Click(object sender, EventArgs e)
+        {
+            Type ListDataType = curTable.FallbackType ?? curTable.ListDataType;
+            foreach (int row in curTable.RowsInEdit)
+            {
+                for (int i = 0; i < curTable.DisplayFields.Count; i++)
+                {
+                    DisplayMetaInformation dmi = curTable.DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
+                    if (dmi.Editable)
+                    {
+                        switch (dmi.ControlType)
+                        {
+                            case ControlType.ctEditText:
+                                ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType((curTable.Rows[row + 1].Cells[i].Controls[0] as Label).Text, curTable.DisplayFields[i].PropertyType));
+                                break;
+                            case ControlType.ctDomain:
+                                int domainId = (curTable.Rows[row + 1].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
+                                ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(domainId, curTable.DisplayFields[i].PropertyType));
+                                break;
+                        }
+                    }
+                }
+                if (Controller.Teilnehmer[row - 1].Id == 0)
+                {
+                    Controller.Teilnehmer[row - 1].Neuanlage();
+                }
+                else
+                {
+                    Controller.Teilnehmer[row - 1].Speichern();
+                }
+            }
+            curTable.DataSource = Controller.Teilnehmer;
+            //curTable.DataBind();
         }
 
         private void OnDeleteButton_Click(object sender, EventArgs e)
@@ -109,5 +146,5 @@ namespace Turnierverwaltung_final.View
         }
     }
 
-    
+
 }
