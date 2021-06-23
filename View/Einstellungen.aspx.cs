@@ -28,6 +28,7 @@ namespace Turnierverwaltung_final.View
             if (!IsPostBack)
             {
                 Controller.GetAlleMannschaften();
+                
             }
             curTable.DataSource = Controller.Teilnehmer;
             curTable.DataBind();
@@ -69,9 +70,11 @@ namespace Turnierverwaltung_final.View
                         switch (dmi.ControlType)
                         {
                             case ControlType.ctEditText:
+                                //Row + 1
                                 ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType((curTable.Rows[row + 1].Cells[i].Controls[0] as Label).Text, curTable.DisplayFields[i].PropertyType));
                                 break;
                             case ControlType.ctDomain:
+                                //Row + 1
                                 int domainId = (curTable.Rows[row + 1].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
                                 ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(domainId, curTable.DisplayFields[i].PropertyType));
                                 break;

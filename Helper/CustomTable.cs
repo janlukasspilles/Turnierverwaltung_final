@@ -19,6 +19,7 @@ namespace Turnierverwaltung_final.Helper
         private CommandEventHandler _onHeaderButton_ClickCommand;
         private EventHandler _deleteButton_ClickCommand;
         private EventHandler _addButton_ClickCommand;
+        private EventHandler _beforeSubmit_ClickCommand;
         private EventHandler _submitButton_ClickCommand;
         private Dictionary<string, IList> _domainDictionary;
         private Type _fallbackType;
@@ -42,6 +43,7 @@ namespace Turnierverwaltung_final.Helper
         public Type FallbackType { get => _fallbackType; set => _fallbackType = value; }
         public EventHandler AddButton_ClickCommand { get => _addButton_ClickCommand; set => _addButton_ClickCommand = value; }
         public EventHandler SubmitButton_ClickCommand { get => _submitButton_ClickCommand; set => _submitButton_ClickCommand = value; }
+        public EventHandler BeforeSubmit_ClickCommand { get => _beforeSubmit_ClickCommand; set => _beforeSubmit_ClickCommand = value; }
         #endregion
         #region Constructors        
         public CustomTable() : base()
@@ -93,10 +95,20 @@ namespace Turnierverwaltung_final.Helper
                 {
 
                 }
-            Rows.Clear();
             SetListDatatype();
             SetDisplayFields();
+            BuildTable();
+        }
+
+        private void BuildTable()
+        {
+            Rows.Clear();
             SetHeaderRow();
+            SetDataRows();
+            SetFooterRow();
+        }
+        private void SetDataRows()
+        {
             for (int i = 0; i < DataSource.Count; i++)
             {
                 //HACK: Alle Klassen haben eine Property ID - Evtl noch eine Vererbungsstufe oder ein Interface bauen
@@ -105,9 +117,7 @@ namespace Turnierverwaltung_final.Helper
                 else
                     SetDataRow(DataSource[i], DisplayFields, i + 1, false);
             }
-            SetFooterRow();
         }
-
         private void SetListDatatype()
         {
             if (FallbackType != null)
@@ -180,24 +190,25 @@ namespace Turnierverwaltung_final.Helper
             {
                 newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
                 Control newControl = null;
+                string controlId = $"con{counter}Row{pos}";
                 DisplayMetaInformation dmi = displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
-                if (!editable || !(displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Editable)
+                if (!Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && (!editable || !(displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Editable))
                 {
                     switch (dmi.ControlType)
                     {
                         case ControlType.ctEditText:
-                            newControl = new Label() { ID = $"con{counter}Row{pos}" };
+                            newControl = new Label() { ID = controlId };
                             (newControl as Label).Text = Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "";
                             break;
                         case ControlType.ctDomain:
-                            newControl = new Label() { ID = $"con{counter}Row{pos}" };
+                            newControl = new Label() { ID = controlId };
                             if (DomainDictionary.TryGetValue(dmi.DomainName, out IList tmp))
                                 (newControl as Label).Text = tmp[Convert.ToInt32(Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "") - 1].ToString();
                             else
                                 throw new Exception("Keine Domainliste hinterlegt");
                             break;
                         case ControlType.ctCheck:
-                            newControl = new CheckBox() { ID = $"con{counter}Row{pos}" };
+                            newControl = new CheckBox() { ID = controlId };
                             (newControl as CheckBox).Checked = (bool)Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null);
                             (newControl as CheckBox).Enabled = false;
                             break;
@@ -210,11 +221,11 @@ namespace Turnierverwaltung_final.Helper
                     switch (dmi.ControlType)
                     {
                         case ControlType.ctEditText:
-                            newControl = new TextBox() { ID = $"con{counter}Row{pos}", CssClass = "form-control" };
+                            newControl = new TextBox() { ID = controlId, CssClass = "form-control" };
                             (newControl as TextBox).Text = Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "";
                             break;
                         case ControlType.ctDomain:
-                            newControl = new DropDownList { ID = $"con{counter}Row{pos}", CssClass = "form-control" };
+                            newControl = new DropDownList { ID = controlId, CssClass = "form-control" };
                             if (DomainDictionary.TryGetValue(dmi.DomainName, out IList tmp))
                                 (newControl as DropDownList).DataSource = tmp;
                             else
@@ -300,6 +311,7 @@ namespace Turnierverwaltung_final.Helper
                 CssClass = "btn btn-secondary",
                 ID = "btnAccept",
             };
+            SubmitButton.Click += OnSubmitButton_Before_Click;
             SubmitButton.Click += SubmitButton_ClickCommand;
             SubmitButton.Click += OnSubmitButton_Click;
             tc.Controls.Add(SubmitButton);
@@ -307,6 +319,11 @@ namespace Turnierverwaltung_final.Helper
 
 
             Rows.Add(tr);
+        }
+
+        private void OnSubmitButton_Before_Click(object sender, EventArgs e)
+        {
+            //BuildTable();
         }
 
         private void OnSubmitButton_Click(object sender, EventArgs e)
