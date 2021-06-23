@@ -192,24 +192,25 @@ namespace Turnierverwaltung_final.Helper
                 Control newControl = null;
                 string controlId = $"con{counter}Row{pos}";
                 DisplayMetaInformation dmi = displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
+                var valueTmp = Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null);
                 if (!Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && (!editable || !(displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Editable))
                 {
                     switch (dmi.ControlType)
                     {
                         case ControlType.ctEditText:
                             newControl = new Label() { ID = controlId };
-                            (newControl as Label).Text = Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "";
+                            (newControl as Label).Text = valueTmp?.ToString() ?? "";
                             break;
                         case ControlType.ctDomain:
                             newControl = new Label() { ID = controlId };
                             if (DomainDictionary.TryGetValue(dmi.DomainName, out IList tmp))
-                                (newControl as Label).Text = tmp[Convert.ToInt32(Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "") - 1].ToString();
+                                (newControl as Label).Text = tmp[Convert.ToInt32(valueTmp?.ToString() ?? "") - 1].ToString();
                             else
                                 throw new Exception("Keine Domainliste hinterlegt");
                             break;
                         case ControlType.ctCheck:
                             newControl = new CheckBox() { ID = controlId };
-                            (newControl as CheckBox).Checked = (bool)Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null);
+                            (newControl as CheckBox).Checked = (bool)valueTmp;
                             (newControl as CheckBox).Enabled = false;
                             break;
                         default:
@@ -222,7 +223,7 @@ namespace Turnierverwaltung_final.Helper
                     {
                         case ControlType.ctEditText:
                             newControl = new TextBox() { ID = controlId, CssClass = "form-control" };
-                            (newControl as TextBox).Text = Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "";
+                            (newControl as TextBox).Text = valueTmp?.ToString() ?? "";
                             break;
                         case ControlType.ctDomain:
                             newControl = new DropDownList { ID = controlId, CssClass = "form-control" };
@@ -231,7 +232,7 @@ namespace Turnierverwaltung_final.Helper
                             else
                                 throw new Exception("Keine Domainliste hinterlegt");
                             (newControl as DropDownList).DataBind();
-                            (newControl as DropDownList).SelectedIndex = Convert.ToInt32(Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "") - 1;
+                            (newControl as DropDownList).SelectedIndex = Convert.ToInt32(valueTmp?.ToString() ?? "") - 1;
                             break;
                     }
                 }
@@ -311,7 +312,7 @@ namespace Turnierverwaltung_final.Helper
                 CssClass = "btn btn-secondary",
                 ID = "btnAccept",
             };
-            SubmitButton.Click += OnSubmitButton_Before_Click;
+            SubmitButton.Click += BeforeSubmit_ClickCommand;
             SubmitButton.Click += SubmitButton_ClickCommand;
             SubmitButton.Click += OnSubmitButton_Click;
             tc.Controls.Add(SubmitButton);
@@ -323,14 +324,13 @@ namespace Turnierverwaltung_final.Helper
 
         private void OnSubmitButton_Before_Click(object sender, EventArgs e)
         {
-            //BuildTable();
+            
         }
 
         private void OnSubmitButton_Click(object sender, EventArgs e)
         {
             if (RowsInEdit != null)
                 RowsInEdit.Clear();
-            DataBind();
         }
 
         private void OnDeleteButton_Click(object sender, EventArgs e)

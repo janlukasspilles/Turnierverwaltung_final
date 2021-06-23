@@ -24,11 +24,11 @@ namespace Turnierverwaltung_final.View
             curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
             curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
             curTable.AddButton_ClickCommand += OnAddButton_Click;
-            curTable.SubmitButton_ClickCommand += OnSubmitButton_Click;
+            curTable.BeforeSubmit_ClickCommand += OnSubmitButton_Click;
             if (!IsPostBack)
             {
                 Controller.GetAlleMannschaften();
-                
+
             }
             curTable.DataSource = Controller.Teilnehmer;
             curTable.DataBind();
@@ -70,28 +70,25 @@ namespace Turnierverwaltung_final.View
                         switch (dmi.ControlType)
                         {
                             case ControlType.ctEditText:
-                                //Row + 1
-                                ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType((curTable.Rows[row + 1].Cells[i].Controls[0] as Label).Text, curTable.DisplayFields[i].PropertyType));
+                                ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType((curTable.Rows[row + 1].Cells[i].Controls[0] as TextBox).Text, curTable.DisplayFields[i].PropertyType));
                                 break;
                             case ControlType.ctDomain:
-                                //Row + 1
                                 int domainId = (curTable.Rows[row + 1].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
                                 ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(domainId, curTable.DisplayFields[i].PropertyType));
                                 break;
                         }
                     }
                 }
-                if (Controller.Teilnehmer[row - 1].Id == 0)
+                if (Controller.Teilnehmer[row].Id == 0)
                 {
-                    Controller.Teilnehmer[row - 1].Neuanlage();
+                    Controller.Teilnehmer[row].Neuanlage();
                 }
                 else
                 {
-                    Controller.Teilnehmer[row - 1].Speichern();
+                    Controller.Teilnehmer[row].Speichern();
                 }
             }
             curTable.DataSource = Controller.Teilnehmer;
-            //curTable.DataBind();
         }
 
         private void OnDeleteButton_Click(object sender, EventArgs e)
@@ -119,35 +116,5 @@ namespace Turnierverwaltung_final.View
             curTable.DataSource = Controller.Teilnehmer;
             curTable.DataBind();
         }
-        protected void Page_PreInit(object sender, EventArgs e)
-        {
-        }
-        protected void Page_Init(object sender, EventArgs e)
-        {
-        }
-        protected void Page_InitComplete(object sender, EventArgs e)
-        {
-        }
-        protected override void OnPreLoad(EventArgs e)
-        {
-
-        }
-        protected void btnSubmit_Click(object sender, EventArgs e)
-        {
-        }
-        protected void Page_LoadComplete(object sender, EventArgs e)
-        {
-        }
-        protected override void OnPreRender(EventArgs e)
-        {
-        }
-        protected override void OnSaveStateComplete(EventArgs e)
-        {
-        }
-        protected void Page_UnLoad(object sender, EventArgs e)
-        {
-        }
     }
-
-
 }
