@@ -14,6 +14,7 @@ namespace Turnierverwaltung_final.View
     {
         #region Attributes
         private Controller _controller;
+        private CustomTable<Teilnehmer> curTable;
         private readonly string[] _ignoreFields = { "Name" };
         #endregion
         #region Properties
@@ -39,7 +40,7 @@ namespace Turnierverwaltung_final.View
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-            LoadTable();
+            //LoadTable();
         }
         private void LoadTable()
         {

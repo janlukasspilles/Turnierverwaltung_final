@@ -90,10 +90,6 @@ namespace Turnierverwaltung_final.Helper
             if (DataSource == null || DataSource.Count <= 0)
                 if (FallbackType == null)
                     throw new Exception("Missing Datasource!");
-                else
-                {
-
-                }
             SetListDatatype();
             SetDisplayFields();
             BuildTable();
@@ -172,7 +168,6 @@ namespace Turnierverwaltung_final.Helper
                 };
                 newBtn.Style.Add("text-align", "left");
                 newBtn.CommandArgument = shownPropertyInfo.Name;
-                //newBtn.Command += OnHeaderButton_Click;
                 newBtn.Command += OnHeaderButton_ClickCommand;
                 newHeaderCell.Controls.Add(newBtn);
                 headerRow.Cells.Add(newHeaderCell);
@@ -188,38 +183,40 @@ namespace Turnierverwaltung_final.Helper
             {
                 newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
                 Control newControl = null;
-                string controlId = $"con{counter}Row{pos}";
                 DisplayMetaInformation dmi = DisplayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
-                var curValueText = member.GetType().GetProperty(DisplayFields[counter].Name).GetValue(member, null);
+
+                string controlId = $"con{counter}Row{pos}";
+                var curValueOfProperty = member.GetType().GetProperty(DisplayFields[counter].Name).GetValue(member, null);
+
                 switch (dmi.ControlType)
                 {
                     case ControlType.ctEditText:
 
-                        if (editable && dmi.Editable || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != curValueText.ToString()))
+                        if ((editable && dmi.Editable) || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != curValueOfProperty.ToString()))
                         {
                             newControl = new TextBox() { ID = controlId, CssClass = "form-control" };
-                            (newControl as TextBox).Text = curValueText?.ToString() ?? "";
+                            (newControl as TextBox).Text = curValueOfProperty?.ToString() ?? "";
                         }
                         else
                         {
                             newControl = new Label() { ID = controlId };
-                            (newControl as Label).Text = curValueText?.ToString() ?? "";
+                            (newControl as Label).Text = curValueOfProperty?.ToString() ?? "";
                         }
                         break;
                     case ControlType.ctDomain:
                         if (DomainDictionary.TryGetValue(dmi.DomainName, out IList domainList))
                         {
-                            if (editable && dmi.Editable || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != domainList[Convert.ToInt32(curValueText) - 1].ToString()))
+                            if (editable && dmi.Editable || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != domainList[Convert.ToInt32(curValueOfProperty) - 1].ToString()))
                             {
                                 newControl = new DropDownList { ID = controlId, CssClass = "form-control" };
                                 (newControl as DropDownList).DataSource = domainList;
                                 (newControl as DropDownList).DataBind();
-                                (newControl as DropDownList).SelectedIndex = Convert.ToInt32(curValueText?.ToString()) - 1;
+                                (newControl as DropDownList).SelectedIndex = Convert.ToInt32(curValueOfProperty?.ToString()) - 1;
                             }
                             else
                             {
                                 newControl = new Label() { ID = controlId };
-                                (newControl as Label).Text = domainList[Convert.ToInt32(curValueText?.ToString()) - 1].ToString();
+                                (newControl as Label).Text = domainList[Convert.ToInt32(curValueOfProperty?.ToString()) - 1].ToString();
                             }
                         }
                         else
@@ -286,7 +283,6 @@ namespace Turnierverwaltung_final.Helper
                 CssClass = "btn btn-secondary",
             };
             DeleteButton.Click += DeleteButton_ClickCommand;
-            DeleteButton.Click += OnDeleteButton_Click;
 
             tc.Controls.Add(DeleteButton);
             tr.Cells.Add(tc);
@@ -305,42 +301,44 @@ namespace Turnierverwaltung_final.Helper
             tc.Controls.Add(AddButton);
             tr.Cells.Add(tc);
 
-            if (RowsInEdit != null && RowsInEdit.Count != 0)
-            {
-                tc = new TableCell();
-                //Submit Button
-                Button SubmitButton = new Button()
-                {
-                    Text = "Änderungen speichern",
-                    Visible = true,
-                    CssClass = "btn btn-secondary",
-                    ID = "btnAccept",
-                };
-                SubmitButton.Click += SubmitButton_ClickCommand;
-                SubmitButton.Click += OnSubmitButton_Click;
-                tc.Controls.Add(SubmitButton);
-                tr.Cells.Add(tc);
 
-                tc = new TableCell();
-                //Cancel Button
-                Button CancelButton = new Button()
-                {
-                    Text = "Änderungen verwerfen",
-                    Visible = true,
-                    CssClass = "btn btn-secondary",
-                    ID = "btnCancel",
-                };
-                CancelButton.Click += CancelButton_ClickCommand;
-                CancelButton.Click += OnCancelButton_Click;
-                tc.Controls.Add(CancelButton);
-                tr.Cells.Add(tc);
-            }
+            tc = new TableCell();
+            //Submit Button
+            Button SubmitButton = new Button()
+            {
+                Text = "Änderungen speichern",
+                Visible = true,
+                Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
+                CssClass = "btn btn-secondary",
+                ID = "btnAccept",
+            };
+            SubmitButton.Click += SubmitButton_ClickCommand;
+            SubmitButton.Click += OnSubmitButton_Click;
+            tc.Controls.Add(SubmitButton);
+            tr.Cells.Add(tc);
+
+            tc = new TableCell();
+            //Cancel Button
+            Button CancelButton = new Button()
+            {
+                Text = "Änderungen verwerfen",
+                Visible = true,
+                Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
+                CssClass = "btn btn-secondary",
+                ID = "btnCancel",
+            };
+            CancelButton.Click += CancelButton_ClickCommand;
+            CancelButton.Click += OnCancelButton_Click;
+            tc.Controls.Add(CancelButton);
+            tr.Cells.Add(tc);
 
             Rows.Add(tr);
         }
 
         private void OnCancelButton_Click(object sender, EventArgs e)
         {
+            if (RowsInEdit != null)
+                RowsInEdit.Clear();
             DataBind();
         }
 
@@ -358,18 +356,6 @@ namespace Turnierverwaltung_final.Helper
                 RowsInEdit.Clear();
             DataBind();
         }
-
-        private void OnDeleteButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void OnHeaderButton_Click(object sender, CommandEventArgs e)
-        {
-
-        }
-
-
         #endregion
     }
 }
