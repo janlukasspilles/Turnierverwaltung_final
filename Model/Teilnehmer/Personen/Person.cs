@@ -37,6 +37,12 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         public string Geburtstag { get => _geburtstag; set => _geburtstag = value; }
         #endregion
         #region Constructs
+        public Person(): base()
+        {
+            Vorname = "";
+            Nachname = "";
+            Geburtstag = "";
+        }
         #endregion
         #region Methods
         public abstract override bool Loeschen();

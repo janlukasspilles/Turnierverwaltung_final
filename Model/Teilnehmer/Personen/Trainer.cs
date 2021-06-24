@@ -21,7 +21,8 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         #region Constructors
         public Trainer() : base()
         {
-
+            JahreErfahrung = 0;
+            Lizenz = "";
         }
         #endregion
         #region Methods

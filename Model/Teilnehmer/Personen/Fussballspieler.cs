@@ -21,7 +21,8 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         #region Constructors
         public Fussballspieler() : base()
         {
-
+            Tore = 0;
+            Position = "";
         }
         #endregion
         #region Methods         

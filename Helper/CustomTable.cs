@@ -87,12 +87,11 @@ namespace Turnierverwaltung_final.Helper
         #region Methods
         public override void DataBind()
         {
-            if (DataSource == null || DataSource.Count <= 0)
-                if (FallbackType == null)
-                    throw new Exception("Missing Datasource!");
+
             SetListDatatype();
             SetDisplayFields();
             BuildTable();
+
         }
 
         private void BuildTable()

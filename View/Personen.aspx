@@ -20,5 +20,5 @@
     </div>
     <br />
     <br />
-    <asp:Table runat="server" ID="tbl_personen" CssClass="table table-bordered"></asp:Table>
+    <asp:Panel runat="server" ID="pnl_tbl"></asp:Panel>
 </asp:Content>

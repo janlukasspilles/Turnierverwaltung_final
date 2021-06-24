@@ -19,16 +19,6 @@ namespace Turnierverwaltung_final.View
         #endregion
         #region Properties
         public Controller Controller { get => _controller; set => _controller = value; }
-        public int InEdit
-        {
-            get
-            {
-                if (ViewState["InEdit"] == null)
-                    return -1;
-                return (int)ViewState["InEdit"];
-            }
-            set => ViewState["InEdit"] = value;
-        }
         #endregion
         #region Constructors
         public Personen() : base()
@@ -40,267 +30,123 @@ namespace Turnierverwaltung_final.View
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-            //LoadTable();
-        }
-        private void LoadTable()
-        {
-            tbl_personen.Rows.Clear();
-
-            Type ListDataType = Controller.Teilnehmer.Count > 0 ? GetListDatatype(Controller.Teilnehmer) : Type.GetType($"Turnierverwaltung_final.Model.Personen.{ddl_selection.SelectedValue}");
-            List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
-
-            //Headerrow
-            tbl_personen.Rows.Add(GetHeaderRow(DisplayFields));
-
-            //Datarows
-            for (int memberNum = 0; memberNum < Controller.Teilnehmer.Count; memberNum++)
+            if (!IsPostBack)
             {
-                tbl_personen.Rows.Add(GetDataRow(Controller.Teilnehmer[memberNum], DisplayFields, memberNum + 1, memberNum + 1 == InEdit));
+                Controller.Teilnehmer.Clear();
             }
-            //Es wird ein neuer Teilnehmer hinzugefügt
-            if (Controller.NeuerTeilnehmer != null)
+            if (ddl_selection.SelectedIndex != 0)
             {
-                tbl_personen.Rows.Add(GetDataRow(Controller.NeuerTeilnehmer, DisplayFields, Controller.Teilnehmer.Count + 1, true));
-            }
-
-            //Footerrow
-            if (DisplayFields.Count > 0)
-                tbl_personen.Rows.Add(GetFooterRow());
-        }
-        private TableHeaderRow GetHeaderRow(List<PropertyInfo> displayFields)
-        {
-            TableHeaderRow headerRow = new TableHeaderRow();
-            foreach (PropertyInfo shownPropertyInfo in displayFields)
-            {
-                TableHeaderCell newHeaderCell = new TableHeaderCell();
-                Button newBtn = new Button
+                Type curType = Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.{ddl_selection.SelectedValue}");
+                if (Controller.Teilnehmer != null && Controller.Teilnehmer.Count > 0)
                 {
-                    Text = (shownPropertyInfo.GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Displayname,
-                    BorderStyle = BorderStyle.None,
-                    ID = $"btn{shownPropertyInfo.Name}"
-                };
-                newBtn.Style.Add("text-align", "left");
-                newBtn.CommandArgument = shownPropertyInfo.Name;
-                newBtn.Command += OnHeaderButton_Click;
-                newHeaderCell.Controls.Add(newBtn);
-                headerRow.Cells.Add(newHeaderCell);
+                    curType = Controller.Teilnehmer[0].GetType();
+                }
+                curTable = new CustomTable<Teilnehmer>(curType);
+                curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
+                curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
+                curTable.AddButton_ClickCommand += OnAddButton_Click;
+                curTable.SubmitButton_ClickCommand += OnSubmitButton_Click;
+                curTable.IgnoreFields = _ignoreFields;
+
+                curTable.DataSource = Controller.Teilnehmer;
+                curTable.DataBind();
+
+                pnl_tbl.Controls.Add(curTable);
             }
-            return headerRow;
         }
-        private TableRow GetDataRow(Teilnehmer T, List<PropertyInfo> displayFields, int pos, bool editable)
+
+        private void OnHeaderButton_Click(object sender, CommandEventArgs e)
         {
-            TableRow tr = new TableRow();
-            TableCell newCell = null;
-            for (int counter = 0; counter < displayFields.Count; counter++)
+            var tmp = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
+            if (Controller.Teilnehmer.SequenceEqual(tmp))
+                Controller.Teilnehmer = Controller.Teilnehmer.OrderByDescending(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
+            else
+                Controller.Teilnehmer = tmp;
+
+            curTable.DataSource = Controller.Teilnehmer;
+            curTable.DataBind();
+        }
+
+        private void OnDeleteButton_Click(object sender, EventArgs e)
+        {
+            Queue<Teilnehmer> deletequeue = new Queue<Teilnehmer>();
+            foreach (TableRow tmp in curTable.Rows)
             {
-                newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
-                newCell.Style.Add("text-align", "left");
-                newCell.Style.Add("vertical-align", "middle");
-                Control newControl = null;
-                if (!editable || !(displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Editable)
+                if (!(tmp is TableHeaderRow) && !(tmp is TableFooterRow))
                 {
-                    newControl = new Label() { ID = $"con{counter}Row{pos}" };
-                    ((Label)newControl).Text = T.GetType().GetProperty(displayFields[counter].Name).GetValue(T, null)?.ToString() ?? "";
+                    if (tmp.Cells[tmp.Cells.Count - 1].FindControl($"cbSelected{curTable.Rows.GetRowIndex(tmp)}") is CheckBox cb)
+                    {
+                        if (cb.Checked)
+                        {
+                            Teilnehmer t = Controller.Teilnehmer[curTable.Rows.GetRowIndex(tmp) - 1];
+                            t.Loeschen();
+                            deletequeue.Enqueue(t);
+                        }
+                    }
+                }
+            }
+            foreach (Teilnehmer t in deletequeue)
+            {
+                Controller.Teilnehmer.Remove(t);
+            }
+            curTable.DataSource = Controller.Teilnehmer;
+            curTable.DataBind();
+        }
+
+        private void OnAddButton_Click(object sender, EventArgs e)
+        {
+            Teilnehmer t = (Teilnehmer)Activator.CreateInstance(curTable.FallbackType);
+            Controller.Teilnehmer.Add(t);
+
+            curTable.DataSource = Controller.Teilnehmer;
+            curTable.DataBind();
+        }
+
+        private void OnSubmitButton_Click(object sender, EventArgs e)
+        {
+            Type ListDataType = curTable.FallbackType ?? curTable.ListDataType;
+            foreach (int row in curTable.RowsInEdit)
+            {
+                for (int i = 0; i < curTable.DisplayFields.Count; i++)
+                {
+                    DisplayMetaInformation dmi = curTable.DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
+                    if (dmi.Editable)
+                    {
+                        switch (dmi.ControlType)
+                        {
+                            case ControlType.ctEditText:
+                                if (curTable.Rows[row + 1].Cells[i].Controls[0] is TextBox)
+                                {
+                                    string value = (curTable.Rows[row + 1].Cells[i].Controls[0] as TextBox).Text;
+                                    ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(value, curTable.DisplayFields[i].PropertyType));
+                                }
+                                break;
+                            case ControlType.ctDomain:
+                                if (curTable.Rows[row + 1].Cells[i].Controls[0] is DropDownList)
+                                {
+                                    int domainId = (curTable.Rows[row + 1].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
+                                    ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(domainId, curTable.DisplayFields[i].PropertyType));
+                                }
+                                break;
+                        }
+                    }
+                }
+                if (Controller.Teilnehmer[row].Id == 0)
+                {
+                    Controller.Teilnehmer[row].Neuanlage();
                 }
                 else
                 {
-                    newControl = new TextBox() { ID = $"con{counter}Row{pos}", CssClass = "form-control" };
-                    (newControl as TextBox).Text = T.GetType().GetProperty(displayFields[counter].Name).GetValue(T, null)?.ToString() ?? "";
-                }
-                newCell.Controls.Add(newControl);
-                tr.Cells.Add(newCell);
-            }
-            if (InEdit == -1)
-            {
-                newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-                newCell.Style.Add("text-align", "left");
-                newCell.Style.Add("vertical-align", "middle");
-                //Edit-Button
-                Button EditButton = new Button
-                {
-                    ID = $"btnEdit{pos}",
-                    Text = "Editieren"
-                };
-
-                EditButton.Command += OnEditButton_Click;
-                EditButton.CssClass = "btn btn-success";
-                EditButton.CommandArgument = pos.ToString();
-                newCell.Controls.Add(EditButton);
-                tr.Cells.Add(newCell);
-                //CheckBox
-                newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-                newCell.Style.Add("text-align", "left");
-                newCell.Style.Add("vertical-align", "middle");
-                CheckBox SelectedCheckBox = new CheckBox() { ID = $"cbSelected{pos}" };
-                newCell.Controls.Add(SelectedCheckBox);
-                tr.Cells.Add(newCell);
-            }
-            return tr;
-        }
-        private TableFooterRow GetFooterRow()
-        {
-            TableFooterRow tr = new TableFooterRow();
-            TableCell tc = new TableCell();
-
-            if (InEdit == -1)
-            {
-                tc = new TableCell();
-                //Delete Button
-                Button DeleteButton = new Button()
-                {
-                    Text = "Ausgewählte löschen",
-                    Visible = true,
-                    ID = "btnDelete",
-                    CssClass = "btn btn-secondary",
-                };
-                DeleteButton.Click += OnDeleteButton_Click;
-                tc.Controls.Add(DeleteButton);
-                tr.Cells.Add(tc);
-
-                tc = new TableCell();
-                //Add Button
-                Button AddButton = new Button()
-                {
-                    Text = "Hinzufügen",
-                    Visible = true,
-                    ID = "btnAdd",
-                    CssClass = "btn btn-secondary",
-                };
-                AddButton.Click += OnAddButton_Click;
-                tc.Controls.Add(AddButton);
-                tr.Cells.Add(tc);
-            }
-            else
-            {
-                //Submit Button
-                Button SubmitButton = new Button()
-                {
-                    Text = "Änderungen speichern",
-                    Visible = true,
-                    CssClass = "btn btn-secondary",
-                    ID = "btnAccept",
-                };
-                SubmitButton.Click += OnSubmitButton_Click;
-                tc.Controls.Add(SubmitButton);
-                tr.Cells.Add(tc);
-
-                tc = new TableCell();
-                //Cancel Button
-                Button CancelButton = new Button()
-                {
-                    Text = "Änderungen verwerfen",
-                    Visible = true,
-                    ID = "btnCancel",
-                    CssClass = "btn btn-secondary",
-                };
-                CancelButton.Click += OnCancelButton_Click;
-                tc.Controls.Add(CancelButton);
-                tr.Cells.Add(tc);
-            }
-
-            return tr;
-        }
-        private void OnEditButton_Click(object sender, CommandEventArgs e)
-        {
-            InEdit = Convert.ToInt32(e.CommandArgument);
-            LoadTable();
-        }
-        private void OnDeleteButton_Click(object sender, EventArgs e)
-        {
-            foreach (TableRow tmp in tbl_personen.Rows)
-            {
-                if (tmp.Cells[tmp.Cells.Count - 1].FindControl($"cbSelected{tbl_personen.Rows.GetRowIndex(tmp)}") is CheckBox cb && cb.Checked)
-                {
-                    Teilnehmer t = Controller.Teilnehmer[tbl_personen.Rows.GetRowIndex(tmp) - 1];
-                    t.Loeschen();
-                    Controller.Teilnehmer.Remove(t);
+                    Controller.Teilnehmer[row].Speichern();
                 }
             }
-            LoadTable();
+            curTable.DataSource = Controller.Teilnehmer;
+            curTable.DataBind();
         }
-        private void OnCancelButton_Click(object sender, EventArgs e)
-        {
-            //Wurde Hinzugefügt wird das hier Rückgängig gemacht
-            Controller.NeuerTeilnehmer = null;
-            //Es gibt keine Editrow mehr
-            InEdit = -1;
-            LoadTable();
-        }
-        private void OnSubmitButton_Click(object sender, EventArgs e)
-        {
-            Type ListDataType = GetListDatatype(Controller.Teilnehmer);
-            List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
-            Teilnehmer t = Controller.NeuerTeilnehmer ?? Controller.Teilnehmer[InEdit - 1];
 
-            for (int i = 0; i < DisplayFields.Count; i++)
-                if ((DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Editable)
-                    ListDataType.GetProperty(DisplayFields[i].Name).SetValue(t, Convert.ChangeType((tbl_personen.Rows[InEdit].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
-
-            if (Controller.NeuerTeilnehmer != null)
-            {
-                //Insertlogik
-                t.Neuanlage();
-                Controller.Teilnehmer.Add(t);
-                Controller.NeuerTeilnehmer = null;
-            }
-            else
-            {
-                //Updatelogik                
-                t.Speichern();
-            }
-            InEdit = -1;
-
-            LoadTable();
-        }
-        private void OnAddButton_Click(object sender, EventArgs e)
-        {
-            Type listDataType = Controller.Teilnehmer.Count > 0 ? GetListDatatype(Controller.Teilnehmer) : Type.GetType($"Turnierverwaltung_final.Model.Personen.{ddl_selection.SelectedValue}");
-            Teilnehmer t = (Teilnehmer)Activator.CreateInstance(listDataType);
-            Controller.NeuerTeilnehmer = t;
-            InEdit = tbl_personen.Rows.Count - 1;
-            LoadTable();
-        }
-        private void OnHeaderButton_Click(object sender, CommandEventArgs e)
-        {
-            Controller.Teilnehmer = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
-        }
-        private Type GetListDatatype(List<Teilnehmer> content)
-        {
-            Type t = content.First().GetType();
-            if (!content.All(x => x.GetType().Equals(t)))
-            {
-                //Checken, ob es eine gemeinsame Basisklasse gibt
-                for (Type current = t; current != null; current = current.BaseType)
-                {
-                    if (content.All(x => x.GetType().IsSubclassOf(current)))
-                    {
-                        return current;
-                    }
-                }
-                //Keine gemeinsame Basisklasse
-                return null;
-            }
-            else
-            {
-                return t;
-            }
-        }
-        private List<PropertyInfo> GetDisplayFields(Type ListDataType)
-        {
-            List<PropertyInfo> result = new List<PropertyInfo>();
-            if (ListDataType != null)
-            {
-                foreach (PropertyInfo propertyInfo in ListDataType.GetProperties())
-                {
-                    if (Attribute.IsDefined(propertyInfo, typeof(DisplayMetaInformation)) && !_ignoreFields.Any(propertyInfo.Name.Contains))
-                        result.Add(propertyInfo);
-                }
-                result = result.OrderBy(p => (p.GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Order).ToList();
-            }
-            return result;
-        }
         protected void OnSelectionChanged(object sender, EventArgs e)
         {
+            Controller.Teilnehmer.Clear();
             switch (ddl_selection.SelectedValue)
             {
                 case "Alle":
@@ -322,7 +168,10 @@ namespace Turnierverwaltung_final.View
                     Controller.GetAlleTennisspieler();
                     break;
             }
-            LoadTable();
+            curTable.FallbackType = Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.{ddl_selection.SelectedValue}");
+
+            curTable.DataSource = Controller.Teilnehmer;
+            curTable.DataBind();
         }
         #endregion        
     }
