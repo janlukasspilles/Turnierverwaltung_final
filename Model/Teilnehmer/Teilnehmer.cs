@@ -24,7 +24,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         #region Constructors
         public Teilnehmer()
         {
-
+            Name = "";
         }
         #endregion
         #region Methods

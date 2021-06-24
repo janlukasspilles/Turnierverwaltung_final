@@ -29,6 +29,9 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         public Mannschaft()
         {
             Mitglieder = new List<Person>();
+            Stadt = "";
+            Gruendungsjahr = "";
+            Sportart = 1;
         }
         #endregion
         #region Methods       
