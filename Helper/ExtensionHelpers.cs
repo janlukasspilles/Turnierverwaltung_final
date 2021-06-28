@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.UI;
 
 namespace Turnierverwaltung_final.Helper
 {
@@ -28,6 +29,19 @@ namespace Turnierverwaltung_final.Helper
         {
             value.Remove(item);
             targetList.Add(item);
+        }
+
+        public static Control FindControlRecursive(this Control value, string name)
+        {
+            if (value != null && value.ID == name)
+                return value;
+            foreach (Control c in value.Controls)
+            {
+                Control tmp = FindControlRecursive(c, name);
+                if (tmp != null)
+                    return tmp;
+            }
+            return null;
         }
     }
 }

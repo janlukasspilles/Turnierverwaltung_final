@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Web.UI;
@@ -7,49 +8,166 @@ using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung.Model.TeilnehmerNS;
 using Turnierverwaltung_final.Helper;
+using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
 
 namespace Turnierverwaltung_final.View
 {
     public partial class Einstellungen : Page
     {
         private Controller _controller;
-        private CustomTable<Teilnehmer> curTable;
+        private CustomTable<Teilnehmer> _curTable;
+        private CustomSwitchPanel _customSwitchPanel;
+
+        public List<Teilnehmer> Mitglieder
+        {
+            get
+            {
+                if (ViewState["Mitglieder"] != null)
+                    return (List<Teilnehmer>)ViewState["Mitglieder"];
+                return null;
+            }
+            set => ViewState["Mitglieder"] = value;
+        }
+
+        public List<Teilnehmer> MoeglicheMitglieder
+        {
+            get
+            {
+                if (ViewState["MoeglicheMitglieder"] != null)
+                    return (List<Teilnehmer>)ViewState["MoeglicheMitglieder"];
+                return null;
+            }
+            set => ViewState["MoeglicheMitglieder"] = value;
+        }
 
         public Controller Controller { get => _controller; set => _controller = value; }
+        public int MitgliederAnzeige
+        {
+            get
+            {
+                if (ViewState["MitgliederAnzeige"] == null)
+                    return -1;
+                return (int)ViewState["MitgliederAnzeige"];
+            }
+            set => ViewState["MitgliederAnzeige"] = value;
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-            curTable = new CustomTable<Teilnehmer>(Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Mannschaft"));
-            curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
-            curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
-            curTable.AddButton_ClickCommand += OnAddButton_Click;
-            curTable.SubmitButton_ClickCommand += OnSubmitButton_Click;
-            curTable.CancelButton_ClickCommand += OnCancelButton_Click;
+            _curTable = new CustomTable<Teilnehmer>(Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Mannschaft"));
+            _curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
+            _curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
+            _curTable.AddButton_ClickCommand += OnAddButton_Click;
+            _curTable.SubmitButton_ClickCommand += OnSubmitButton_Click;
+            _curTable.CancelButton_ClickCommand += OnCancelButton_Click;
+            _curTable.AdditionalRowButtons = GetAdditionalRowButtons();
             if (!IsPostBack)
             {
                 Controller.GetAlleMannschaften();
-
             }
-            curTable.DataSource = Controller.Teilnehmer;
-            curTable.DataBind();
+            _curTable.DataSource = Controller.Teilnehmer;
+            _curTable.DataBind();
 
-            pnl_tbl.Controls.Add(curTable);
+            pnl_tbl.Controls.Add(_curTable);
+            if (MitgliederAnzeige != -1)
+            {
+                _customSwitchPanel = new CustomSwitchPanel();
+                _customSwitchPanel.HeadlineText = $"Mitgliederliste für {Controller.Teilnehmer[MitgliederAnzeige]}";
+                _customSwitchPanel.Ds1 = Mitglieder;
+                _customSwitchPanel.Ds2 = MoeglicheMitglieder;
+                _customSwitchPanel.LeftButton_ClickCommand += OnLeftButton_Click;
+                _customSwitchPanel.RightButton_ClickCommand += OnRightButton_Click;
+                _customSwitchPanel.CancelButton_ClickCommand += OnCancelMitgliederButton_Click;
+                _customSwitchPanel.SubmitButton_ClickCommand += OnSubmitMitgliederButton_Click;
+                _customSwitchPanel.DataBind();
+                pnl_mitglieder.Controls.Add(_customSwitchPanel);
+            }
+
+        }
+
+        private List<Tuple<string, string, string, Action<object, CommandEventArgs>>> GetAdditionalRowButtons()
+        {
+            return new List<Tuple<string, string, string, Action<object, CommandEventArgs>>>
+            {
+                Tuple.Create("btnZeigeMitglieder", "Zeige Mitglieder", "btn btn-secondary", new Action<object, CommandEventArgs>((o, e) => OnZeigeMitglieder_Click(o, e)))
+            };
+        }
+
+        private void OnZeigeMitglieder_Click(object sender, CommandEventArgs e)
+        {
+            MitgliederAnzeige = Convert.ToInt32(e.CommandArgument) - 1;
+            Mitglieder = (Controller.Teilnehmer[MitgliederAnzeige] as Mannschaft).Mitglieder;
+            MoeglicheMitglieder = Controller.GetMoeglicheMitglieder((Controller.Teilnehmer[MitgliederAnzeige] as Mannschaft).Id);
+            _customSwitchPanel = new CustomSwitchPanel()
+            {
+                HeadlineText = $"Mitgliederliste für {Controller.Teilnehmer[MitgliederAnzeige]}"
+            };
+            _customSwitchPanel.Ds1 = Mitglieder;
+            _customSwitchPanel.Ds2 = MoeglicheMitglieder;
+            _customSwitchPanel.LeftButton_ClickCommand += OnLeftButton_Click;
+            _customSwitchPanel.RightButton_ClickCommand += OnRightButton_Click;
+            _customSwitchPanel.CancelButton_ClickCommand += OnCancelMitgliederButton_Click;
+            _customSwitchPanel.SubmitButton_ClickCommand += OnSubmitMitgliederButton_Click;
+            _customSwitchPanel.DataBind();            
+            pnl_mitglieder.Controls.Clear();
+            pnl_mitglieder.Controls.Add(_customSwitchPanel);
+        }
+
+        private void OnSubmitMitgliederButton_Click(object sender, EventArgs e)
+        {
+            (Controller.Teilnehmer[MitgliederAnzeige] as Mannschaft).Mitglieder = Mitglieder;
+            (Controller.Teilnehmer[MitgliederAnzeige] as Mannschaft).Speichern();
+        }
+
+        private void OnCancelMitgliederButton_Click(object sender, EventArgs e)
+        {
+            Mitglieder = (Controller.Teilnehmer[MitgliederAnzeige] as Mannschaft).Mitglieder;
+            MoeglicheMitglieder = Controller.GetMoeglicheMitglieder((Controller.Teilnehmer[MitgliederAnzeige] as Mannschaft).Id);
+            ((ListBox)_customSwitchPanel.FindControlRecursive("lbListe1")).DataSource = Mitglieder;
+            ((ListBox)_customSwitchPanel.FindControlRecursive("lbListe2")).DataSource = MoeglicheMitglieder;
+            ((ListBox)_customSwitchPanel.FindControlRecursive("lbListe2")).DataBind();
+            ((ListBox)_customSwitchPanel.FindControlRecursive("lbListe1")).DataBind();
+        }
+
+        private void OnRightButton_Click(object sender, EventArgs e)
+        {
+            //Entfernen
+            ListBox lbMoegliche = (ListBox)_customSwitchPanel.FindControlRecursive("lbListe2");
+            ListBox lbTatsaechliche = (ListBox)_customSwitchPanel.FindControlRecursive("lbListe1");
+            if (lbTatsaechliche.SelectedIndex != -1)
+                Mitglieder.MoveTo(Mitglieder[lbTatsaechliche.SelectedIndex], MoeglicheMitglieder);
+            lbMoegliche.DataBind();
+            lbTatsaechliche.DataBind();
+        }
+
+        private void OnLeftButton_Click(object sender, EventArgs e)
+        {
+            //Hinzufügen
+            ListBox lbMoegliche = (ListBox)_customSwitchPanel.FindControlRecursive("lbListe2");
+            ListBox lbTatsaechliche = (ListBox)_customSwitchPanel.FindControlRecursive("lbListe1");
+            if (lbMoegliche.SelectedIndex != -1)
+                MoeglicheMitglieder.MoveTo(MoeglicheMitglieder[lbMoegliche.SelectedIndex], Mitglieder);
+            
+            lbMoegliche.DataBind();
+            lbTatsaechliche.DataBind();
         }
 
         private void OnCancelButton_Click(object sender, EventArgs e)
         {
+            ResetSwitcher();
             Controller.Teilnehmer.RemoveAll(x => x.Id == 0);
-            curTable.DataSource = Controller.Teilnehmer;
+            _curTable.DataSource = Controller.Teilnehmer;
         }
 
         private void OnAddButton_Click(object sender, EventArgs e)
         {
+            ResetSwitcher();
             Mannschaft m = new Mannschaft();
             Controller.Teilnehmer.Add(m);
 
-            curTable.DataSource = Controller.Teilnehmer;
-            curTable.DataBind();
+            _curTable.DataSource = Controller.Teilnehmer;
+            _curTable.DataBind();
         }
 
         private void OnHeaderButton_Click(object sender, CommandEventArgs e)
@@ -60,34 +178,35 @@ namespace Turnierverwaltung_final.View
             else
                 Controller.Teilnehmer = tmp;
 
-            curTable.DataSource = Controller.Teilnehmer;
-            curTable.DataBind();
+            _curTable.DataSource = Controller.Teilnehmer;
+            _curTable.DataBind();
         }
 
         private void OnSubmitButton_Click(object sender, EventArgs e)
         {
-            Type ListDataType = curTable.FallbackType ?? curTable.ListDataType;
-            foreach (int row in curTable.RowsInEdit)
+            ResetSwitcher();
+            Type ListDataType = _curTable.FallbackType ?? _curTable.ListDataType;
+            foreach (int row in _curTable.RowsInEdit)
             {
-                for (int i = 0; i < curTable.DisplayFields.Count; i++)
+                for (int i = 0; i < _curTable.DisplayFields.Count; i++)
                 {
-                    DisplayMetaInformation dmi = curTable.DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
+                    DisplayMetaInformation dmi = _curTable.DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
                     if (dmi.Editable)
                     {
                         switch (dmi.ControlType)
                         {
                             case ControlType.ctEditText:
-                                if(curTable.Rows[row + 1].Cells[i].Controls[0] is TextBox)
+                                if (_curTable.Rows[row + 1].Cells[i].Controls[0] is TextBox)
                                 {
-                                    string value = (curTable.Rows[row + 1].Cells[i].Controls[0] as TextBox).Text;
-                                    ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(value, curTable.DisplayFields[i].PropertyType));
-                                }                                                                 
+                                    string value = (_curTable.Rows[row + 1].Cells[i].Controls[0] as TextBox).Text;
+                                    ListDataType.GetProperty(_curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(value, _curTable.DisplayFields[i].PropertyType));
+                                }
                                 break;
                             case ControlType.ctDomain:
-                                if (curTable.Rows[row + 1].Cells[i].Controls[0] is DropDownList)
+                                if (_curTable.Rows[row + 1].Cells[i].Controls[0] is DropDownList)
                                 {
-                                    int domainId = (curTable.Rows[row + 1].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
-                                    ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(domainId, curTable.DisplayFields[i].PropertyType));
+                                    int domainId = (_curTable.Rows[row + 1].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
+                                    ListDataType.GetProperty(_curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(domainId, _curTable.DisplayFields[i].PropertyType));
                                 }
                                 break;
                         }
@@ -102,22 +221,30 @@ namespace Turnierverwaltung_final.View
                     Controller.Teilnehmer[row].Speichern();
                 }
             }
-            curTable.DataSource = Controller.Teilnehmer;
-            curTable.DataBind();
+            _curTable.DataSource = Controller.Teilnehmer;
+            _curTable.DataBind();
+        }
+        private void ResetSwitcher()
+        {
+            MoeglicheMitglieder = null;
+            Mitglieder = null;
+            MitgliederAnzeige = -1;
+            pnl_mitglieder.Controls.Clear();
         }
 
         private void OnDeleteButton_Click(object sender, EventArgs e)
         {
+            ResetSwitcher();
             Queue<Teilnehmer> deletequeue = new Queue<Teilnehmer>();
-            foreach (TableRow tmp in curTable.Rows)
+            foreach (TableRow tmp in _curTable.Rows)
             {
                 if (!(tmp is TableHeaderRow) && !(tmp is TableFooterRow))
                 {
-                    if (tmp.Cells[tmp.Cells.Count - 1].FindControl($"cbSelected{curTable.Rows.GetRowIndex(tmp)}") is CheckBox cb)
+                    if (tmp.Cells[tmp.Cells.Count - 1].FindControl($"cbSelected{_curTable.Rows.GetRowIndex(tmp)}") is CheckBox cb)
                     {
                         if (cb.Checked)
                         {
-                            Teilnehmer t = Controller.Teilnehmer[curTable.Rows.GetRowIndex(tmp) - 1];
+                            Teilnehmer t = Controller.Teilnehmer[_curTable.Rows.GetRowIndex(tmp) - 1];
                             t.Loeschen();
                             deletequeue.Enqueue(t);
                         }
@@ -125,11 +252,11 @@ namespace Turnierverwaltung_final.View
                 }
             }
             foreach (Teilnehmer t in deletequeue)
-            {
+            {                
                 Controller.Teilnehmer.Remove(t);
             }
-            curTable.DataSource = Controller.Teilnehmer;
-            curTable.DataBind();
+            _curTable.DataSource = Controller.Teilnehmer;
+            _curTable.DataBind();
         }
     }
 }

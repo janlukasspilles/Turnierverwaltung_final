@@ -16,9 +16,20 @@ namespace Turnierverwaltung_final.View
         private Controller _controller;
         private CustomTable<Teilnehmer> curTable;
         private readonly string[] _ignoreFields = { "Name" };
+        public Type ShownType
+        {
+            get
+            {
+                if (ViewState["ShownType"] != null)
+                    return (Type)ViewState["ShownType"];
+                return null;
+            }
+            set => ViewState["ShownType"] = value;
+        }
         #endregion
         #region Properties
         public Controller Controller { get => _controller; set => _controller = value; }
+
         #endregion
         #region Constructors
         public Personen() : base()
@@ -34,25 +45,37 @@ namespace Turnierverwaltung_final.View
             {
                 Controller.Teilnehmer.Clear();
             }
-            if (ddl_selection.SelectedIndex != 0)
+            if (ShownType != null)
             {
-                Type curType = Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.{ddl_selection.SelectedValue}");
-                if (Controller.Teilnehmer != null && Controller.Teilnehmer.Count > 0)
-                {
-                    curType = Controller.Teilnehmer[0].GetType();
-                }
-                curTable = new CustomTable<Teilnehmer>(curType);
+                (this.FindControlRecursive("btn" + ShownType.Name) as Button).CssClass = "btn btn-warning";
+                BuildTable();
+            }
+        }
+        private void ResetButtons()
+        {
+            btnTrainer.CssClass = "btn btn-primary";
+            btnPhysio.CssClass = "btn btn-primary";
+            btnFussballspieler.CssClass = "btn btn-primary";
+            btnHandballspieler.CssClass = "btn btn-primary";
+            btnTennisspieler.CssClass = "btn btn-primary";
+        }
+
+        private void BuildTable()
+        {
+            if (curTable == null)
+            {
+                curTable = new CustomTable<Teilnehmer>(ShownType);
                 curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
                 curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
                 curTable.AddButton_ClickCommand += OnAddButton_Click;
                 curTable.SubmitButton_ClickCommand += OnSubmitButton_Click;
                 curTable.IgnoreFields = _ignoreFields;
-
-                curTable.DataSource = Controller.Teilnehmer;
-                curTable.DataBind();
-
-                pnl_tbl.Controls.Add(curTable);
             }
+            curTable.FallbackType = ShownType;
+            curTable.DataSource = Controller.Teilnehmer;
+            curTable.DataBind();
+
+            pnl_tbl.Controls.Add(curTable);
         }
 
         private void OnHeaderButton_Click(object sender, CommandEventArgs e)
@@ -143,15 +166,11 @@ namespace Turnierverwaltung_final.View
             curTable.DataSource = Controller.Teilnehmer;
             curTable.DataBind();
         }
-
-        protected void OnSelectionChanged(object sender, EventArgs e)
+        protected void OnTypeSelected(object sender, EventArgs e)
         {
             Controller.Teilnehmer.Clear();
-            switch (ddl_selection.SelectedValue)
+            switch ((sender as Button).CommandArgument)
             {
-                case "Alle":
-                    Controller.GetAllePersonen();
-                    break;
                 case "Trainer":
                     Controller.GetAlleTrainer();
                     break;
@@ -168,11 +187,11 @@ namespace Turnierverwaltung_final.View
                     Controller.GetAlleTennisspieler();
                     break;
             }
-            curTable.FallbackType = Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.{ddl_selection.SelectedValue}");
-
-            curTable.DataSource = Controller.Teilnehmer;
-            curTable.DataBind();
+            ShownType = Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.{(sender as Button).CommandArgument}");
+            ResetButtons();
+            (sender as Button).CssClass = "btn btn-warning";
+            BuildTable();
         }
-        #endregion        
     }
+    #endregion
 }

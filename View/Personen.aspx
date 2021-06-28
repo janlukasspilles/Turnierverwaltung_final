@@ -7,16 +7,12 @@
     </div>
     <br />
     <br />
-    <div class="btn-group">
-        <asp:DropDownList CssClass="btn btn-primary dropdown-toggle" runat="server" ID="ddl_selection" AutoPostBack="true" OnSelectedIndexChanged="OnSelectionChanged">
-            <asp:ListItem></asp:ListItem>
-            <asp:ListItem>Alle</asp:ListItem>
-            <asp:ListItem>Trainer</asp:ListItem>
-            <asp:ListItem>Physio</asp:ListItem>
-            <asp:ListItem>Fussballspieler</asp:ListItem>
-            <asp:ListItem>Handballspieler</asp:ListItem>
-            <asp:ListItem>Tennisspieler</asp:ListItem>
-        </asp:DropDownList>
+    <div class="btn-group btn-group-toggle">
+        <asp:Button runat="server" ID="btnTrainer" OnClick="OnTypeSelected" type="button" class="btn btn-primary" Text="Trainer" CommandArgument="Trainer"></asp:Button>
+        <asp:Button runat="server" ID="btnPhysio" OnClick="OnTypeSelected" class="btn btn-primary" Text="Physio" CommandArgument="Physio"></asp:Button>
+        <asp:Button runat="server" ID="btnFussballspieler" OnClick="OnTypeSelected" class="btn btn-primary" Text="Fussballspieler" CommandArgument="Fussballspieler"></asp:Button>
+        <asp:Button runat="server" ID="btnHandballspieler" OnClick="OnTypeSelected" class="btn btn-primary" Text="Handballspieler" CommandArgument="Handballspieler"></asp:Button>
+        <asp:Button runat="server" ID="btnTennisspieler" OnClick="OnTypeSelected" class="btn btn-primary" Text="Tennisspieler" CommandArgument="Tennisspieler"></asp:Button>
     </div>
     <br />
     <br />

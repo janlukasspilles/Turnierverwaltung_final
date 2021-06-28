@@ -6,6 +6,6 @@
     </div>
     <br />
     <br />
-    <asp:Table runat="server" ID="tbl_mannschaften" CssClass="table table-bordered"></asp:Table>
+    <asp:Panel runat="server" ID="pnl_tbl"></asp:Panel>
     <asp:Panel runat="server" ID="pnl_mitglieder"></asp:Panel>
 </asp:Content>

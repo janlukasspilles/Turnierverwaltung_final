@@ -15,13 +15,13 @@ namespace Turnierverwaltung_final.View
     {
 
         /// <summary>
-        /// tbl_mannschaften-Steuerelement
+        /// pnl_tbl-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table tbl_mannschaften;
+        protected global::System.Web.UI.WebControls.Panel pnl_tbl;
 
         /// <summary>
         /// pnl_mitglieder-Steuerelement

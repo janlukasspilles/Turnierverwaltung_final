@@ -11,13 +11,13 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
     public class Mannschaft : Teilnehmer
     {
         #region Attributes
-        private List<Person> _mitglieder;
+        private List<Teilnehmer> _mitglieder;
         private string _stadt;
         private string _gruendungsjahr;
         private int _sportart;
         #endregion
         #region Properties
-        public List<Person> Mitglieder { get => _mitglieder; set => _mitglieder = value; }
+        public List<Teilnehmer> Mitglieder { get => _mitglieder; set => _mitglieder = value; }
         [DisplayMetaInformation("Stadt", 13, true, ControlType.ctEditText)]
         public string Stadt { get => _stadt; set => _stadt = value; }
         [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctEditText)]
@@ -28,16 +28,16 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         #region Constructors
         public Mannschaft()
         {
-            Mitglieder = new List<Person>();
+            Mitglieder = new List<Teilnehmer>();
             Stadt = "";
             Gruendungsjahr = "";
             Sportart = 1;
         }
         #endregion
         #region Methods       
-        private List<Person> GetMitglieder()
+        private List<Teilnehmer> GetMitglieder()
         {
-            List<Person> result = new List<Person>();
+            List<Teilnehmer> result = new List<Teilnehmer>();
             Person p = null;
             string sql = "SELECT P.ID," +
                 "case " +
@@ -62,33 +62,32 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
                 MySqlCommand cmd = new MySqlCommand(sql, con);
                 MySqlDataReader reader = cmd.ExecuteReader();
 
+
                 while (reader.Read())
                 {
-                    while (reader.Read())
+                    switch (reader.GetString("Profession"))
                     {
-                        switch (reader.GetString("Profession"))
-                        {
-                            case "Trainer":
-                                p = new Trainer();
-                                break;
-                            case "Physio":
-                                p = new Physio();
-                                break;
-                            case "Fussballspieler":
-                                p = new Fussballspieler();
-                                break;
-                            case "Handballspieler":
-                                p = new Handballspieler();
-                                break;
-                            case "Tennisspieler":
-                                p = new Tennisspieler();
-                                break;
-                        }
-                        p.SelektionId(reader.GetInt64("ID"));
-                        result.Add(p);
+                        case "Trainer":
+                            p = new Trainer();
+                            break;
+                        case "Physio":
+                            p = new Physio();
+                            break;
+                        case "Fussballspieler":
+                            p = new Fussballspieler();
+                            break;
+                        case "Handballspieler":
+                            p = new Handballspieler();
+                            break;
+                        case "Tennisspieler":
+                            p = new Tennisspieler();
+                            break;
                     }
-                    reader.Close();
+                    p.SelektionId(reader.GetInt64("ID"));
+                    result.Add(p);
                 }
+                reader.Close();
+
             }
             catch (Exception e)
             {
@@ -234,10 +233,10 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
 
         private void SpeicherMitglieder()
         {
-            List<Person> oldMembers = GetMitglieder();
+            List<Teilnehmer> oldMembers = GetMitglieder();
             //Löschen
-            List<Person> remove = oldMembers.Except(Mitglieder).ToList();
-            List<Person> add = Mitglieder.Except(oldMembers).ToList();
+            List<Teilnehmer> remove = oldMembers.Except(Mitglieder).ToList();
+            List<Teilnehmer> add = Mitglieder.Except(oldMembers).ToList();
             string deleteSql = $"DELETE FROM PERSONEN_MANNSCHAFTEN WHERE MANNSCHAFT_ID = '{Id}' AND PERSON_ID IN('{string.Join("', '", remove.Select(x => x.Id))}')";
 
 

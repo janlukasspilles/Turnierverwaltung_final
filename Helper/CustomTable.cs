@@ -23,6 +23,7 @@ namespace Turnierverwaltung_final.Helper
         private EventHandler _cancelButton_ClickCommand;
         private Dictionary<string, IList> _domainDictionary;
         private Type _fallbackType;
+        private List<Tuple<string, string, string, Action<object, CommandEventArgs>>> _additionalRowButtons;
         #endregion
         #region Properties
         public List<T> DataSource { get => _dataSource; set => _dataSource = value; }
@@ -44,6 +45,7 @@ namespace Turnierverwaltung_final.Helper
         public EventHandler AddButton_ClickCommand { get => _addButton_ClickCommand; set => _addButton_ClickCommand = value; }
         public EventHandler SubmitButton_ClickCommand { get => _submitButton_ClickCommand; set => _submitButton_ClickCommand = value; }
         public EventHandler CancelButton_ClickCommand { get => _cancelButton_ClickCommand; set => _cancelButton_ClickCommand = value; }
+        public List<Tuple<string, string, string, Action<object, CommandEventArgs>>> AdditionalRowButtons { get => _additionalRowButtons; set => _additionalRowButtons = value; }
         #endregion
         #region Constructors        
         public CustomTable() : base()
@@ -87,11 +89,9 @@ namespace Turnierverwaltung_final.Helper
         #region Methods
         public override void DataBind()
         {
-
             SetListDatatype();
             SetDisplayFields();
             BuildTable();
-
         }
 
         private void BuildTable()
@@ -136,6 +136,11 @@ namespace Turnierverwaltung_final.Helper
                     ListDataType = t;
                 }
             }
+        }
+
+        private void AddAdditionalRowButtons()
+        {
+
         }
 
         private void SetDisplayFields()
@@ -237,6 +242,26 @@ namespace Turnierverwaltung_final.Helper
                 newCell.Controls.Add(newControl);
                 tr.Cells.Add(newCell);
             }
+
+            //Additional Row Buttons
+            if (AdditionalRowButtons != null && AdditionalRowButtons.Count > 0)
+            {
+                foreach (var tmp in AdditionalRowButtons)
+                {
+                    newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
+                    Button b = new Button()
+                    {
+                        ID = tmp.Item1 + $"{pos}",
+                        Text = tmp.Item2,
+                        CssClass = tmp.Item3
+                    };
+                    b.Command += (o, e) => tmp.Item4(o, e);
+                    b.CommandArgument = pos.ToString();
+                    newCell.Controls.Add(b);
+                    tr.Cells.Add(newCell);
+                }
+            }
+
             if (!editable)
             {
                 newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
@@ -257,6 +282,7 @@ namespace Turnierverwaltung_final.Helper
                 newCell.Controls.Add(SelectedCheckBox);
                 tr.Cells.Add(newCell);
             }
+
             Rows.Add(tr);
         }
 

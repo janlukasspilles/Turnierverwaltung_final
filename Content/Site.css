@@ -2,6 +2,8 @@
 body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-color: #222 !important;
+    color: #fff;
 }
 
 /* Wrapping element */
@@ -9,6 +11,8 @@ body {
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    background-color: #222 !important;
+    color: #fff;
 }
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
@@ -27,5 +31,7 @@ textarea {
 
     .body-content {
         padding: 0;
+        background-color: #222 !important;
+        color: #fff;
     }
 }

@@ -75,9 +75,9 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
-        public List<Person> GetMoeglicheMitglieder(long mannschaftId)
+        public List<Teilnehmer> GetMoeglicheMitglieder(long mannschaftId)
         {
-            List<Person> result = new List<Person>();
+            List<Teilnehmer> result = new List<Teilnehmer>();
             Person p = null;
             string sql = "SELECT P.ID, " +
                 "CASE " +

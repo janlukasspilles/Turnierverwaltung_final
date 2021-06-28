@@ -21,7 +21,8 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
         #region Constructors
         public Tennisspieler() : base()
         {
-
+            AnzahlSpiele = 0;
+            AnzahlGewonnen = 0;
         }
         #endregion
         #region Methods         
