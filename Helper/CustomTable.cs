@@ -166,16 +166,18 @@ namespace Turnierverwaltung_final.Helper
                 Button newBtn = new Button
                 {
                     Text = (shownPropertyInfo.GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Displayname,
+                    ID = $"btn{shownPropertyInfo.Name}",
+                    CssClass = "btn btn-secondary",
                     Width = Unit.Percentage(100),
-                    BorderStyle = BorderStyle.None,
-                    ID = $"btn{shownPropertyInfo.Name}"
                 };
                 newBtn.Style.Add("text-align", "left");
+                newBtn.Style.Add("display", "block");
+                newBtn.Style.Add("margin", "auto");
                 newBtn.CommandArgument = shownPropertyInfo.Name;
                 newBtn.Command += OnHeaderButton_ClickCommand;
-                newHeaderCell.Controls.Add(newBtn);
+                newHeaderCell.Controls.Add(newBtn);                
                 headerRow.Cells.Add(newHeaderCell);
-            }
+            }            
             Rows.Add(headerRow);
         }
 
@@ -185,7 +187,7 @@ namespace Turnierverwaltung_final.Helper
             TableCell newCell;
             for (int counter = 0; counter < DisplayFields.Count; counter++)
             {
-                newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
+                newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };                
                 Control newControl = null;
                 DisplayMetaInformation dmi = DisplayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
 
@@ -219,7 +221,7 @@ namespace Turnierverwaltung_final.Helper
                             }
                             else
                             {
-                                newControl = new Label() { ID = controlId };
+                                newControl = new Label() { ID = controlId };                                
                                 (newControl as Label).Text = domainList[Convert.ToInt32(curValueOfProperty?.ToString()) - 1].ToString();
                             }
                         }
@@ -269,16 +271,18 @@ namespace Turnierverwaltung_final.Helper
                 Button EditButton = new Button
                 {
                     ID = $"btnEdit{pos}",
-                    Text = "Editieren"
+                    Text = "Editieren",
+                    Width = Unit.Percentage(100),
                 };
                 EditButton.Command += OnEditButton_Click;
-                EditButton.CssClass = "btn btn-success";
+                EditButton.CssClass = "btn btn-warning";
                 EditButton.CommandArgument = pos.ToString();
                 newCell.Controls.Add(EditButton);
                 tr.Cells.Add(newCell);
 
                 newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
                 CheckBox SelectedCheckBox = new CheckBox() { ID = $"cbSelected{pos}" };
+
                 newCell.Controls.Add(SelectedCheckBox);
                 tr.Cells.Add(newCell);
             }
@@ -297,15 +301,15 @@ namespace Turnierverwaltung_final.Helper
         private void SetFooterRow()
         {
             TableFooterRow tr = new TableFooterRow();
-
             TableCell tc = new TableCell();
             //Delete Button
             Button DeleteButton = new Button()
             {
-                Text = "Ausgewählte löschen",
+                Text = "Löschen",
                 Visible = true,
                 ID = "btnDelete",
-                CssClass = "btn btn-secondary",
+                CssClass = "btn btn-danger",
+                Width = Unit.Percentage(100),
             };
             DeleteButton.Click += DeleteButton_ClickCommand;
 
@@ -319,7 +323,8 @@ namespace Turnierverwaltung_final.Helper
                 Text = "Hinzufügen",
                 Visible = true,
                 ID = "btnAddMannschaft",
-                CssClass = "btn btn-secondary",
+                CssClass = "btn btn-warning",
+                Width = Unit.Percentage(100),
             };
             AddButton.Click += AddButton_ClickCommand;
             AddButton.Click += OnAddButton_Click;
@@ -331,11 +336,12 @@ namespace Turnierverwaltung_final.Helper
             //Submit Button
             Button SubmitButton = new Button()
             {
-                Text = "Änderungen speichern",
+                Text = "Speichern",
                 Visible = true,
                 Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
-                CssClass = "btn btn-secondary",
+                CssClass = "btn btn-success",
                 ID = "btnAccept",
+                Width = Unit.Percentage(100),
             };
             SubmitButton.Click += SubmitButton_ClickCommand;
             SubmitButton.Click += OnSubmitButton_Click;
@@ -346,11 +352,12 @@ namespace Turnierverwaltung_final.Helper
             //Cancel Button
             Button CancelButton = new Button()
             {
-                Text = "Änderungen verwerfen",
+                Text = "Verwerfen",
                 Visible = true,
                 Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
-                CssClass = "btn btn-secondary",
+                CssClass = "btn btn-danger",
                 ID = "btnCancel",
+                Width = Unit.Percentage(100),
             };
             CancelButton.Click += CancelButton_ClickCommand;
             CancelButton.Click += OnCancelButton_Click;

@@ -6,22 +6,25 @@ body {
     color: #fff;
 }
 
+.jumbotron {
+    background-color: #303030;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
     background-color: #222 !important;
     color: #fff;
 }
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
-input,
 select,
-textarea {
+textarea,
+input {
     max-width: 280px;
+    color: #fff;
+    background-color: #8d8d8d;
 }
-
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {

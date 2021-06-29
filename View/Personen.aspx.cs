@@ -53,11 +53,11 @@ namespace Turnierverwaltung_final.View
         }
         private void ResetButtons()
         {
-            btnTrainer.CssClass = "btn btn-primary";
-            btnPhysio.CssClass = "btn btn-primary";
-            btnFussballspieler.CssClass = "btn btn-primary";
-            btnHandballspieler.CssClass = "btn btn-primary";
-            btnTennisspieler.CssClass = "btn btn-primary";
+            btnTrainer.CssClass = "btn btn-dark";
+            btnPhysio.CssClass = "btn btn-dark";
+            btnFussballspieler.CssClass = "btn btn-dark";
+            btnHandballspieler.CssClass = "btn btn-dark";
+            btnTennisspieler.CssClass = "btn btn-dark";
         }
 
         private void BuildTable()
