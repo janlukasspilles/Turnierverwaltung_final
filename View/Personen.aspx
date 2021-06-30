@@ -1,7 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Personen.aspx.cs" Inherits="Turnierverwaltung_final.View.Personen" %>
 
-
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+    <script>
+        $(document).ready(function () {
+            $('.datepicker-field').datepicker();
+        });
+    </script>
     <div class="jumbotron">
         <h1>Personenverwaltung</h1>
     </div>

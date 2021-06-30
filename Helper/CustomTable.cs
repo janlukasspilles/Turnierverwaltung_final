@@ -175,9 +175,9 @@ namespace Turnierverwaltung_final.Helper
                 newBtn.Style.Add("margin", "auto");
                 newBtn.CommandArgument = shownPropertyInfo.Name;
                 newBtn.Command += OnHeaderButton_ClickCommand;
-                newHeaderCell.Controls.Add(newBtn);                
+                newHeaderCell.Controls.Add(newBtn);
                 headerRow.Cells.Add(newHeaderCell);
-            }            
+            }
             Rows.Add(headerRow);
         }
 
@@ -187,7 +187,7 @@ namespace Turnierverwaltung_final.Helper
             TableCell newCell;
             for (int counter = 0; counter < DisplayFields.Count; counter++)
             {
-                newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };                
+                newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
                 Control newControl = null;
                 DisplayMetaInformation dmi = DisplayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
 
@@ -221,7 +221,7 @@ namespace Turnierverwaltung_final.Helper
                             }
                             else
                             {
-                                newControl = new Label() { ID = controlId };                                
+                                newControl = new Label() { ID = controlId };
                                 (newControl as Label).Text = domainList[Convert.ToInt32(curValueOfProperty?.ToString()) - 1].ToString();
                             }
                         }
@@ -237,6 +237,18 @@ namespace Turnierverwaltung_final.Helper
                         //    (newControl as CheckBox).Checked = (bool)valueTmp;
                         //    (newControl as CheckBox).Enabled = false;
                         //}
+                        break;
+                    case ControlType.ctDate:
+                        if ((editable && dmi.Editable) || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != curValueOfProperty.ToString()))
+                        {
+                            newControl = new TextBox() { ID = controlId, TextMode = TextBoxMode.Date };
+                            (newControl as TextBox).Text = String.Format("yyyy-dd-mm", curValueOfProperty?.ToString() ?? "");
+                        }
+                        else
+                        {
+                            newControl = new Label() { ID = controlId };
+                            (newControl as Label).Text = curValueOfProperty?.ToString() ?? "";
+                        }
                         break;
                     default:
                         throw new Exception("Fehler!!");

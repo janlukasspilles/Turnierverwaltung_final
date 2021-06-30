@@ -18,6 +18,7 @@
     {
         ctEditText,
         ctDomain,
-        ctCheck
+        ctCheck,
+        ctDate
     }
 }

@@ -33,7 +33,7 @@ namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
                 Name = Vorname + " " + Nachname;
             }
         }
-        [DisplayMetaInformation("Geburtstag", 4, true, ControlType.ctEditText)]
+        [DisplayMetaInformation("Geburtstag", 4, true, ControlType.ctDate)]
         public string Geburtstag { get => _geburtstag; set => _geburtstag = value; }
         #endregion
         #region Constructs
