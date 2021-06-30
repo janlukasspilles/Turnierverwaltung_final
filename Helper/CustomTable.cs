@@ -231,12 +231,18 @@ namespace Turnierverwaltung_final.Helper
                         }
                         break;
                     case ControlType.ctCheck:
-                        //if ((!editable || dmi.Editable) && !Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId))
-                        //{
-                        //    newControl = new CheckBox() { ID = controlId };
-                        //    (newControl as CheckBox).Checked = (bool)valueTmp;
-                        //    (newControl as CheckBox).Enabled = false;
-                        //}
+                        if ((!editable || dmi.Editable) && !Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId))
+                        {
+                            newControl = new CheckBox() { ID = controlId };
+                            (newControl as CheckBox).Checked = Convert.ToBoolean(curValueOfProperty?.ToString());
+                            (newControl as CheckBox).Enabled = true;
+                        }
+                        else
+                        {
+                            newControl = new CheckBox() { ID = controlId };
+                            (newControl as CheckBox).Checked = Convert.ToBoolean(curValueOfProperty?.ToString());
+                            (newControl as CheckBox).Enabled = false;
+                        }
                         break;
                     case ControlType.ctDate:
                         if ((editable && dmi.Editable) || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != curValueOfProperty.ToString()))
