@@ -20,7 +20,7 @@ namespace Turnierverwaltung.Model.TeilnehmerNS
         public List<Teilnehmer> Mitglieder { get => _mitglieder; set => _mitglieder = value; }
         [DisplayMetaInformation("Stadt", 13, true, ControlType.ctEditText)]
         public string Stadt { get => _stadt; set => _stadt = value; }
-        [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctEditText)]
+        [DisplayMetaInformation("Gründungsjahr", 14, true, ControlType.ctDate)]
         public string Gruendungsjahr { get => _gruendungsjahr; set => _gruendungsjahr = value; }
         [DisplayMetaInformation("Sportart", 15, true, ControlType.ctDomain, DdlList.dlSportarten, DomainName = "SPORTART")]
         public int Sportart { get => _sportart; set => _sportart = value; }

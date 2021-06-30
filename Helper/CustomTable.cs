@@ -241,8 +241,8 @@ namespace Turnierverwaltung_final.Helper
                     case ControlType.ctDate:
                         if ((editable && dmi.Editable) || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != curValueOfProperty.ToString()))
                         {
-                            newControl = new TextBox() { ID = controlId, TextMode = TextBoxMode.Date };
-                            (newControl as TextBox).Text = String.Format("yyyy-dd-mm", curValueOfProperty?.ToString() ?? "");
+                            newControl = new TextBox() { ID = controlId, TextMode = TextBoxMode.Date, CssClass = "form-control" };
+                            (newControl as TextBox).Text = curValueOfProperty?.ToString() ?? "";
                         }
                         else
                         {

@@ -151,6 +151,13 @@ namespace Turnierverwaltung_final.View
                                     ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(domainId, curTable.DisplayFields[i].PropertyType));
                                 }
                                 break;
+                            case ControlType.ctDate:
+                                if (curTable.Rows[row + 1].Cells[i].Controls[0] is TextBox)
+                                {
+                                    string value = (curTable.Rows[row + 1].Cells[i].Controls[0] as TextBox).Text;
+                                    ListDataType.GetProperty(curTable.DisplayFields[i].Name).SetValue(Controller.Teilnehmer[row], Convert.ChangeType(value, curTable.DisplayFields[i].PropertyType));
+                                }
+                                break;
                         }
                     }
                 }
