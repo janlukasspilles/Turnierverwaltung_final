@@ -80,11 +80,18 @@ namespace Turnierverwaltung_final.View
 
         private void OnHeaderButton_Click(object sender, CommandEventArgs e)
         {
+            LinkButton curButton = sender as LinkButton;
             var tmp = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
             if (Controller.Teilnehmer.SequenceEqual(tmp))
+            {
                 Controller.Teilnehmer = Controller.Teilnehmer.OrderByDescending(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
+                curButton.CssClass = "btn btn-secondary glyphicon glyphicon-chevron-up";
+            }
             else
+            {
                 Controller.Teilnehmer = tmp;
+                curButton.CssClass = "btn btn-secondary glyphicon glyphicon-chevron-down";
+            }
 
             curTable.DataSource = Controller.Teilnehmer;
             curTable.DataBind();

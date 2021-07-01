@@ -163,7 +163,7 @@ namespace Turnierverwaltung_final.Helper
             foreach (PropertyInfo shownPropertyInfo in DisplayFields)
             {
                 TableHeaderCell newHeaderCell = new TableHeaderCell();
-                Button newBtn = new Button
+                LinkButton newBtn = new LinkButton
                 {
                     Text = (shownPropertyInfo.GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Displayname,
                     ID = $"btn{shownPropertyInfo.Name}",
@@ -286,14 +286,15 @@ namespace Turnierverwaltung_final.Helper
             {
                 newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
                 //Edit-Button
-                Button EditButton = new Button
+                LinkButton EditButton = new LinkButton
                 {
                     ID = $"btnEdit{pos}",
-                    Text = "Editieren",
-                    Width = Unit.Percentage(100),
+                    //Text = "Editieren",
+                    //Width = Unit.Percentage(100),                    
+                    CssClass = "btn btn-primary glyphicon glyphicon-pencil"
                 };
                 EditButton.Command += OnEditButton_Click;
-                EditButton.CssClass = "btn btn-warning";
+
                 EditButton.CommandArgument = pos.ToString();
                 newCell.Controls.Add(EditButton);
                 tr.Cells.Add(newCell);
@@ -321,13 +322,13 @@ namespace Turnierverwaltung_final.Helper
             TableFooterRow tr = new TableFooterRow();
             TableCell tc = new TableCell();
             //Delete Button
-            Button DeleteButton = new Button()
+            LinkButton DeleteButton = new LinkButton()
             {
                 Text = "Löschen",
                 Visible = true,
                 ID = "btnDelete",
-                CssClass = "btn btn-danger",
-                Width = Unit.Percentage(100),
+                CssClass = "btn btn-danger glyphicon glyphicon-trash",
+                //Width = Unit.Percentage(100),
             };
             DeleteButton.Click += DeleteButton_ClickCommand;
 
@@ -336,13 +337,13 @@ namespace Turnierverwaltung_final.Helper
 
             tc = new TableCell();
             //Add Button
-            Button AddButton = new Button()
+            LinkButton AddButton = new LinkButton()
             {
                 Text = "Hinzufügen",
                 Visible = true,
                 ID = "btnAddMannschaft",
-                CssClass = "btn btn-warning",
-                Width = Unit.Percentage(100),
+                CssClass = "btn btn-warning glyphicon glyphicon-plus",
+                //Width = Unit.Percentage(100),
             };
             AddButton.Click += AddButton_ClickCommand;
             AddButton.Click += OnAddButton_Click;
@@ -352,14 +353,14 @@ namespace Turnierverwaltung_final.Helper
 
             tc = new TableCell();
             //Submit Button
-            Button SubmitButton = new Button()
+            LinkButton SubmitButton = new LinkButton()
             {
                 Text = "Speichern",
                 Visible = true,
                 Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
-                CssClass = "btn btn-success",
+                CssClass = "btn btn-success glyphicon glyphicon-ok",
                 ID = "btnAccept",
-                Width = Unit.Percentage(100),
+                //Width = Unit.Percentage(100),
             };
             SubmitButton.Click += SubmitButton_ClickCommand;
             SubmitButton.Click += OnSubmitButton_Click;
@@ -368,14 +369,14 @@ namespace Turnierverwaltung_final.Helper
 
             tc = new TableCell();
             //Cancel Button
-            Button CancelButton = new Button()
+            LinkButton CancelButton = new LinkButton()
             {
                 Text = "Verwerfen",
                 Visible = true,
                 Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
-                CssClass = "btn btn-danger",
+                CssClass = "btn btn-danger glyphicon glyphicon-remove",
                 ID = "btnCancel",
-                Width = Unit.Percentage(100),
+                //Width = Unit.Percentage(100),
             };
             CancelButton.Click += CancelButton_ClickCommand;
             CancelButton.Click += OnCancelButton_Click;

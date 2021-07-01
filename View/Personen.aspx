@@ -11,12 +11,14 @@
     </div>
     <br />
     <br />
-    <div class="btn-group btn-group-toggle">
-        <asp:Button runat="server" ID="btnTrainer" OnClick="OnTypeSelected" type="button" class="btn btn-primary" Text="Trainer" CommandArgument="Trainer"></asp:Button>
-        <asp:Button runat="server" ID="btnPhysio" OnClick="OnTypeSelected" class="btn btn-primary" Text="Physio" CommandArgument="Physio"></asp:Button>
-        <asp:Button runat="server" ID="btnFussballspieler" OnClick="OnTypeSelected" class="btn btn-primary" Text="Fussballspieler" CommandArgument="Fussballspieler"></asp:Button>
-        <asp:Button runat="server" ID="btnHandballspieler" OnClick="OnTypeSelected" class="btn btn-primary" Text="Handballspieler" CommandArgument="Handballspieler"></asp:Button>
-        <asp:Button runat="server" ID="btnTennisspieler" OnClick="OnTypeSelected" class="btn btn-primary" Text="Tennisspieler" CommandArgument="Tennisspieler"></asp:Button>
+    <div class="wrapper text-center">
+        <div class="btn-group btn-group-toggle">
+            <asp:Button runat="server" ID="btnTrainer" OnClick="OnTypeSelected" type="button" class="btn btn-dark" Text="Trainer" CommandArgument="Trainer"></asp:Button>
+            <asp:Button runat="server" ID="btnPhysio" OnClick="OnTypeSelected" class="btn btn-dark" Text="Physio" CommandArgument="Physio"></asp:Button>
+            <asp:Button runat="server" ID="btnFussballspieler" OnClick="OnTypeSelected" class="btn btn-dark" Text="Fussballspieler" CommandArgument="Fussballspieler"></asp:Button>
+            <asp:Button runat="server" ID="btnHandballspieler" OnClick="OnTypeSelected" class="btn btn-dark" Text="Handballspieler" CommandArgument="Handballspieler"></asp:Button>
+            <asp:Button runat="server" ID="btnTennisspieler" OnClick="OnTypeSelected" class="btn btn-dark" Text="Tennisspieler" CommandArgument="Tennisspieler"></asp:Button>
+        </div>
     </div>
     <br />
     <br />
