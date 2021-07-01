@@ -79,18 +79,17 @@ namespace Turnierverwaltung_final.View
         }
 
         private void OnHeaderButton_Click(object sender, CommandEventArgs e)
-        {
-            LinkButton curButton = sender as LinkButton;
-            var tmp = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
-            if (Controller.Teilnehmer.SequenceEqual(tmp))
+        {            
+            List<Teilnehmer> ListeSortiertAsc = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
+            if (Controller.Teilnehmer.SequenceEqual(ListeSortiertAsc))
             {
                 Controller.Teilnehmer = Controller.Teilnehmer.OrderByDescending(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
-                curButton.CssClass = "btn btn-secondary glyphicon glyphicon-chevron-up";
+                curTable.Sorted = Tuple.Create(curTable.FallbackType.GetProperty(e.CommandArgument.ToString()), SortDirection.Descending);
             }
             else
             {
-                Controller.Teilnehmer = tmp;
-                curButton.CssClass = "btn btn-secondary glyphicon glyphicon-chevron-down";
+                Controller.Teilnehmer = ListeSortiertAsc;
+                curTable.Sorted = Tuple.Create(curTable.FallbackType.GetProperty(e.CommandArgument.ToString()), SortDirection.Ascending);
             }
 
             curTable.DataSource = Controller.Teilnehmer;

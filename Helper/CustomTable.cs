@@ -46,6 +46,19 @@ namespace Turnierverwaltung_final.Helper
         public EventHandler SubmitButton_ClickCommand { get => _submitButton_ClickCommand; set => _submitButton_ClickCommand = value; }
         public EventHandler CancelButton_ClickCommand { get => _cancelButton_ClickCommand; set => _cancelButton_ClickCommand = value; }
         public List<Tuple<string, string, string, Action<object, CommandEventArgs>>> AdditionalRowButtons { get => _additionalRowButtons; set => _additionalRowButtons = value; }
+        public Tuple<PropertyInfo, SortDirection> Sorted
+        {
+            get
+            {
+                if (ViewState["Sorted"] != null)
+                {
+                    return (Tuple<PropertyInfo, SortDirection>)ViewState["Sorted"];
+                }
+                return null;
+            }
+            set => ViewState["Sorted"] = value;
+        }
+
         #endregion
         #region Constructors        
         public CustomTable() : base()
@@ -106,9 +119,9 @@ namespace Turnierverwaltung_final.Helper
             for (int i = 0; i < DataSource.Count; i++)
             {
                 if (RowsInEdit != null && RowsInEdit.Contains(i))
-                    SetDataRowNew(DataSource[i], i + 1, true);
+                    SetDataRow(DataSource[i], i + 1, true);
                 else
-                    SetDataRowNew(DataSource[i], i + 1, false);
+                    SetDataRow(DataSource[i], i + 1, false);
             }
         }
         private void SetListDatatype()
@@ -138,11 +151,6 @@ namespace Turnierverwaltung_final.Helper
             }
         }
 
-        private void AddAdditionalRowButtons()
-        {
-
-        }
-
         private void SetDisplayFields()
         {
             DisplayFields.Clear();
@@ -167,9 +175,16 @@ namespace Turnierverwaltung_final.Helper
                 {
                     Text = (shownPropertyInfo.GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Displayname,
                     ID = $"btn{shownPropertyInfo.Name}",
-                    CssClass = "btn btn-secondary",
+                    CssClass = "btn btn-primary",
                     Width = Unit.Percentage(100),
                 };
+                if(Sorted != null && Sorted.Item1.Equals(shownPropertyInfo))
+                {
+                    if (Sorted.Item2 == SortDirection.Ascending)
+                        newBtn.CssClass = "btn btn-primary glyphicon glyphicon-chevron-down";
+                    else
+                        newBtn.CssClass = "btn btn-primary glyphicon glyphicon-chevron-up";
+                }
                 newBtn.Style.Add("text-align", "left");
                 newBtn.Style.Add("display", "block");
                 newBtn.Style.Add("margin", "auto");
@@ -181,7 +196,7 @@ namespace Turnierverwaltung_final.Helper
             Rows.Add(headerRow);
         }
 
-        private void SetDataRowNew(T member, int pos, bool editable)
+        private void SetDataRow(T member, int pos, bool editable)
         {
             TableRow tr = new TableRow();
             TableCell newCell;
@@ -373,11 +388,12 @@ namespace Turnierverwaltung_final.Helper
             {
                 Text = "Verwerfen",
                 Visible = true,
-                Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
+                //Enabled = RowsInEdit != null && RowsInEdit.Count != 0,
                 CssClass = "btn btn-danger glyphicon glyphicon-remove",
                 ID = "btnCancel",
                 //Width = Unit.Percentage(100),
             };
+            CancelButton.Attributes.Add("onClick", "return !this.disabled;");
             CancelButton.Click += CancelButton_ClickCommand;
             CancelButton.Click += OnCancelButton_Click;
             tc.Controls.Add(CancelButton);
