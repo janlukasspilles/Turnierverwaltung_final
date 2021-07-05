@@ -2,7 +2,7 @@
 
 namespace TVModelLib
 {
-    public class DisplayMetaInformation : Attribute
+    public class DisplayMetaInformation : Attribute 
     {
         #region Attributes
         private int _order;
