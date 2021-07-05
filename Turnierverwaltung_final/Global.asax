@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Turnierverwaltung_final.Global" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Turnierverwaltung.Global" Language="C#" %>

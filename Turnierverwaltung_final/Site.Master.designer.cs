@@ -7,7 +7,7 @@
 // </automatisch generiert>
 //------------------------------------------------------------------------------
 
-namespace Turnierverwaltung_final
+namespace Turnierverwaltung
 {
 
 

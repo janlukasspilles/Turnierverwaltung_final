@@ -6,8 +6,8 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
-using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Model.TurniereNS;
+using Turnierverwaltung.Helper;
+using Turnierverwaltung.Model.TurniereNS;
 // Es gibt eine Tabelle mit allen Mannschaften analog zur Personenansicht
 // Es gibt einen neuen Button "Spieler hinzufügen" in der Tabelle für jede Mannschaft
 // Wird dieser Button gedrückt öffnen sich zwei Felder
@@ -15,7 +15,7 @@ using Turnierverwaltung_final.Model.TurniereNS;
 // Feld2 zeigt alle Personen, die Mitglieder dieser Mannschaft werden können
 // Spieler in den jeweiligen Feldern lassen sich auswählen
 // Zwei Buttons über die Spieler hinzugefügt oder entfernt werden können
-namespace Turnierverwaltung_final.View
+namespace Turnierverwaltung.View
 {
     public partial class Turniere : Page
     {
@@ -53,7 +53,7 @@ namespace Turnierverwaltung_final.View
         {
             tbl_turniere.Rows.Clear();
 
-            Type ListDataType = Controller.Turniere.Count > 0 ? GetListDatatype(Controller.Turniere) : Type.GetType($"Turnierverwaltung_final.Model.Turniere.Turnier");
+            Type ListDataType = Controller.Turniere.Count > 0 ? GetListDatatype(Controller.Turniere) : Type.GetType($"Turnierverwaltung.Model.Turniere.Turnier");
             List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
 
             //Headerrow
@@ -334,7 +334,7 @@ namespace Turnierverwaltung_final.View
         }
         private void OnAddButton_Click(object sender, EventArgs e)
         {
-            Type listDataType = Controller.Turniere.Count > 0 ? GetListDatatype(Controller.Turniere) : Type.GetType($"Turnierverwaltung_final.Model.TurniereNS.Turnier");
+            Type listDataType = Controller.Turniere.Count > 0 ? GetListDatatype(Controller.Turniere) : Type.GetType($"Turnierverwaltung.Model.TurniereNS.Turnier");
             Turnier t = (Turnier)Activator.CreateInstance(listDataType);
             Controller.NeuesTurnier = t;
             EditableRow = tbl_turniere.Rows.Count - 1;

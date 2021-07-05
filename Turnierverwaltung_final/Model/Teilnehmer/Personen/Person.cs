@@ -1,8 +1,8 @@
 ﻿using System;
 using Turnierverwaltung.Model.TeilnehmerNS;
-using Turnierverwaltung_final.Helper;
+using Turnierverwaltung.Helper;
 
-namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
+namespace Turnierverwaltung.Model.TeilnehmerNS.Personen
 {
     [Serializable]
     public abstract class Person : Teilnehmer

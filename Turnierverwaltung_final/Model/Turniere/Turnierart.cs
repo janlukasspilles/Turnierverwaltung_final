@@ -1,9 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Diagnostics;
-using Turnierverwaltung_final.Helper;
+using Turnierverwaltung.Helper;
 
-namespace Turnierverwaltung_final.Model.TurniereNS
+namespace Turnierverwaltung.Model.TurniereNS
 {
     public class Turnierart
     {

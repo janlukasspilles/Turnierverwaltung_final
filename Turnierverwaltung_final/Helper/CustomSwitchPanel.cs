@@ -6,7 +6,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.Model.TeilnehmerNS;
 
-namespace Turnierverwaltung_final.Helper
+namespace Turnierverwaltung.Helper
 {
     public class CustomSwitchPanel : Panel
     {

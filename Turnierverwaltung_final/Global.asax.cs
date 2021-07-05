@@ -7,9 +7,9 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using Turnierverwaltung.ControllerNS;
-using Turnierverwaltung_final.Helper;
+using Turnierverwaltung.Helper;
 
-namespace Turnierverwaltung_final
+namespace Turnierverwaltung
 {
     public class Global : HttpApplication
     {
@@ -23,7 +23,7 @@ namespace Turnierverwaltung_final
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 
-            DatabaseCreator.GenerateDatabase(true);
+            DatabaseCreator.GenerateDatabase();
 
             Controller = new Controller();
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Turnierverwaltung_final.Helper
+namespace Turnierverwaltung.Helper
 {
     public class DisplayMetaInformation : Attribute
     {

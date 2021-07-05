@@ -4,7 +4,7 @@
 //Datum:        19.11.2020
 //Beschreibung: Kümmert sich um den Programmablauf
 using System;
-using Turnierverwaltung_final.Helper;
+using Turnierverwaltung.Helper;
 
 namespace Turnierverwaltung.Model.TeilnehmerNS
 {

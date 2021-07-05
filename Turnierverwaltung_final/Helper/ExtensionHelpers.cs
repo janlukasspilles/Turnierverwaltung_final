@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 
-namespace Turnierverwaltung_final.Helper
+namespace Turnierverwaltung.Helper
 {
     public static class ExtensionHelpers
     {

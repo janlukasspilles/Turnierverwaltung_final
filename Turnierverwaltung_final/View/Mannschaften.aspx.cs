@@ -7,10 +7,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung.Model.TeilnehmerNS;
-using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
+using Turnierverwaltung.Helper;
+using Turnierverwaltung.Model.TeilnehmerNS.Personen;
 
-namespace Turnierverwaltung_final.View
+namespace Turnierverwaltung.View
 {
     public partial class Mannschaften : Page
     {

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Optimization;
 using System.Web.UI;
 
-namespace Turnierverwaltung_final
+namespace Turnierverwaltung
 {
     public class BundleConfig
     {

@@ -7,7 +7,7 @@
 // </automatisch generiert>
 //------------------------------------------------------------------------------
 
-namespace Turnierverwaltung_final.View
+namespace Turnierverwaltung.View
 {
 
 

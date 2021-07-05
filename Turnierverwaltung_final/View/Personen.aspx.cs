@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
-using Turnierverwaltung_final.Helper;
+using Turnierverwaltung.Helper;
 using System.Linq;
 using System.Web.UI;
 using System.Collections.Generic;
 using System.Reflection;
 using Turnierverwaltung.Model.TeilnehmerNS;
 
-namespace Turnierverwaltung_final.View
+namespace Turnierverwaltung.View
 {
     public partial class Personen : Page
     {
@@ -200,7 +200,7 @@ namespace Turnierverwaltung_final.View
                     Controller.GetAlleTennisspieler();
                     break;
             }
-            ShownType = Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.{(sender as Button).CommandArgument}");
+            ShownType = Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.{(sender as Button).CommandArgument}");
             ResetButtons();
             (sender as Button).CssClass = "btn btn-warning";
             BuildTable();

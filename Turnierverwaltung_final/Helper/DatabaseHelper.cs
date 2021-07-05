@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Turnierverwaltung_final.Helper
+namespace Turnierverwaltung.Helper
 {
     public static class DatabaseHelper
     {
@@ -89,15 +89,15 @@ namespace Turnierverwaltung_final.Helper
             switch (prof)
             {
                 case "Trainer":
-                    return Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.Trainer");
+                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Trainer");
                 case "Physio":
-                    return Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.Physio");
+                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Physio");
                 case "Fussballspieler":
-                    return Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.Fussballspieler");
+                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Fussballspieler");
                 case "Handballspieler":
-                    return Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.Handballspieler");
+                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Handballspieler");
                 case "Tennisspieler":
-                    return Type.GetType($"Turnierverwaltung_final.Model.TeilnehmerNS.Personen.Tennisspieler");
+                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Tennisspieler");
                 default: throw new Exception("Invalid Type");
             }
         }

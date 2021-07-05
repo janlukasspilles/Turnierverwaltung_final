@@ -4,10 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Turnierverwaltung.Model.TeilnehmerNS;
-using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Model;
-using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
-using Turnierverwaltung_final.Model.TurniereNS;
+using Turnierverwaltung.Helper;
+using Turnierverwaltung.Model;
+using Turnierverwaltung.Model.TeilnehmerNS.Personen;
+using Turnierverwaltung.Model.TurniereNS;
 
 namespace Turnierverwaltung.ControllerNS
 {

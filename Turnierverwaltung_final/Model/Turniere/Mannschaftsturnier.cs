@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using Turnierverwaltung.Model.TeilnehmerNS;
 
-namespace Turnierverwaltung_final.Model.TurniereNS
+namespace Turnierverwaltung.Model.TurniereNS
 {
     public class Mannschaftsturnier : Turnier
     {

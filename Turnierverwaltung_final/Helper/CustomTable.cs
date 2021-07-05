@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Turnierverwaltung_final.Model;
+using Turnierverwaltung.Model;
 
-namespace Turnierverwaltung_final.Helper
+namespace Turnierverwaltung.Helper
 {
     public class CustomTable<T> : Table
     {

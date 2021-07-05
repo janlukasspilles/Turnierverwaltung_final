@@ -3,11 +3,11 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace Turnierverwaltung_final.Helper
+namespace Turnierverwaltung.Helper
 {
     public static class DatabaseCreator
     {
-        public static void GenerateDatabase(bool newStructure)
+        public static void GenerateDatabase()
         {
             using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {

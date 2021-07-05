@@ -4,7 +4,7 @@ using System.Web;
 using System.Web.Routing;
 using Microsoft.AspNet.FriendlyUrls;
 
-namespace Turnierverwaltung_final
+namespace Turnierverwaltung
 {
     public static class RouteConfig
     {

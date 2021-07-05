@@ -1,9 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Diagnostics;
-using Turnierverwaltung_final.Helper;
+using Turnierverwaltung.Helper;
 
-namespace Turnierverwaltung_final.Model.TeilnehmerNS.Personen
+namespace Turnierverwaltung.Model.TeilnehmerNS.Personen
 {
     [Serializable]
     public class Tennisspieler : Person

@@ -2,9 +2,9 @@
 using System;
 using System.Diagnostics;
 using Turnierverwaltung.Model.TeilnehmerNS;
-using Turnierverwaltung_final.Helper;
+using Turnierverwaltung.Helper;
 
-namespace Turnierverwaltung_final.Model.TurniereNS
+namespace Turnierverwaltung.Model.TurniereNS
 {
     public class Spiel
     {

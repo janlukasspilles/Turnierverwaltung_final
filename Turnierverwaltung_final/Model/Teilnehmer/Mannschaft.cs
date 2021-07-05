@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Turnierverwaltung_final.Helper;
-using Turnierverwaltung_final.Model.TeilnehmerNS.Personen;
+using Turnierverwaltung.Helper;
+using Turnierverwaltung.Model.TeilnehmerNS.Personen;
 
 namespace Turnierverwaltung.Model.TeilnehmerNS
 {

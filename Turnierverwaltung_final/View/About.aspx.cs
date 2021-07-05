@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace Turnierverwaltung_final.View
+namespace Turnierverwaltung.View
 {
     public partial class About : Page
     {
