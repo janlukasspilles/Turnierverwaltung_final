@@ -3,11 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Turnierverwaltung.Model.TeilnehmerNS;
-using Turnierverwaltung.Helper;
-using Turnierverwaltung.Model;
-using Turnierverwaltung.Model.TeilnehmerNS.Personen;
-using Turnierverwaltung.Model.TurniereNS;
+using TVModeLib.Model.TeilnehmerNS;
+using TVModeLib.Model;
+using TVModeLib.Model.TeilnehmerNS.Personen;
+using TVModeLib.Model.TurniereNS;
+using TVModelLib;
 
 namespace Turnierverwaltung.ControllerNS
 {
@@ -170,7 +170,6 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
-
         public void GetAlleTurnierArten()
         {
             Turnierarten.Clear();
@@ -452,7 +451,6 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
-
         public IList GetDomainList(DdlList listname)
         {
             switch (listname)
