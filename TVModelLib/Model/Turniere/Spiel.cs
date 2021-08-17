@@ -1,12 +1,14 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Diagnostics;
-using TVModeLib.Model.TeilnehmerNS;
+using TVModelLib.Model.TeilnehmerNS;
 using TVModelLib;
 using TVModelLib.Database;
+using TVModelLib.Model.TeilnehmerNS;
 
-namespace TVModeLib.Model.TurniereNS
+namespace TVModelLib.Model.TurniereNS
 {
+    [Serializable]
     public class Spiel
     {
         #region Attributes
@@ -24,9 +26,9 @@ namespace TVModeLib.Model.TurniereNS
         public int PunkteTeilnehmer2 { get => _punkteTeilnehmer2; set => _punkteTeilnehmer2 = value; }
         public long Id { get => _id; set => _id = value; }
         public int TurnierId { get => _turnierId; set => _turnierId = value; }
-        [DisplayMetaInformation("Teilnehmer 1", 22, false, ControlType.ctEditText)]
+        [DisplayMetaInformation("Teilnehmer 1", 22, true, ControlType.ctDomain, DomainName = "TURNIERTEILNEHMER")]
         public Teilnehmer Teilnehmer1 { get => _teilnehmer1; set => _teilnehmer1 = value; }
-        [DisplayMetaInformation("Teilnehmer 2", 24, false, ControlType.ctEditText)]
+        [DisplayMetaInformation("Teilnehmer 2", 24, true, ControlType.ctDomain, DomainName = "TURNIERTEILNEHMER")]
         public Teilnehmer Teilnehmer2 { get => _teilnehmer2; set => _teilnehmer2 = value; }
         #endregion
         #region Constructors
@@ -34,11 +36,60 @@ namespace TVModeLib.Model.TurniereNS
         {
 
         }
+        public Spiel(int turnierId)
+        {
+            TurnierId = turnierId;
+        }
         #endregion
         #region Methods
-        public void Speichern()
+        public void Speichern(string turnierart)
         {
-
+            string sql = "";
+            switch (turnierart)
+            {
+                case "Mannschaftsturnier":
+                    using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+                    {
+                        try
+                        {
+                            con.Open();
+                            sql = $"UPDATE MANNSCHAFTSSPIEL SET MANNSCHAFT1_ID = '{Teilnehmer1.Id}', MANNSCHAFT2_ID = '{Teilnehmer2.Id}', PUNKTE_MANNSCHAFT1 = '{PunkteTeilnehmer1}', PUNKTE_MANNSCHAFT2 = '{PunkteTeilnehmer2}' WHERE ID = '{Id}'";
+                            using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch (MySqlException e)
+                        {
+#if DEBUG
+                            Debug.WriteLine(e.Message);
+#endif
+                            throw e;
+                        }
+                    }
+                    break;
+                case "Einzelturnier":
+                    using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+                    {
+                        try
+                        {
+                            con.Open();
+                            sql = $"UPDATE EINZELSPIEL SET PERSON1_ID = '{Teilnehmer1.Id}', PERSON2_ID = '{Teilnehmer2.Id}', PUNKTE_PERSON1 = '{PunkteTeilnehmer1}', PUNKTE_PERSON2 = '{PunkteTeilnehmer2}' WHERE ID = '{Id}'";
+                            using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch (MySqlException e)
+                        {
+#if DEBUG
+                            Debug.WriteLine(e.Message);
+#endif
+                            throw e;
+                        }
+                    }
+                    break;
+            }
         }
         public void Neuanlage(string turnierart)
         {
@@ -92,7 +143,7 @@ namespace TVModeLib.Model.TurniereNS
 
         public void Loeschen()
         {
-            string turnierart = DatabaseHelper.ReturnSingleValue($"SELECT * FROM TURNIER T JOIN TURNIERART TA ON TA.ID = T.TURNIERART_ID WHERE T.ID = '{Id}'").ToString();
+            string turnierart = DatabaseHelper.ReturnSingleValue("Bezeichnung", "turnierart", TurnierId).ToString();
             switch (turnierart)
             {
                 case "Mannschaftsturnier":
@@ -163,7 +214,7 @@ namespace TVModeLib.Model.TurniereNS
                                 {
                                     case "Mannschaftsspiel":
                                         PunkteTeilnehmer1 = reader.GetInt32("PUNKTE_MANNSCHAFT1");
-                                        PunkteTeilnehmer2 = reader.GetInt32("PUNKTE_MANNSCHAFT1");
+                                        PunkteTeilnehmer2 = reader.GetInt32("PUNKTE_MANNSCHAFT2");
                                         Teilnehmer1 = new Mannschaft();
                                         Teilnehmer1.SelektionId(reader.GetInt64("MANNSCHAFT1_ID"));
                                         Teilnehmer2 = new Mannschaft();

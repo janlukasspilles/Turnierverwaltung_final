@@ -1,4 +1,4 @@
-﻿namespace TVModeLib.Model.TurniereNS
+﻿namespace TVModelLib.Model.TurniereNS
 {
     public class Einzelturnier : Turnier
     {

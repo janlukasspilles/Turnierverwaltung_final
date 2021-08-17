@@ -54,6 +54,8 @@
                         <li><a runat="server" href="~/View/Pages/Mannschaften">Mannschaften</a></li>
                         <li><a runat="server" href="~/View/Pages/Turniere">Turniere</a></li>
                         <li><a runat="server" href="~/View/Pages/Personen">Personen</a></li>
+                        <li><a runat="server" href="~/View/Pages/Spieleverwaltung">Spieleverwaltung</a></li>
+                        <li><a runat="server" href="~/View/Pages/Ranking">Ranking</a></li>
                         <li><a runat="server" href="~/View/Pages/Einstellungen">Einstellungen</a></li>
                     </ul>
                 </div>

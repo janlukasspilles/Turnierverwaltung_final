@@ -154,6 +154,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="View\Pages\About.aspx" />
+    <Content Include="View\Pages\Spieleverwaltung.aspx" />
+    <Content Include="View\Pages\Ranking.aspx" />
     <Content Include="View\Pages\Turniere.aspx" />
     <Content Include="View\Pages\Mannschaften.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -220,6 +222,20 @@
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="View\Pages\Spieleverwaltung.aspx.cs">
+      <DependentUpon>Spieleverwaltung.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="View\Pages\Spieleverwaltung.aspx.designer.cs">
+      <DependentUpon>Spieleverwaltung.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\Ranking.aspx.cs">
+      <DependentUpon>Ranking.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="View\Pages\Ranking.aspx.designer.cs">
+      <DependentUpon>Ranking.aspx</DependentUpon>
+    </Compile>
     <Compile Include="View\Pages\Turniere.aspx.cs">
       <DependentUpon>Turniere.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

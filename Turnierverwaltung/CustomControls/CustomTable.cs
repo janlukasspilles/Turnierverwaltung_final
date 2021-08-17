@@ -5,8 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using TVModeLib.Model;
+using TVModelLib.Model;
 using TVModelLib;
+using TVModelLib.Extensions;
 
 namespace Turnierverwaltung.CustomControls
 {
@@ -67,37 +68,20 @@ namespace Turnierverwaltung.CustomControls
             IgnoreFields = new string[] { };
             DisplayFields = new List<PropertyInfo>();
             DomainDictionary = new Dictionary<string, IList>();
-            List<Sportart> tmp = new List<Sportart>();
-            Sportart sp = new Sportart();
-            sp.SelektionId(1);
-            tmp.Add(sp);
-            sp = new Sportart();
-            sp.SelektionId(2);
-            tmp.Add(sp);
-            sp = new Sportart();
-            sp.SelektionId(3);
-            tmp.Add(sp);
-            DomainDictionary.Add("SPORTART", tmp.ToList());
+            DomainDictionary.Add("SPORTART", Global.Controller.GetAlleSportarten());
+            DomainDictionary.Add("TURNIERART", Global.Controller.GetAlleTurnierarten());
             CssClass = "table table-bordered";
         }
-        public CustomTable(Type fallbackType) : base()
+        public CustomTable(Type fallbackType, string id) : base()
         {
             IgnoreFields = new string[] { };
             DisplayFields = new List<PropertyInfo>();
-            DomainDictionary = new Dictionary<string, IList>();
-            List<Sportart> tmp = new List<Sportart>();
-            Sportart sp = new Sportart();
-            sp.SelektionId(1);
-            tmp.Add(sp);
-            sp = new Sportart();
-            sp.SelektionId(2);
-            tmp.Add(sp);
-            sp = new Sportart();
-            sp.SelektionId(3);
-            tmp.Add(sp);
-            DomainDictionary.Add("SPORTART", tmp.ToList());
+            DomainDictionary = new Dictionary<string, IList>();                    
+            DomainDictionary.Add("SPORTART", Global.Controller.GetAlleSportarten());
+            DomainDictionary.Add("TURNIERART", Global.Controller.GetAlleTurnierarten());
             CssClass = "table table-bordered";
             FallbackType = fallbackType;
+            ID = id;
         }
         #endregion
         #region Methods
@@ -228,17 +212,26 @@ namespace Turnierverwaltung.CustomControls
                     case ControlType.ctDomain:
                         if (DomainDictionary.TryGetValue(dmi.DomainName, out IList domainList))
                         {
-                            if (editable && dmi.Editable || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != domainList[Convert.ToInt32(curValueOfProperty) - 1].ToString()))
+                            int posInDomainList = 0;
+                            if (!curValueOfProperty.IsNumericType())
+                                posInDomainList = domainList.IndexOf(curValueOfProperty);
+                            else
+                                posInDomainList = Convert.ToInt32(curValueOfProperty?.ToString()) - 1;
+                            if (posInDomainList == -1)
+                                posInDomainList++;
+
+                            if (editable && dmi.Editable || (Context.Request.Form.AllKeys.Contains("ctl00$MainContent$" + controlId) && Context.Request.Form["ctl00$MainContent$" + controlId].ToString() != domainList[posInDomainList].ToString()))
                             {
                                 newControl = new DropDownList { ID = controlId, CssClass = "form-control" };
                                 (newControl as DropDownList).DataSource = domainList;
                                 (newControl as DropDownList).DataBind();
-                                (newControl as DropDownList).SelectedIndex = Convert.ToInt32(curValueOfProperty?.ToString()) - 1;
+                                
+                                (newControl as DropDownList).SelectedIndex = posInDomainList;
                             }
                             else
                             {
                                 newControl = new Label() { ID = controlId };
-                                (newControl as Label).Text = domainList[Convert.ToInt32(curValueOfProperty?.ToString()) - 1].ToString();
+                                (newControl as Label).Text = domainList[posInDomainList].ToString();
                             }
                         }
                         else

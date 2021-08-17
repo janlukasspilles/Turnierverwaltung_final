@@ -31,7 +31,7 @@ namespace TVModelLib.Database
 
         public static object ReturnSingleValue(string sql)
         {
-            using (MySqlConnection con = new MySqlConnection())
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
             {
                 try
                 {
@@ -89,15 +89,15 @@ namespace TVModelLib.Database
             switch (prof)
             {
                 case "Trainer":
-                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Trainer");
+                    return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Trainer");
                 case "Physio":
-                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Physio");
+                    return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Physio");
                 case "Fussballspieler":
-                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Fussballspieler");
+                    return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Fussballspieler");
                 case "Handballspieler":
-                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Handballspieler");
+                    return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Handballspieler");
                 case "Tennisspieler":
-                    return Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Personen.Tennisspieler");
+                    return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Tennisspieler");
                 default: throw new Exception("Invalid Type");
             }
         }

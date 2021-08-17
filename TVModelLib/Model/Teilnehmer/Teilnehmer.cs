@@ -6,7 +6,7 @@
 using System;
 using TVModelLib;
 
-namespace TVModeLib.Model.TeilnehmerNS
+namespace TVModelLib.Model.TeilnehmerNS
 {
     [Serializable]
     public abstract class Teilnehmer : IEquatable<Teilnehmer>

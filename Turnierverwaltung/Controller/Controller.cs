@@ -1,13 +1,12 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using TVModeLib.Model.TeilnehmerNS;
-using TVModeLib.Model;
-using TVModeLib.Model.TeilnehmerNS.Personen;
-using TVModeLib.Model.TurniereNS;
+using TVModelLib.Model;
 using TVModelLib;
+using TVModelLib.Model.TurniereNS;
+using TVModelLib.Model.TeilnehmerNS;
+using TVModelLib.Model.TeilnehmerNS.Personen;
 
 namespace Turnierverwaltung.ControllerNS
 {
@@ -15,34 +14,90 @@ namespace Turnierverwaltung.ControllerNS
     {
         #region Attributes
         private List<Teilnehmer> _teilnehmer;
-        private Teilnehmer _neuerTeilnehmer;
-        private List<Sportart> _sportarten;
-        private List<Person> _moeglicheMitglieder;
-        private List<Turnierart> _turnierarten;
         private List<Turnier> _turniere;
-        private Turnier _neuesTurnier;
         #endregion
         #region Properties
         public List<Teilnehmer> Teilnehmer { get => _teilnehmer; set => _teilnehmer = value; }
-        public Teilnehmer NeuerTeilnehmer { get => _neuerTeilnehmer; set => _neuerTeilnehmer = value; }
-        public List<Sportart> Sportarten { get => _sportarten; set => _sportarten = value; }
-        public List<Turnierart> Turnierarten { get => _turnierarten; set => _turnierarten = value; }
         public List<Turnier> Turniere { get => _turniere; set => _turniere = value; }
-        public Turnier NeuesTurnier { get => _neuesTurnier; set => _neuesTurnier = value; }
-        public List<Person> MoeglicheMitglieder { get => _moeglicheMitglieder; set => _moeglicheMitglieder = value; }
         #endregion
         #region Constructors
         public Controller()
         {
             Teilnehmer = new List<Teilnehmer>();
-            Sportarten = new List<Sportart>();
-            Turnierarten = new List<Turnierart>();
             Turniere = new List<Turnier>();
-            GetAlleSportenarten();
-            GetAlleTurnierArten();
         }
         #endregion
         #region Methods     
+
+        public void GetRanking(int turnierId)
+        {
+
+        }
+
+        public List<Turnierart> GetAlleTurnierarten()
+        {
+            string sql = "SELECT ID FROM TURNIERART";
+            List<Turnierart> result = new List<Turnierart>();
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Turnierart t = new Turnierart();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    result.Add(t);
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return result;
+        }
+
+        public List<Sportart> GetAlleSportarten()
+        {
+            string sql = "SELECT ID FROM SPORTART";
+            List<Sportart> result = new List<Sportart>();
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Sportart s = new Sportart();
+                    s.SelektionId(reader.GetInt64("ID"));
+                    result.Add(s);
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return result;
+        }
+
         public void GetAlleTurniere()
         {
             Turniere.Clear();
@@ -75,6 +130,124 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
+        public List<Teilnehmer> GetMoeglicheTurnierTeilnehmerEinzel(long turnierId)
+        {
+            List<Teilnehmer> result = new List<Teilnehmer>();
+            Person p = null;
+            string sql = $@"SELECT P.ID,
+                        CASE 
+                        WHEN((SELECT 1 FROM TRAINER T WHERE T.PERSON_ID = P.iD) IS NOT NULL) THEN 'Trainer'
+                        WHEN((SELECT 1 FROM PHYSIO PH WHERE PH.PERSON_ID = P.iD) IS NOT NULL) THEN 'Physio'
+                        WHEN((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Fussballspieler' 
+                        WHEN((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Handballspieler' 
+                        WHEN((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Tennisspieler' 
+                        ELSE 'Der Hund hat keine Detailtabelle' 
+                        END AS Profession 
+                        FROM PERSON P
+                        LEFT OUTER JOIN TURNIER_PERSON TP 
+                        ON P.ID = TP.PERSON_ID
+                        WHERE TP.TURNIER_ID IS NULL
+                        OR TP.TURNIER_ID <> {turnierId}";
+
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    switch (reader.GetString("Profession"))
+                    {
+                        case "Trainer":
+                            p = new Trainer();
+                            break;
+                        case "Physio":
+                            p = new Physio();
+                            break;
+                        case "Fussballspieler":
+                            p = new Fussballspieler();
+                            break;
+                        case "Handballspieler":
+                            p = new Handballspieler();
+                            break;
+                        case "Tennisspieler":
+                            p = new Tennisspieler();
+                            break;
+                    }
+                    p.SelektionId(reader.GetInt64("ID"));
+                    result.Add(p);
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return result;
+        }
+        public List<Teilnehmer> GetMoeglicheTurnierteilnehmer(long turnierId, int turnierart)
+        {
+            switch (turnierart)
+            {
+                case 1:
+                    return GetMoeglicheTurnierTeilnehmermannschaft(turnierId);
+                case 2:
+                    return GetMoeglicheTurnierTeilnehmerEinzel(turnierId);
+                default: throw new Exception($"Nicht gemappte oder ungültige Turnierart: {turnierart}");
+            }
+        }
+
+        public List<Teilnehmer> GetMoeglicheTurnierTeilnehmermannschaft(long turnierId)
+        {
+            List<Teilnehmer> result = new List<Teilnehmer>();
+            string sql = $@"SELECT * 
+                            FROM MANNSCHAFT M
+                            WHERE NOT EXISTS 
+                                (SELECT * 
+                                FROM TURNIER_MANNSCHAFT TM 
+                                WHERE TM.MANNSCHAFT_ID = M.ID 
+                                AND TM.TURNIER_ID = {turnierId})";
+
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Mannschaft m = new Mannschaft();
+                    m.SelektionId(reader.GetInt64("ID"));
+                    result.Add(m);
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return result;
+        }
+
         public List<Teilnehmer> GetMoeglicheMitglieder(long mannschaftId)
         {
             List<Teilnehmer> result = new List<Teilnehmer>();
@@ -139,67 +312,8 @@ namespace Turnierverwaltung.ControllerNS
             }
 
             return result;
-        }
-        public void GetAlleSportenarten()
-        {
-            Sportarten.Clear();
-            string sql = "SELECT ID FROM SPORTART";
-            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
-            try
-            {
-                con.Open();
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    Sportart s = new Sportart();
-                    s.SelektionId(reader.GetInt64("ID"));
-                    Sportarten.Add(s);
-                }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Debug.WriteLine(e.Message);
-#endif
-                throw e;
-            }
-            finally
-            {
-                con.Close();
-            }
-        }
-        public void GetAlleTurnierArten()
-        {
-            Turnierarten.Clear();
-            string sql = "SELECT ID FROM TURNIERART";
-            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
-            try
-            {
-                con.Open();
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                MySqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    Turnierart t = new Turnierart();
-                    t.SelektionId(reader.GetInt64("ID"));
-                    Turnierarten.Add(t);
-                }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Debug.WriteLine(e.Message);
-#endif
-                throw e;
-            }
-            finally
-            {
-                con.Close();
-            }
-        }
+        }        
+        
         public void GetAllePhysios()
         {
             Teilnehmer.Clear();
@@ -360,65 +474,7 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
-        public void GetAllePersonen()
-        {
-            Teilnehmer.Clear();
-            Person p = null;
-            string sql = "SELECT P.ID, " +
-                "case " +
-                "when((SELECT 1 FROM TRAINER T WHERE T.PERSON_ID = P.ID) IS NOT NULL) THEN 'Trainer' " +
-                "when((SELECT 1 FROM PHYSIO PH WHERE PH.PERSON_ID = P.ID) IS NOT NULL) THEN 'Physio' " +
-                "when((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Fussballspieler' " +
-                "when((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Handballspieler' " +
-                "when((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Tennisspieler' " +
-                "END AS Profession " +
-                "FROM PERSON P";
-
-            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
-            try
-            {
-                con.Open();
-
-                MySqlCommand cmd = new MySqlCommand(sql, con);
-                MySqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    switch (reader.GetString("Profession"))
-                    {
-                        case "Trainer":
-                            p = new Trainer();
-                            break;
-                        case "Physio":
-                            p = new Physio();
-                            break;
-                        case "Fussballspieler":
-                            p = new Fussballspieler();
-                            break;
-                        case "Handballspieler":
-                            p = new Handballspieler();
-                            break;
-                        case "Tennisspieler":
-                            p = new Tennisspieler();
-                            break;
-                    }
-                    p.SelektionId(reader.GetInt64("ID"));
-                    Teilnehmer.Add(p);
-                }
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                Debug.WriteLine(e.Message);
-#endif
-                throw e;
-            }
-            finally
-            {
-                con.Close();
-            }
-
-        }
+        
         public void GetAlleMannschaften()
         {
             Teilnehmer.Clear();
@@ -449,17 +505,6 @@ namespace Turnierverwaltung.ControllerNS
             finally
             {
                 con.Close();
-            }
-        }
-        public IList GetDomainList(DdlList listname)
-        {
-            switch (listname)
-            {
-                case DdlList.dlSportarten:
-                    return Sportarten;
-                case DdlList.dlTurnierarten:
-                    return Turnierarten;
-                default: return null;
             }
         }
         #endregion

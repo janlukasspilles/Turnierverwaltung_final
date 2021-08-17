@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using TVModelLib;
 
-namespace TVModeLib.Model.TeilnehmerNS.Personen
+namespace TVModelLib.Model.TeilnehmerNS.Personen
 {
     [Serializable]
     public class Fussballspieler : Person

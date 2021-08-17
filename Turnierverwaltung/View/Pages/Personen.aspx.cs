@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web.UI;
 using System.Collections.Generic;
 using System.Reflection;
-using TVModeLib.Model.TeilnehmerNS;
+using TVModelLib.Model.TeilnehmerNS;
 using TVModelLib.Extensions;
 using Turnierverwaltung.CustomControls;
 using TVModelLib;
@@ -66,7 +66,7 @@ namespace Turnierverwaltung.View.Pages
         {
             if (curTable == null)
             {
-                curTable = new CustomTable<Teilnehmer>(ShownType);
+                curTable = new CustomTable<Teilnehmer>(ShownType, "PersonenTable");
                 curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
                 curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
                 curTable.AddButton_ClickCommand += OnAddButton_Click;

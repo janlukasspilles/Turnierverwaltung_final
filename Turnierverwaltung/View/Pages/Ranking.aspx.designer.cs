@@ -11,16 +11,25 @@ namespace Turnierverwaltung.View.Pages
 {
 
 
-    public partial class Einstellungen
+    public partial class Ranking
     {
 
         /// <summary>
-        /// gView-Steuerelement
+        /// ddlTurnier-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gView;
+        protected global::System.Web.UI.WebControls.DropDownList ddlTurnier;
+
+        /// <summary>
+        /// tblRanking-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Table tblRanking;
     }
 }

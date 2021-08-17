@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
 using Turnierverwaltung.CustomControls;
-using TVModeLib.Model.TeilnehmerNS;
+using TVModelLib.Model.TeilnehmerNS;
 using TVModelLib;
 using TVModelLib.Extensions;
 
@@ -55,7 +55,7 @@ namespace Turnierverwaltung.View.Pages
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-            _curTable = new CustomTable<Teilnehmer>(Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Mannschaft"));
+            _curTable = new CustomTable<Teilnehmer>(Type.GetType($"Turnierverwaltung.Model.TeilnehmerNS.Mannschaft"), "Mannschaftstable");
             _curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
             _curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
             _curTable.AddButton_ClickCommand += OnAddButton_Click;

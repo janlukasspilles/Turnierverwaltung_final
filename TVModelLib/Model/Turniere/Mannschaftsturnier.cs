@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TVModeLib.Model.TeilnehmerNS;
+using TVModelLib.Model.TeilnehmerNS;
 
-namespace TVModeLib.Model.TurniereNS
+namespace TVModelLib.Model.TurniereNS
 {
     public class Mannschaftsturnier : Turnier
     {

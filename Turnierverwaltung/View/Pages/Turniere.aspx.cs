@@ -6,34 +6,54 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Turnierverwaltung.ControllerNS;
-using TVModeLib.Model.TurniereNS;
+using Turnierverwaltung.CustomControls;
+using TVModelLib.Model.TeilnehmerNS;
+using TVModelLib.Model.TurniereNS;
 using TVModelLib;
-// Es gibt eine Tabelle mit allen Mannschaften analog zur Personenansicht
-// Es gibt einen neuen Button "Spieler hinzufügen" in der Tabelle für jede Mannschaft
-// Wird dieser Button gedrückt öffnen sich zwei Felder
-// Feld1 sind die Mitglieder der entsprechenden Mannschaft
-// Feld2 zeigt alle Personen, die Mitglieder dieser Mannschaft werden können
-// Spieler in den jeweiligen Feldern lassen sich auswählen
-// Zwei Buttons über die Spieler hinzugefügt oder entfernt werden können
+using TVModelLib.Extensions;
+
 namespace Turnierverwaltung.View.Pages
 {
     public partial class Turniere : Page
     {
         #region Attributes
         private Controller _controller;
-        private readonly string[] _ignoreFields = { };
+        private CustomTable<Turnier> _turnierTable;
+        private CustomSwitchPanel _teilnehmerSwitchPanel;
         #endregion
         #region Properties
         public Controller Controller { get => _controller; set => _controller = value; }
-        public int EditableRow
+        public List<Teilnehmer> Teilnehmer
         {
             get
             {
-                if (ViewState["InEdit"] == null)
-                    return -1;
-                return (int)ViewState["InEdit"];
+                if (ViewState["Teilnehmer"] != null)
+                    return (List<Teilnehmer>)ViewState["Teilnehmer"];
+                return null;
             }
-            set => ViewState["InEdit"] = value;
+            set => ViewState["Teilnehmer"] = value;
+        }
+
+        public List<Teilnehmer> MoeglicheTeilnehmer
+        {
+            get
+            {
+                if (ViewState["MoeglicheTeilnehmer"] != null)
+                    return (List<Teilnehmer>)ViewState["MoeglicheTeilnehmer"];
+                return null;
+            }
+            set => ViewState["MoeglicheTeilnehmer"] = value;
+        }
+
+        public int MitgliederAnzeige
+        {
+            get
+            {
+                if (ViewState["MitgliederAnzeige"] == null)
+                    return -1;
+                return (int)ViewState["MitgliederAnzeige"];
+            }
+            set => ViewState["MitgliederAnzeige"] = value;
         }
         #endregion
         #region Constructors
@@ -46,415 +66,259 @@ namespace Turnierverwaltung.View.Pages
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-            Controller.GetAlleTurniere();
-            LoadTable();
-        }
-        private void LoadTable()
-        {
-            tbl_turniere.Rows.Clear();
+            _turnierTable = new CustomTable<Turnier>(Type.GetType($"TVModelLib.Model.Turniere.Turnier"), "TurnierTable");
+            _turnierTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
+            _turnierTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
+            _turnierTable.AddButton_ClickCommand += OnAddButton_Click;
+            _turnierTable.SubmitButton_ClickCommand += OnSubmitButton_Click;
+            _turnierTable.CancelButton_ClickCommand += OnCancelButton_Click;
+            _turnierTable.AdditionalRowButtons = GetAdditionalRowButtons();
+            if (!IsPostBack)
+                Controller.GetAlleTurniere();
+            _turnierTable.DataSource = Controller.Turniere;
+            _turnierTable.DataBind();
 
-            Type ListDataType = Controller.Turniere.Count > 0 ? GetListDatatype(Controller.Turniere) : Type.GetType($"Turnierverwaltung.Model.Turniere.Turnier");
-            List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
+            pnl_turniere.Controls.Add(_turnierTable);
 
-            //Headerrow
-            tbl_turniere.Rows.Add(GetHeaderRow(DisplayFields));
-
-            //Datarows
-            for (int memberNum = 0; memberNum < Controller.Turniere.Count; memberNum++)
+            if (MitgliederAnzeige != -1)
             {
-                tbl_turniere.Rows.Add(GetDataRow(Controller.Turniere[memberNum], DisplayFields, memberNum + 1, memberNum + 1 == EditableRow));
-            }
-            //Es wird ein neuer Teilnehmer hinzugefügt
-            if (Controller.NeuesTurnier != null)
-            {
-                tbl_turniere.Rows.Add(GetDataRow(Controller.NeuesTurnier, DisplayFields, Controller.Turniere.Count + 1, true));
-            }
-
-            //Footerrow
-            if (DisplayFields.Count > 0)
-                tbl_turniere.Rows.Add(GetFooterRow());
-
-            //Unterer Teil
-            if (EditableRow != -1)
-            {
+                _teilnehmerSwitchPanel = new CustomSwitchPanel
+                {
+                    HeadlineText = $"Teilnehmerliste für Turnier: {Controller.Turniere[MitgliederAnzeige]}",
+                    Ds1 = Teilnehmer,
+                    Ds2 = MoeglicheTeilnehmer
+                };
+                _teilnehmerSwitchPanel.LeftButton_ClickCommand += OnLeftButton_Click;
+                _teilnehmerSwitchPanel.RightButton_ClickCommand += OnRightButton_Click;
+                _teilnehmerSwitchPanel.CancelButton_ClickCommand += OnCancelMitgliederButton_Click;
+                _teilnehmerSwitchPanel.SubmitButton_ClickCommand += OnSubmitMitgliederButton_Click;
+                _teilnehmerSwitchPanel.DataBind();
+                pnl_teilnehmer.Controls.Add(_teilnehmerSwitchPanel);
             }
         }
-        private TableHeaderRow GetHeaderRow(List<PropertyInfo> displayFields)
+
+        private List<Tuple<string, string, string, Action<object, CommandEventArgs>>> GetAdditionalRowButtons()
         {
-            TableHeaderRow headerRow = new TableHeaderRow();
-            foreach (PropertyInfo shownPropertyInfo in displayFields)
+            return new List<Tuple<string, string, string, Action<object, CommandEventArgs>>>
             {
-                TableHeaderCell newHeaderCell = new TableHeaderCell();
-                Button newBtn = new Button
-                {
-                    Text = (shownPropertyInfo.GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Displayname,
-                    Width = Unit.Percentage(100),
-                    BorderStyle = BorderStyle.None,
-                    ID = $"btn{shownPropertyInfo.Name}"
-                };
-                newBtn.Style.Add("text-align", "left");
-                newBtn.CommandArgument = shownPropertyInfo.Name;
-                newBtn.Command += OnHeaderButton_Click;
-                newHeaderCell.Controls.Add(newBtn);
-                headerRow.Cells.Add(newHeaderCell);
-            }
-            return headerRow;
-        }
-        private TableRow GetDataRow<T>(T Member, List<PropertyInfo> displayFields, int pos, bool editable)
-        {
-            TableRow tr = new TableRow();
-            TableCell newCell = null;
-            for (int counter = 0; counter < displayFields.Count; counter++)
-            {
-                newCell = new TableCell() { ID = $"tblCell{counter}Row{pos}" };
-                Control newControl = null;
-                DisplayMetaInformation dmi = displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
-                if (!editable || !(displayFields[counter].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Editable)
-                {
-                    switch (dmi.ControlType)
-                    {
-                        case ControlType.ctEditText:
-                            newControl = new Label() { ID = $"con{counter}Row{pos}" };
-                            (newControl as Label).Text = Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "";
-                            break;
-                        case ControlType.ctDomain:
-                            newControl = new Label() { ID = $"con{counter}Row{pos}" };
-                            //Hack -> muss umgebaut werden, da Ergebnis von Reihenfolge der Selektion abhängt
-                            (newControl as Label).Text = Controller.GetDomainList(dmi.DomainList)[Convert.ToInt32(Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "") - 1].ToString();
-                            break;
-                        case ControlType.ctCheck:
-                            newControl = new CheckBox() { ID = $"con{counter}Row{pos}" };
-                            (newControl as CheckBox).Checked = (bool)Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null);
-                            (newControl as CheckBox).Enabled = false;
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (dmi.ControlType)
-                    {
-                        case ControlType.ctEditText:
-                            newControl = new TextBox() { ID = $"con{counter}Row{pos}", CssClass = "form-control" };
-                            (newControl as TextBox).Text = Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "";
-                            break;
-                        case ControlType.ctDomain:
-                            newControl = new DropDownList { ID = $"con{counter}Row{pos}", CssClass = "form-control" };
-                            (newControl as DropDownList).DataSource = Controller.GetDomainList(dmi.DomainList);
-                            (newControl as DropDownList).DataBind();
-                            //Hack -> muss umgebaut werden, da Ergebnis von Reihenfolge der Selektion abhängt
-                            (newControl as DropDownList).SelectedIndex = Convert.ToInt32(Member.GetType().GetProperty(displayFields[counter].Name).GetValue(Member, null)?.ToString() ?? "") - 1;
-                            break;
-                    }
-
-                }
-
-                newCell.Controls.Add(newControl);
-                tr.Cells.Add(newCell);
-            }
-            if (EditableRow == -1)
-            {
-                if (Member is Turnier)
-                {
-                    if (!(Member as Turnier).Abgeschlossen)
-                    {
-                        Button TurnierDurchfuehren = new Button
-                        {
-                            ID = $"btnDurchfuehren{pos}",
-                            Text = $"Turnier durchführen"
-                        };
-                        TurnierDurchfuehren.Command += OnTurnierDurchfuehren_Click;
-                        TurnierDurchfuehren.CommandArgument = pos.ToString();
-                        newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-                        newCell.Controls.Add(TurnierDurchfuehren);
-                        tr.Cells.Add(newCell);
-                    }
-                    else
-                    {
-                        Button ZeigeSpiele = new Button
-                        {
-                            ID = $"btnZeigeSpiele{pos}",
-                            Text = $"Zeige Spiele"
-                        };
-                        ZeigeSpiele.Command += OnZeigeSpiele_Click;
-                        ZeigeSpiele.CommandArgument = pos.ToString();
-                        newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-                        newCell.Controls.Add(ZeigeSpiele);
-                        tr.Cells.Add(newCell);
-                    }
-
-                    //Edit-Button
-                    newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-                    Button EditButton = new Button
-                    {
-                        ID = $"btnEdit{pos}",
-                        Text = "Editieren"
-                    };
-                    EditButton.Command += OnEditButton_Click;
-                    EditButton.CssClass = "btn btn-success";
-                    EditButton.CommandArgument = pos.ToString();
-                    newCell.Controls.Add(EditButton);
-                    tr.Cells.Add(newCell);
-                    //CheckBox
-                    newCell = new TableCell() { ID = $"tblCell{tr.Cells.Count}Row{pos}" };
-                    CheckBox SelectedCheckBox = new CheckBox() { ID = $"cbSelected{pos}" };
-                    newCell.Controls.Add(SelectedCheckBox);
-                    tr.Cells.Add(newCell);
-                }
-            }
-            return tr;
-        }
-        private TableFooterRow GetFooterRow()
-        {
-            TableFooterRow tr = new TableFooterRow();
-            TableCell tc = new TableCell();
-
-            if (EditableRow == -1)
-            {
-                tc = new TableCell();
-                //Delete Button
-                Button DeleteButton = new Button()
-                {
-                    Text = "Ausgewählte löschen",
-                    Visible = true,
-                    ID = "btnDelete",
-                    CssClass = "btn btn-secondary",
-                };
-                DeleteButton.Click += OnDeleteButton_Click;
-                tc.Controls.Add(DeleteButton);
-                tr.Cells.Add(tc);
-
-                tc = new TableCell();
-                //Add Button
-                Button AddButton = new Button()
-                {
-                    Text = "Hinzufügen",
-                    Visible = true,
-                    ID = "btnAddMannschaft",
-                    CssClass = "btn btn-secondary",
-                };
-                AddButton.Click += OnAddButton_Click;
-                tc.Controls.Add(AddButton);
-                tr.Cells.Add(tc);
-            }
-            else
-            {
-                //Submit Button
-                Button SubmitButton = new Button()
-                {
-                    Text = "Änderungen speichern",
-                    Visible = true,
-                    CssClass = "btn btn-secondary",
-                    ID = "btnAccept",
-                };
-                SubmitButton.Click += OnSubmitButton_Click;
-                tc.Controls.Add(SubmitButton);
-                tr.Cells.Add(tc);
-
-                tc = new TableCell();
-                //Cancel Button
-                Button CancelButton = new Button()
-                {
-                    Text = "Änderungen verwerfen",
-                    Visible = true,
-                    ID = "btnCancel",
-                    CssClass = "btn btn-secondary",
-                };
-                CancelButton.Click += OnCancelButton_Click;
-                tc.Controls.Add(CancelButton);
-                tr.Cells.Add(tc);
-            }
-            return tr;
+                Tuple.Create("btnZeigeTeilnehmer", "Zeige Teilnehmer", "btn btn-secondary", new Action<object, CommandEventArgs>((o, e) => OnZeigeTeilnehmer_Click(o, e)))
+            };
         }
 
-        private void OnEditButton_Click(object sender, CommandEventArgs e)
+        private void OnZeigeTeilnehmer_Click(object o, CommandEventArgs e)
         {
-            EditableRow = Convert.ToInt32(e.CommandArgument);
-            //Spieler hinzufügen
-            LoadTable();
+            MitgliederAnzeige = Convert.ToInt32(e.CommandArgument) - 1;
+            Teilnehmer = Controller.Turniere[MitgliederAnzeige].TurnierTeilnehmer;
+            MoeglicheTeilnehmer = Controller.GetMoeglicheTurnierteilnehmer(Controller.Turniere[MitgliederAnzeige].Id, Controller.Turniere[MitgliederAnzeige].Turnierart);
+            _teilnehmerSwitchPanel = new CustomSwitchPanel()
+            {
+                HeadlineText = $"Mitgliederliste für {Controller.Turniere[MitgliederAnzeige]}"
+            };
+            _teilnehmerSwitchPanel.Ds1 = Teilnehmer;
+            _teilnehmerSwitchPanel.Ds2 = MoeglicheTeilnehmer;
+            _teilnehmerSwitchPanel.LeftButton_ClickCommand += OnLeftButton_Click;
+            _teilnehmerSwitchPanel.RightButton_ClickCommand += OnRightButton_Click;
+            _teilnehmerSwitchPanel.CancelButton_ClickCommand += OnCancelMitgliederButton_Click;
+            _teilnehmerSwitchPanel.SubmitButton_ClickCommand += OnSubmitMitgliederButton_Click;
+            _teilnehmerSwitchPanel.DataBind();
+            pnl_teilnehmer.Controls.Clear();
+            pnl_teilnehmer.Controls.Add(_teilnehmerSwitchPanel);
+        }
+
+        private void OnSubmitMitgliederButton_Click(object sender, EventArgs e)
+        {
+            Controller.Turniere[MitgliederAnzeige].TurnierTeilnehmer = Teilnehmer;
+            Controller.Turniere[MitgliederAnzeige].Speichern();
+        }
+
+        private void OnCancelMitgliederButton_Click(object sender, EventArgs e)
+        {
+            Teilnehmer = (Controller.Turniere[MitgliederAnzeige] as Turnier).TurnierTeilnehmer;
+            MoeglicheTeilnehmer = Controller.GetMoeglicheMitglieder((Controller.Turniere[MitgliederAnzeige] as Turnier).Id);
+            ((ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe1")).DataSource = Teilnehmer;
+            ((ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe2")).DataSource = MoeglicheTeilnehmer;
+            ((ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe2")).DataBind();
+            ((ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe1")).DataBind();
+        }
+
+        private void OnRightButton_Click(object sender, EventArgs e)
+        {
+            //Entfernen
+            ListBox lbMoegliche = (ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe2");
+            ListBox lbTatsaechliche = (ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe1");
+            if (lbTatsaechliche.SelectedIndex != -1)
+                Teilnehmer.MoveTo(Teilnehmer[lbTatsaechliche.SelectedIndex], MoeglicheTeilnehmer);
+            lbMoegliche.DataBind();
+            lbTatsaechliche.DataBind();
+        }
+
+        private void OnLeftButton_Click(object sender, EventArgs e)
+        {
+            //Hinzufügen
+            ListBox lbMoegliche = (ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe2");
+            ListBox lbTatsaechliche = (ListBox)_teilnehmerSwitchPanel.FindControlRecursive("lbListe1");
+            if (lbMoegliche.SelectedIndex != -1)
+                MoeglicheTeilnehmer.MoveTo(MoeglicheTeilnehmer[lbMoegliche.SelectedIndex], Teilnehmer);
+
+            lbMoegliche.DataBind();
+            lbTatsaechliche.DataBind();
         }
         private void OnDeleteButton_Click(object sender, EventArgs e)
         {
-            foreach (TableRow tmp in tbl_turniere.Rows)
+            ResetSwitcher();
+            Queue<Turnier> deletequeue = new Queue<Turnier>();
+            foreach (TableRow tmp in _turnierTable.Rows)
             {
-                if (tmp.Cells[tmp.Cells.Count - 1].FindControl($"cbSelected{tbl_turniere.Rows.GetRowIndex(tmp)}") is CheckBox cb && cb.Checked)
+                if (!(tmp is TableHeaderRow) && !(tmp is TableFooterRow))
                 {
-                    Turnier t = Controller.Turniere[tbl_turniere.Rows.GetRowIndex(tmp) - 1];
-                    t.Loeschen();
-                    Controller.Turniere.Remove(t);
+                    if (tmp.Cells[tmp.Cells.Count - 1].FindControl($"cbSelected{_turnierTable.Rows.GetRowIndex(tmp)}") is CheckBox cb)
+                    {
+                        if (cb.Checked)
+                        {
+                            Turnier t = Controller.Turniere[_turnierTable.Rows.GetRowIndex(tmp) - 1];
+                            t.Loeschen();
+                            deletequeue.Enqueue(t);
+                        }
+                    }
                 }
             }
-            LoadTable();
+            foreach (Turnier t in deletequeue)
+            {
+                Controller.Turniere.Remove(t);
+            }
+            _turnierTable.DataSource = Controller.Turniere;
+            _turnierTable.DataBind();
         }
         private void OnCancelButton_Click(object sender, EventArgs e)
         {
-            //Wurde Hinzugefügt wird das hier Rückgängig gemacht
-            Controller.NeuerTeilnehmer = null;
-            //Es gibt keine Editrow mehr
-            EditableRow = -1;
-            LoadTable();
+            ResetSwitcher();
+            Controller.Turniere.RemoveAll(x => x.Id == 0);
+            _turnierTable.DataSource = Controller.Turniere;
         }
         private void OnSubmitButton_Click(object sender, EventArgs e)
         {
-            Type ListDataType = GetListDatatype(Controller.Turniere);
-            List<PropertyInfo> DisplayFields = GetDisplayFields(ListDataType);
-            Turnier t = Controller.NeuesTurnier ?? Controller.Turniere[EditableRow - 1];
-
-            for (int i = 0; i < DisplayFields.Count; i++)
+            ResetSwitcher();
+            Type ListDataType = _turnierTable.FallbackType ?? _turnierTable.ListDataType;
+            foreach (int row in _turnierTable.RowsInEdit)
             {
-                DisplayMetaInformation dmi = DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
-                if (dmi.Editable)
+                for (int i = 0; i < _turnierTable.DisplayFields.Count; i++)
                 {
-                    switch (dmi.ControlType)
+                    DisplayMetaInformation dmi = _turnierTable.DisplayFields[i].GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation;
+                    if (dmi.Editable)
                     {
-                        case ControlType.ctEditText:
-                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(t, Convert.ChangeType((tbl_turniere.Rows[EditableRow].Cells[i].Controls[0] as TextBox).Text, DisplayFields[i].PropertyType));
-                            break;
-                        case ControlType.ctDomain:
-                            int domainId = (tbl_turniere.Rows[EditableRow].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
-                            ListDataType.GetProperty(DisplayFields[i].Name).SetValue(t, Convert.ChangeType(domainId, DisplayFields[i].PropertyType));
-                            break;
+                        switch (dmi.ControlType)
+                        {
+                            case ControlType.ctEditText:
+                                if (_turnierTable.Rows[row + 1].Cells[i].Controls[0] is TextBox)
+                                {
+                                    string value = (_turnierTable.Rows[row + 1].Cells[i].Controls[0] as TextBox).Text;
+                                    ListDataType.GetProperty(_turnierTable.DisplayFields[i].Name).SetValue(Controller.Turniere[row], Convert.ChangeType(value, _turnierTable.DisplayFields[i].PropertyType));
+                                }
+                                break;
+                            case ControlType.ctDomain:
+                                if (_turnierTable.Rows[row + 1].Cells[i].Controls[0] is DropDownList)
+                                {
+                                    int domainId = (_turnierTable.Rows[row + 1].Cells[i].Controls[0] as DropDownList).SelectedIndex + 1;
+                                    ListDataType.GetProperty(_turnierTable.DisplayFields[i].Name).SetValue(Controller.Turniere[row], Convert.ChangeType(domainId, _turnierTable.DisplayFields[i].PropertyType));
+                                }
+                                break;
+                            case ControlType.ctDate:
+                                if (_turnierTable.Rows[row + 1].Cells[i].Controls[0] is TextBox)
+                                {
+                                    string value = (_turnierTable.Rows[row + 1].Cells[i].Controls[0] as TextBox).Text;
+                                    ListDataType.GetProperty(_turnierTable.DisplayFields[i].Name).SetValue(Controller.Turniere[row], Convert.ChangeType(value, _turnierTable.DisplayFields[i].PropertyType));
+                                }
+                                break;
+                        }
                     }
                 }
+                if (Controller.Turniere[row].Id == 0)
+                {
+                    Controller.Turniere[row].Neuanlage();
+                }
+                else
+                {
+                    Controller.Turniere[row].Speichern();
+                }
             }
-            //Insertlogik
-            if (Controller.NeuesTurnier != null)
-            {
-                t.Neuanlage();
-                Controller.Turniere.Add(t);
-                Controller.NeuesTurnier = null;
-            }
-            //Updatelogik
-            else
-            {
-                t.Speichern();
-            }
-
-            EditableRow = -1;
-            LoadTable();
+            _turnierTable.DataSource = Controller.Turniere;
+            _turnierTable.DataBind();
         }
         private void OnAddButton_Click(object sender, EventArgs e)
         {
-            Type listDataType = Controller.Turniere.Count > 0 ? GetListDatatype(Controller.Turniere) : Type.GetType($"Turnierverwaltung.Model.TurniereNS.Turnier");
-            Turnier t = (Turnier)Activator.CreateInstance(listDataType);
-            Controller.NeuesTurnier = t;
-            EditableRow = tbl_turniere.Rows.Count - 1;
-            LoadTable();
+            ResetSwitcher();
+            Turnier t = new Turnier();
+            Controller.Turniere.Add(t);
+
+            _turnierTable.DataSource = Controller.Turniere;
+            _turnierTable.DataBind();
         }
         private void OnHeaderButton_Click(object sender, CommandEventArgs e)
         {
-            Controller.Teilnehmer = Controller.Teilnehmer.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
+            var tmp = Controller.Turniere.OrderBy(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
+            if (Controller.Turniere.SequenceEqual(tmp))
+                Controller.Turniere = Controller.Turniere.OrderByDescending(o => o.GetType().GetProperty(e.CommandArgument.ToString()).GetValue(o)).ToList();
+            else
+                Controller.Turniere = tmp;
+
+            _turnierTable.DataSource = Controller.Turniere;
+            _turnierTable.DataBind();
         }
         private void OnTurnierDurchfuehren_Click(object sender, CommandEventArgs e)
         {
-            Turnier actTurnier = Controller.Turniere[Convert.ToInt32(e.CommandArgument) - 1];
-            actTurnier.ErzeugeSpiele(false);
+            //Turnier actTurnier = Controller.Turniere[Convert.ToInt32(e.CommandArgument) - 1];
+            //actTurnier.ErzeugeSpiele(false);
 
-            pnl_spiele.Controls.Clear();
+            //pnl_spiele.Controls.Clear();
 
-            HtmlGenericControl headline = new HtmlGenericControl("h2")
-            {
-                InnerText = $"Spiele von Turnier: {actTurnier.Turniername}",
-                ID = "headlineMitgliederSwitch"
-            };
-            pnl_spiele.Controls.Add(headline);
+            //HtmlGenericControl headline = new HtmlGenericControl("h2")
+            //{
+            //    InnerText = $"Spiele von Turnier: {actTurnier.Turniername}",
+            //    ID = "headlineMitgliederSwitch"
+            //};
+            //pnl_spiele.Controls.Add(headline);
 
-            Table spieleTable = new Table
-            {
-                ID = $"tableSpiele",
-                CssClass = "table table-bordered"
-            };
+            //Table spieleTable = new Table
+            //{
+            //    ID = $"tableSpiele",
+            //    CssClass = "table table-bordered"
+            //};
 
-            spieleTable.Rows.Add(GetHeaderRow(GetDisplayFields(actTurnier.Spiele[0].GetType())));            
+            //spieleTable.Rows.Add(GetHeaderRow(GetDisplayFields(actTurnier.Spiele[0].GetType())));            
 
-            //HACK: Gottlos wie kompliziert, deswegen so...
-            switch (System.Windows.Forms.MessageBox.Show("Wollen Sie das Turnier manuell durchführen?", "Bitte Auswählen", System.Windows.Forms.MessageBoxButtons.YesNo))
-            {
-                case System.Windows.Forms.DialogResult.Yes:
-                    for (int memberNum = 0; memberNum < actTurnier.Spiele.Count; memberNum++)
-                    {
-                        spieleTable.Rows.Add(GetDataRow(actTurnier.Spiele[memberNum], GetDisplayFields(actTurnier.Spiele[0].GetType()), memberNum + 1, true));
-                    }
-                    break;
-                case System.Windows.Forms.DialogResult.No:
-                    Random r = new Random();
-                    for (int memberNum = 0; memberNum < actTurnier.Spiele.Count; memberNum++)
-                    {
-                        actTurnier.Spiele[memberNum].PunkteTeilnehmer1 = r.Next(0, 15);
-                        actTurnier.Spiele[memberNum].PunkteTeilnehmer2 = r.Next(0, 15);
-                        spieleTable.Rows.Add(GetDataRow(actTurnier.Spiele[memberNum], GetDisplayFields(actTurnier.Spiele[0].GetType()), memberNum + 1, false));
-                    }
-                    break;
-            }
-            spieleTable.Rows.Add(GetFooterRow());
-            pnl_spiele.Controls.Add(spieleTable);
+            ////HACK: Gottlos wie kompliziert, deswegen so...
+            //switch (System.Windows.Forms.MessageBox.Show("Wollen Sie das Turnier manuell durchführen?", "Bitte Auswählen", System.Windows.Forms.MessageBoxButtons.YesNo))
+            //{
+            //    case System.Windows.Forms.DialogResult.Yes:
+            //        for (int memberNum = 0; memberNum < actTurnier.Spiele.Count; memberNum++)
+            //        {
+            //            spieleTable.Rows.Add(GetDataRow(actTurnier.Spiele[memberNum], GetDisplayFields(actTurnier.Spiele[0].GetType()), memberNum + 1, true));
+            //        }
+            //        break;
+            //    case System.Windows.Forms.DialogResult.No:
+            //        Random r = new Random();
+            //        for (int memberNum = 0; memberNum < actTurnier.Spiele.Count; memberNum++)
+            //        {
+            //            actTurnier.Spiele[memberNum].PunkteTeilnehmer1 = r.Next(0, 15);
+            //            actTurnier.Spiele[memberNum].PunkteTeilnehmer2 = r.Next(0, 15);
+            //            spieleTable.Rows.Add(GetDataRow(actTurnier.Spiele[memberNum], GetDisplayFields(actTurnier.Spiele[0].GetType()), memberNum + 1, false));
+            //        }
+            //        break;
+            //}
+            //spieleTable.Rows.Add(GetFooterRow());
+            //pnl_spiele.Controls.Add(spieleTable);
         }
-
         private void OnZeigeSpiele_Click(object sender, CommandEventArgs e)
         {
-            Turnier actTurnier = Controller.Turniere[Convert.ToInt32(e.CommandArgument) - 1];
-            List<Spiel> spiele = actTurnier.Spiele;
-            //Zeigt die gespielten Spiele an
-            pnl_spiele.Controls.Clear();
-
-            HtmlGenericControl headline = new HtmlGenericControl("h2")
-            {
-                InnerText = $"Spiele von Turnier: {actTurnier.Turniername}",
-                ID = "headlineMitgliederSwitch"
-            };
-            pnl_spiele.Controls.Add(headline);
-
-            Table spieleTable = new Table
-            {
-                ID = $"tableSpiele",
-                CssClass = "table table-bordered"
-            };
-
-            //Headerrows
-            spieleTable.Rows.Add(GetHeaderRow(GetDisplayFields(spiele[0].GetType())));
-
-            //Datarows
-            for (int memberNum = 0; memberNum < spiele.Count; memberNum++)
-            {
-                spieleTable.Rows.Add(GetDataRow(spiele[memberNum], GetDisplayFields(spiele[0].GetType()), memberNum + 1, memberNum + 1 == EditableRow));
-            }
-            pnl_spiele.Controls.Add(spieleTable);
 
         }
 
-        private Type GetListDatatype(List<Turnier> content)
+        private void ResetSwitcher()
         {
-            Type t = content.First().GetType();
-            if (!content.All(x => x.GetType().Equals(t)))
-            {
-                //Checken, ob es eine gemeinsame Basisklasse gibt
-                for (Type current = t; current != null; current = current.BaseType)
-                {
-                    if (content.All(x => x.GetType().IsSubclassOf(current)))
-                    {
-                        return current;
-                    }
-                }
-                //Keine gemeinsame Basisklasse
-                return null;
-            }
-            else
-            {
-                return t;
-            }
-        }
-        private List<PropertyInfo> GetDisplayFields(Type ListDataType)
-        {
-            List<PropertyInfo> result = new List<PropertyInfo>();
-            if (ListDataType != null)
-            {
-                foreach (PropertyInfo propertyInfo in ListDataType.GetProperties())
-                {
-                    if (Attribute.IsDefined(propertyInfo, typeof(DisplayMetaInformation)) && !_ignoreFields.Any(propertyInfo.Name.Contains))
-                        result.Add(propertyInfo);
-                }
-                result = result.OrderBy(p => (p.GetCustomAttribute(typeof(DisplayMetaInformation), true) as DisplayMetaInformation).Order).ToList();
-            }
-            return result;
+            MoeglicheTeilnehmer = null;
+            Teilnehmer = null;
+            MitgliederAnzeige = -1;
+            pnl_teilnehmer.Controls.Clear();
         }
         #endregion
     }

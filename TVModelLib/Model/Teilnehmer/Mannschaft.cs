@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using TVModeLib.Model.TeilnehmerNS.Personen;
-using TVModelLib;
+using TVModelLib.Model.TeilnehmerNS.Personen;
 
-namespace TVModeLib.Model.TeilnehmerNS
+namespace TVModelLib.Model.TeilnehmerNS
 {
+    [Serializable]
     public class Mannschaft : Teilnehmer
     {
         #region Attributes

@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using TVModelLib;
 
-namespace TVModeLib.Model.TurniereNS
+namespace TVModelLib.Model.TurniereNS
 {
     public class Turnierart
     {

@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using TVModeLib.Model.TeilnehmerNS;
+using TVModelLib.Model.TeilnehmerNS;
 using TVModelLib;
 using TVModelLib.Database;
+using TVModelLib.Model.TeilnehmerNS;
 
-namespace TVModeLib.Model.TurniereNS
+namespace TVModelLib.Model.TurniereNS
 {
+    [Serializable]
     public class Turnier
     {
         #region Attributes      
@@ -22,13 +24,13 @@ namespace TVModeLib.Model.TurniereNS
         #endregion
         #region Properties
         public List<Spiel> Spiele { get => _spiele; set => _spiele = value; }
-        [DisplayMetaInformation("Sportart", 17, true, ControlType.ctDomain, DdlList.dlSportarten)]
+        [DisplayMetaInformation("Sportart", 17, true, ControlType.ctDomain, DdlList.dlSportarten, DomainName = "SPORTART")]
         public int SportartId { get => _sportartId; set => _sportartId = value; }
         [DisplayMetaInformation("Bezeichnung", 16, true, ControlType.ctEditText)]
         public string Turniername { get => _turnierName; set => _turnierName = value; }
         public long Id { get => _id; set => _id = value; }
         public List<Teilnehmer> TurnierTeilnehmer { get => _turnierTeilnehmer; set => _turnierTeilnehmer = value; }
-        [DisplayMetaInformation("Turnierart", 18, true, ControlType.ctDomain, DdlList.dlTurnierarten)]
+        [DisplayMetaInformation("Turnierart", 18, true, ControlType.ctDomain, DdlList.dlTurnierarten, DomainName = "TURNIERART")]
         public int Turnierart { get => _turnierart; set => _turnierart = value; }
         [DisplayMetaInformation("Abgeschlossen", 19, false, ControlType.ctCheck)]
         public bool Abgeschlossen { get => _abgeschlossen; set => _abgeschlossen = value; }
@@ -38,9 +40,18 @@ namespace TVModeLib.Model.TurniereNS
         {
             Spiele = new List<Spiel>();
             TurnierTeilnehmer = new List<Teilnehmer>();
+            SportartId = 1;
+            Turniername = "";
+            Id = 0;
+            Turnierart = 1;
+            Abgeschlossen = false;
         }
         #endregion
         #region Methods
+        public override string ToString()
+        {
+            return Turniername;
+        }
         public void Neuanlage()
         {
             bool res = true;
@@ -86,8 +97,6 @@ namespace TVModeLib.Model.TurniereNS
                     }
                     if (TurnierTeilnehmer != null)
                         SpeichereTeilnehmer();
-                    if (Spiele != null)
-                        SpeichereSpiele();
                 }
                 catch (MySqlException e)
                 {
@@ -226,7 +235,6 @@ namespace TVModeLib.Model.TurniereNS
         }
         private List<Teilnehmer> GetTeilnehmer()
         {
-            TurnierTeilnehmer.Clear();
             List<Teilnehmer> result = new List<Teilnehmer>();
             string turnierart = DatabaseHelper.ReturnSingleValue("Bezeichnung", "turnierart", Turnierart).ToString();
             string sql = "";
@@ -291,63 +299,60 @@ namespace TVModeLib.Model.TurniereNS
             }
             return result;
         }
+        //private void SpeichereSpiele()
+        //{
+        //    List<Spiel> oldMembers = GetSpiele();
 
-        private void SpeichereSpiele()
-        {
-            List<Spiel> oldMembers = GetSpiele();
+        //    List<Spiel> remove = oldMembers.Except(Spiele).ToList();
+        //    List<Spiel> add = Spiele.Except(oldMembers).ToList();
 
-            List<Spiel> remove = oldMembers.Except(Spiele).ToList();
-            List<Spiel> add = Spiele.Except(oldMembers).ToList();
+        //    string turnierart = DatabaseHelper.ReturnSingleValue("Bezeichnung", "turnierart", Turnierart).ToString();
 
-            string turnierart = DatabaseHelper.ReturnSingleValue("Bezeichnung", "turnierart", Turnierart).ToString();            
-
-            switch (turnierart)
-            {
-                case "Mannschaftsturnier":
-                    foreach (Spiel s in remove)
-                    {
-                        s.Loeschen();
-                    }
-                    foreach (Spiel s in add)
-                    {
-                        s.Neuanlage("Mannschaftsturnier");
-                    }
-                    break;
-                case "Einzelturnier":
-                    foreach (Spiel s in remove)
-                    {
-                        s.Loeschen();
-                    }
-                    foreach (Spiel s in add)
-                    {
-                        s.Neuanlage("Einzelturnier");
-                    }
-                    break;
-            }
-        }
-
-        public void ErzeugeSpiele(bool mitRueckspiel)
-        {
-            //n!/(k! * (n-k)!)
-            for (int i = 0; i < TurnierTeilnehmer.Count; i++)
-            {
-                for (int j = i + 1; j < TurnierTeilnehmer.Count; j++)
-                {
-                    Spiele.Add(new Spiel { Teilnehmer1 = TurnierTeilnehmer[i], Teilnehmer2 = TurnierTeilnehmer[j] });
-                }
-            }
-            if (mitRueckspiel)
-            {
-                for (int i = TurnierTeilnehmer.Count - 1; i >= 0; i--)
-                {
-                    for (int j = i - 1; j >= 0; j--)
-                    {
-                        Spiele.Add(new Spiel { Teilnehmer1 = TurnierTeilnehmer[i], Teilnehmer2 = TurnierTeilnehmer[j] });
-                    }
-                }
-            }
-        }
-
+        //    switch (turnierart)
+        //    {
+        //        case "Mannschaftsturnier":
+        //            foreach (Spiel s in remove)
+        //            {
+        //                s.Loeschen();
+        //            }
+        //            foreach (Spiel s in add)
+        //            {
+        //                s.Neuanlage("Mannschaftsturnier");
+        //            }
+        //            break;
+        //        case "Einzelturnier":
+        //            foreach (Spiel s in remove)
+        //            {
+        //                s.Loeschen();
+        //            }
+        //            foreach (Spiel s in add)
+        //            {
+        //                s.Neuanlage("Einzelturnier");
+        //            }
+        //            break;
+        //    }
+        //}
+        //public void ErzeugeSpiele(bool mitRueckspiel)
+        //{
+        //    //n!/(k! * (n-k)!)
+        //    for (int i = 0; i < TurnierTeilnehmer.Count; i++)
+        //    {
+        //        for (int j = i + 1; j < TurnierTeilnehmer.Count; j++)
+        //        {
+        //            Spiele.Add(new Spiel { Teilnehmer1 = TurnierTeilnehmer[i], Teilnehmer2 = TurnierTeilnehmer[j] });
+        //        }
+        //    }
+        //    if (mitRueckspiel)
+        //    {
+        //        for (int i = TurnierTeilnehmer.Count - 1; i >= 0; i--)
+        //        {
+        //            for (int j = i - 1; j >= 0; j--)
+        //            {
+        //                Spiele.Add(new Spiel { Teilnehmer1 = TurnierTeilnehmer[i], Teilnehmer2 = TurnierTeilnehmer[j] });
+        //            }
+        //        }
+        //    }
+        //}
         private void SpeichereTeilnehmer()
         {
             List<Teilnehmer> oldMembers = GetTeilnehmer();

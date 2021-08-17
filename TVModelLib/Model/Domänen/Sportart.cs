@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using TVModelLib;
 
-namespace TVModeLib.Model
+namespace TVModelLib.Model
 {
     public class Sportart
     {

@@ -15,21 +15,21 @@ namespace Turnierverwaltung.View.Pages
     {
 
         /// <summary>
-        /// tbl_turniere-Steuerelement
+        /// pnl_turniere-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table tbl_turniere;
+        protected global::System.Web.UI.WebControls.Panel pnl_turniere;
 
         /// <summary>
-        /// pnl_spiele-Steuerelement
+        /// pnl_teilnehmer-Steuerelement
         /// </summary>
         /// <remarks>
         /// Automatisch generiertes Feld
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnl_spiele;
+        protected global::System.Web.UI.WebControls.Panel pnl_teilnehmer;
     }
 }

@@ -87,6 +87,7 @@
     <Compile Include="Extensions\BoolExtensions.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\GenericListExtensions.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Model\Domänen\Sportart.cs" />

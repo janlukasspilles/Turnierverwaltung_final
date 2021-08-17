@@ -1,7 +1,7 @@
 ﻿using System;
 using TVModelLib;
 
-namespace TVModeLib.Model.TeilnehmerNS.Personen
+namespace TVModelLib.Model.TeilnehmerNS.Personen
 {
     [Serializable]
     public abstract class Person : Teilnehmer
