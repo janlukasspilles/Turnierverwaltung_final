@@ -60,6 +60,7 @@ namespace Turnierverwaltung.View.Pages
             btnFussballspieler.CssClass = "btn btn-dark";
             btnHandballspieler.CssClass = "btn btn-dark";
             btnTennisspieler.CssClass = "btn btn-dark";
+            btnMaterialwart.CssClass = "btn btn-dark";
         }
 
         private void BuildTable()
@@ -200,6 +201,9 @@ namespace Turnierverwaltung.View.Pages
                     break;
                 case "Tennisspieler":
                     Controller.GetAlleTennisspieler();
+                    break;
+                case "Materialwart":
+                    Controller.GetAlleMaterialwarte();
                     break;
             }
             ShownType = TypeExtensions.GetTvType((sender as Button).CommandArgument);

@@ -58,6 +58,7 @@ namespace TVModelLib.Database
                 "when((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Fussballspieler' " +
                 "when((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Handballspieler' " +
                 "when((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Tennisspieler' " +
+                "when((SELECT 1 FROM MATERIALWART MW WHERE MW.PERSON_ID = P.ID) IS NOT NULL) THEN 'Materialwart' " +
                 "END AS Profession " +
                 "FROM PERSON P " +
                 $"WHERE P.ID = {id}";
@@ -98,6 +99,8 @@ namespace TVModelLib.Database
                     return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Handballspieler");
                 case "Tennisspieler":
                     return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Tennisspieler");
+                case "Materialwart":
+                    return Type.GetType($"TVModelLib.Model.TeilnehmerNS.Personen.Materialwart");
                 default: throw new Exception("Invalid Type");
             }
         }

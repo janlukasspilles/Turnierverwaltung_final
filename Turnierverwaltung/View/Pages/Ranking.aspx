@@ -7,5 +7,5 @@
     <br />
     <br />
     <asp:DropDownList runat="server" ID="ddlTurnier"></asp:DropDownList>
-    <asp:Table runat="server" ID="tblRanking" />
+    <asp:Gridview runat="server" ID="gvRanking" />
 </asp:Content>

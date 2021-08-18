@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using TVModelLib.Model.TeilnehmerNS;
-using TVModelLib;
 using TVModelLib.Database;
-using TVModelLib.Model.TeilnehmerNS;
 
 namespace TVModelLib.Model.TurniereNS
 {

@@ -60,6 +60,15 @@ namespace Turnierverwaltung.View.Pages
         protected global::System.Web.UI.WebControls.Button btnTennisspieler;
 
         /// <summary>
+        /// btnMaterialwart-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnMaterialwart;
+
+        /// <summary>
         /// pnl_tbl-Steuerelement
         /// </summary>
         /// <remarks>

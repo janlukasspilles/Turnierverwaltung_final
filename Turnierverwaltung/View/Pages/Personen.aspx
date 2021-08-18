@@ -18,6 +18,7 @@
             <asp:Button runat="server" ID="btnFussballspieler" OnClick="OnTypeSelected" class="btn btn-dark" Text="Fussballspieler" CommandArgument="Fussballspieler"></asp:Button>
             <asp:Button runat="server" ID="btnHandballspieler" OnClick="OnTypeSelected" class="btn btn-dark" Text="Handballspieler" CommandArgument="Handballspieler"></asp:Button>
             <asp:Button runat="server" ID="btnTennisspieler" OnClick="OnTypeSelected" class="btn btn-dark" Text="Tennisspieler" CommandArgument="Tennisspieler"></asp:Button>
+            <asp:Button runat="server" ID="btnMaterialwart" OnClick="OnTypeSelected" class="btn btn-dark" Text="Materialwarte" CommandArgument="Materialwart"></asp:Button>
         </div>
     </div>
     <br />

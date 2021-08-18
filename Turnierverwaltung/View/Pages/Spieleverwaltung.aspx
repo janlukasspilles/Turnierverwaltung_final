@@ -8,7 +8,7 @@
     <br />
     <asp:Panel runat="server" ID="pnl_head">
         <asp:DropDownList runat="server" ID="ddlTurnierauswahl" AutoPostBack="true" OnSelectedIndexChanged="ddlTurnierauswahl_SelectedIndexChanged"></asp:DropDownList>
-        <asp:Button runat="server" ID="btnDurchfuehren" Text="Turnier durchführen" />
+        <%--<asp:Button runat="server" ID="btnDurchfuehren" Text="Turnier durchführen" />--%>
     </asp:Panel>
     <asp:Panel runat="server" ID="pnl_tbl">
 

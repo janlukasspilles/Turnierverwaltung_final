@@ -34,6 +34,8 @@ namespace Turnierverwaltung.View.Pages
             Controller.GetAlleTurniere();
             ddlTurnier.DataSource = Controller.Turniere;
             ddlTurnier.DataBind();
+            gvRanking.DataSource = Controller.GetRanking(1);
+            gvRanking.DataBind();
         }
         #endregion
     }

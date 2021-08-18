@@ -94,6 +94,7 @@
     <Compile Include="Model\Teilnehmer\Mannschaft.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Fussballspieler.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Handballspieler.cs" />
+    <Compile Include="Model\Teilnehmer\Personen\Materialwart.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Person.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Physio.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Tennisspieler.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Model\Teilnehmer\Teilnehmer.cs" />
     <Compile Include="Model\Turniere\Einzelturnier.cs" />
     <Compile Include="Model\Turniere\Mannschaftsturnier.cs" />
+    <Compile Include="Model\Turniere\Ranking.cs" />
     <Compile Include="Model\Turniere\Spiel.cs" />
     <Compile Include="Model\Turniere\Turnier.cs" />
     <Compile Include="Model\Domänen\Turnierart.cs" />

@@ -7,6 +7,7 @@ using TVModelLib;
 using TVModelLib.Model.TurniereNS;
 using TVModelLib.Model.TeilnehmerNS;
 using TVModelLib.Model.TeilnehmerNS.Personen;
+using System.Data;
 
 namespace Turnierverwaltung.ControllerNS
 {
@@ -28,11 +29,6 @@ namespace Turnierverwaltung.ControllerNS
         }
         #endregion
         #region Methods     
-
-        public void GetRanking(int turnierId)
-        {
-
-        }
 
         public List<Turnierart> GetAlleTurnierarten()
         {
@@ -130,6 +126,78 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
+
+        public DataTable GetRanking(int turnierId)
+        {
+            DataTable dt = new DataTable();
+            var sql = "SELECT @`curRow` := @`curRow` + 1 AS \"Platzierung\""
+                    + " ,FINAL.*"
+                    + " FROM"
+                    + " ("
+                        + " SELECT  SUBVALUES.NAME"
+                        + " ,SUM(SUBVALUES.Gewonnen * 3) + SUM(SUBVALUES.Unentschieden * 1) / 2 AS \"Punkte\""
+                        + " ,SUBVALUES.Gewonnen"
+                        + " ,SUBVALUES.Verloren"
+                        + " ,SUBVALUES.Unentschieden"
+                        + " ,SUBVALUES.Differenz AS \"Tordifferenz\""
+                        + " FROM"
+                        + " ("
+                            + " SELECT  SUBSTATUS.NAME"
+                            + " ,SUM(if (SUBSTATUS.STATUS = 'Gewonnen',1,0))      AS 'Gewonnen'"
+                            + " ,SUM(if (SUBSTATUS.STATUS = 'Verloren',1,0))      AS 'Verloren'"
+                            + " ,SUM(if (SUBSTATUS.STATUS = 'Unentschieden',1,0)) AS 'Unentschieden'"
+                            + " ,SUM(SUBSTATUS.Differenz)                        AS 'Differenz'"
+
+                            + " FROM"
+                            + " ("
+                                + " SELECT  m.NAME"
+                                + " , ms.PUNKTE_MANNSCHAFT1 - ms.PUNKTE_MANNSCHAFT2 AS \"Differenz\""
+                                + " , CASE WHEN ms.PUNKTE_MANNSCHAFT1 > ms.PUNKTE_MANNSCHAFT2 THEN 'Gewonnen'"
+                                    + " WHEN ms.PUNKTE_MANNSCHAFT1 < ms.PUNKTE_MANNSCHAFT2 THEN 'Verloren'  ELSE 'Unentschieden' END AS \"Status\""
+                                + " FROM MANNSCHAFT M"
+                                + " JOIN mannschaftsspiel ms"
+                                + " ON ms.MANNSCHAFT1_ID = m.ID"
+                                + $" WHERE ms.TURNIER_ID = '{turnierId}'"
+                                + " UNION ALL"
+                                + " SELECT m.NAME"
+                                + " , ms.PUNKTE_MANNSCHAFT2 - ms.PUNKTE_MANNSCHAFT1 AS \"Differenz\""
+                                + " , CASE WHEN ms.PUNKTE_MANNSCHAFT1 < ms.PUNKTE_MANNSCHAFT2 THEN 'Gewonnen'"
+                                    + " WHEN ms.PUNKTE_MANNSCHAFT1 > ms.PUNKTE_MANNSCHAFT2 THEN 'Verloren'  ELSE 'Unentschieden' END AS \"Status\""
+                                + " FROM MANNSCHAFT M"
+                                + " JOIN mannschaftsspiel ms"
+                                + " ON ms.MANNSCHAFT2_ID = m.ID"
+                                + $" WHERE ms.TURNIER_ID = '{turnierId}'"
+                            + " ) AS SUBSTATUS"
+                            + " GROUP BY  SUBSTATUS.NAME"
+                    + " ) AS SUBVALUES"
+                    + " GROUP BY  SUBVALUES.NAME"
+                    + " ORDER BY Punkte desc"
+                            + " ,Differenz desc"
+                + " ) AS FINAL, ("
+                + " SELECT  @`curRow`:= 0) r; ";
+
+            using (MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString))
+            {
+                try
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(sql, con))
+                    {
+                        //cmd.Parameters.AddWithValue("@curRow", 0);
+                        dt.Load(cmd.ExecuteReader());
+                        return dt;
+                    }
+                }
+                catch (MySqlException e)
+                {
+#if DEBUG
+                    Debug.WriteLine(e.Message);
+#endif
+                    throw e;
+                }
+            }
+        }
+
         public List<Teilnehmer> GetMoeglicheTurnierTeilnehmerEinzel(long turnierId)
         {
             List<Teilnehmer> result = new List<Teilnehmer>();
@@ -141,6 +209,7 @@ namespace Turnierverwaltung.ControllerNS
                         WHEN((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Fussballspieler' 
                         WHEN((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Handballspieler' 
                         WHEN((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Tennisspieler' 
+                        when((SELECT 1 FROM MATERIALWART MW WHERE MW.PERSON_ID = P.ID) IS NOT NULL) THEN 'Materialwart'
                         ELSE 'Der Hund hat keine Detailtabelle' 
                         END AS Profession 
                         FROM PERSON P
@@ -175,6 +244,9 @@ namespace Turnierverwaltung.ControllerNS
                             break;
                         case "Tennisspieler":
                             p = new Tennisspieler();
+                            break;
+                        case "Materialwart":
+                            p = new Materialwart();
                             break;
                     }
                     p.SelektionId(reader.GetInt64("ID"));
@@ -259,6 +331,7 @@ namespace Turnierverwaltung.ControllerNS
                 "WHEN((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Fussballspieler' " +
                 "WHEN((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Handballspieler' " +
                 "WHEN((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.iD) IS NOT NULL) THEN 'Tennisspieler' " +
+                "when((SELECT 1 FROM MATERIALWART MW WHERE MW.PERSON_ID = P.ID) IS NOT NULL) THEN 'Materialwart' " +
                 "ELSE 'Der Hund hat keine Detailtabelle' " +
                 "END AS Profession " +
                 "FROM PERSON P " +
@@ -294,6 +367,9 @@ namespace Turnierverwaltung.ControllerNS
                         case "Tennisspieler":
                             p = new Tennisspieler();
                             break;
+                        case "Materialwart":
+                            p = new Materialwart();
+                            break;
                     }
                     p.SelektionId(reader.GetInt64("ID"));
                     result.Add(p);
@@ -312,8 +388,8 @@ namespace Turnierverwaltung.ControllerNS
             }
 
             return result;
-        }        
-        
+        }
+
         public void GetAllePhysios()
         {
             Teilnehmer.Clear();
@@ -378,6 +454,40 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
+
+        public void GetAlleMaterialwarte()
+        {
+            Teilnehmer.Clear();
+            string sql = "SELECT P.ID FROM PERSON P JOIN MATERIALWART M ON P.ID = M.PERSON_ID";
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Materialwart t = new Materialwart();
+                    t.SelektionId(reader.GetInt64("ID"));
+                    Teilnehmer.Add(t);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
         public void GetAlleFussballspieler()
         {
             Teilnehmer.Clear();
@@ -474,7 +584,7 @@ namespace Turnierverwaltung.ControllerNS
                 con.Close();
             }
         }
-        
+
         public void GetAlleMannschaften()
         {
             Teilnehmer.Clear();

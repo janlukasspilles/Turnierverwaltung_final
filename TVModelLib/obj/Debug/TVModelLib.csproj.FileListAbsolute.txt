@@ -4,13 +4,6 @@ C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\TVModelLib.dl
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\TVModelLib.pdb
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\System.Buffers.dll
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\System.Memory.dll
-C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\Google.Protobuf.pdb
-C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\Google.Protobuf.xml
-C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\K4os.Compression.LZ4.xml
-C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\K4os.Compression.LZ4.Streams.xml
-C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\K4os.Hash.xxHash.xml
-C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\MySql.Data.xml
-C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.csproj.CopyComplete
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.dll
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.pdb

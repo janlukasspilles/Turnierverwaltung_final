@@ -46,6 +46,7 @@ namespace TVModelLib.Model.TeilnehmerNS
                 "when((SELECT 1 FROM FUSSBALLSPIELER FS WHERE FS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Fussballspieler' " +
                 "when((SELECT 1 FROM HANDBALLSPIELER HS WHERE HS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Handballspieler' " +
                 "when((SELECT 1 FROM TENNISSPIELER TS WHERE TS.PERSON_ID = P.ID) IS NOT NULL) THEN 'Tennisspieler' " +
+                "when((SELECT 1 FROM MATERIALWART MW WHERE MW.PERSON_ID = P.ID) IS NOT NULL) THEN 'Materialwart' " +
                 "END AS Profession " +
                 "FROM PERSON P " +
                 "JOIN PERSONEN_MANNSCHAFTEN PM " +
@@ -81,6 +82,9 @@ namespace TVModelLib.Model.TeilnehmerNS
                             break;
                         case "Tennisspieler":
                             p = new Tennisspieler();
+                            break;
+                        case "Materialwart":
+                            p = new Materialwart();
                             break;
                     }
                     p.SelektionId(reader.GetInt64("ID"));
