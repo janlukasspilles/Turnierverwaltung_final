@@ -21,7 +21,7 @@ namespace Turnierverwaltung.View.Pages
         protected void Page_Load(object sender, EventArgs e)
         {
             Controller = Global.Controller;
-            _curTable = new CustomTable<Benutzer>(Type.GetType($"Turnierverwaltung.Model.Benutzeranmeldung.Benutzer"), "Benutzertabelle");
+            _curTable = new CustomTable<Benutzer>(Type.GetType($"TVModelLib.Model.Benutzeranmeldung.Benutzer"), "Benutzertabelle");
             _curTable.OnHeaderButton_ClickCommand += OnHeaderButton_Click;
             _curTable.DeleteButton_ClickCommand += OnDeleteButton_Click;
             _curTable.AddButton_ClickCommand += OnAddButton_Click;
@@ -40,14 +40,12 @@ namespace Turnierverwaltung.View.Pages
         
         private void OnCancelButton_Click(object sender, EventArgs e)
         {
-            ResetSwitcher();
             Controller.Benutzer.RemoveAll(x => x.Id == 0);
             _curTable.DataSource = Controller.Benutzer;
         }
 
         private void OnAddButton_Click(object sender, EventArgs e)
         {
-            ResetSwitcher();
             Benutzer m = new Benutzer();
             Controller.Benutzer.Add(m);
 
@@ -69,7 +67,6 @@ namespace Turnierverwaltung.View.Pages
 
         private void OnSubmitButton_Click(object sender, EventArgs e)
         {
-            ResetSwitcher();
             Type ListDataType = _curTable.FallbackType ?? _curTable.ListDataType;
             foreach (int row in _curTable.RowsInEdit)
             {
@@ -116,17 +113,9 @@ namespace Turnierverwaltung.View.Pages
             _curTable.DataSource = Controller.Benutzer;
             _curTable.DataBind();
         }
-        private void ResetSwitcher()
-        {
-            MoeglicheMitglieder = null;
-            Mitglieder = null;
-            MitgliederAnzeige = -1;
-            pnl_mitglieder.Controls.Clear();
-        }
 
         private void OnDeleteButton_Click(object sender, EventArgs e)
         {
-            ResetSwitcher();
             Queue<Benutzer> deletequeue = new Queue<Benutzer>();
             foreach (TableRow tmp in _curTable.Rows)
             {

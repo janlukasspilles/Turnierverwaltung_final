@@ -17,9 +17,13 @@ namespace TVModelLib.Model.Benutzeranmeldung
         private int _rolleId;
         #endregion
         #region Properties
+        [DisplayMetaInformation("Benutzername", 27, true, ControlType.ctEditText)]
         public string Benutzername { get => _benutzername; set => _benutzername = value; }
+        [DisplayMetaInformation("Passwort", 28, true, ControlType.ctEditText)]
         public string Passwort { get => _passwort; set => _passwort = value; }
+        [DisplayMetaInformation("Id", 26, false, ControlType.ctEditText)]
         public int Id { get => _id; set => _id = value; }
+        [DisplayMetaInformation("Benutzerrolle", 29, true, ControlType.ctDomain, DdlList.dlSportarten, DomainName = "BENUTZERROLLE")]
         public int RolleId { get => _rolleId; set => _rolleId = value; }
         #endregion
         #region Constructors
@@ -64,7 +68,7 @@ namespace TVModelLib.Model.Benutzeranmeldung
                     con.Open();
                     string selectionString = $"SELECT B.* " +
                         $"FROM BENUTZER B " +
-                        $"WHERE P.ID = '{id}'";
+                        $"WHERE B.ID = '{id}'";
 
                     using (MySqlCommand cmd = new MySqlCommand(selectionString, con))
                     {

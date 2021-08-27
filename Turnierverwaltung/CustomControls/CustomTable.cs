@@ -79,6 +79,7 @@ namespace Turnierverwaltung.CustomControls
             DomainDictionary = new Dictionary<string, IList>();                    
             DomainDictionary.Add("SPORTART", Global.Controller.GetAlleSportarten());
             DomainDictionary.Add("TURNIERART", Global.Controller.GetAlleTurnierarten());
+            DomainDictionary.Add("BENUTZERROLLE", Global.Controller.GetAlleBenutzerRollen());
             CssClass = "table table-bordered";
             FallbackType = fallbackType;
             ID = id;
@@ -420,3 +421,4 @@ namespace Turnierverwaltung.CustomControls
         #endregion
     }
 }
+

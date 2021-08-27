@@ -16,4 +16,3 @@ C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelL
 C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.csproj.CopyComplete
 C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.dll
 C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.pdb
-C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.csprojAssemblyReference.cache

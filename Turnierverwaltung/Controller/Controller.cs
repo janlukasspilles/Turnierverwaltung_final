@@ -7,6 +7,7 @@ using TVModelLib;
 using TVModelLib.Model.TurniereNS;
 using TVModelLib.Model.TeilnehmerNS;
 using TVModelLib.Model.TeilnehmerNS.Personen;
+using TVModelLib.Model.Benutzeranmeldung;
 using System.Data;
 
 namespace Turnierverwaltung.ControllerNS
@@ -16,19 +17,107 @@ namespace Turnierverwaltung.ControllerNS
         #region Attributes
         private List<Teilnehmer> _teilnehmer;
         private List<Turnier> _turniere;
+        private List<Benutzer> _benutzer;
         #endregion
         #region Properties
         public List<Teilnehmer> Teilnehmer { get => _teilnehmer; set => _teilnehmer = value; }
         public List<Turnier> Turniere { get => _turniere; set => _turniere = value; }
+        public List<Benutzer> Benutzer { get => _benutzer; set => _benutzer = value; }
         #endregion
         #region Constructors
         public Controller()
         {
             Teilnehmer = new List<Teilnehmer>();
             Turniere = new List<Turnier>();
+            Benutzer = new List<Benutzer>();
         }
         #endregion
-        #region Methods     
+        #region Methods   
+        public bool CheckLogin(string username, string password)
+        {
+            using (MySqlConnection conn = new MySqlConnection(GlobalConstants.connectionString))
+            {
+                MySqlCommand command = new MySqlCommand("CheckPassword;", conn);
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Add your parameters here if you need them
+                command.Parameters.Add(new MySqlParameter("@BENUTZERNAME_b", username));
+                command.Parameters.Add(new MySqlParameter("@PASSWORT_p", password));
+
+                var returnParameter = command.Parameters.Add("@ReturnVal", MySqlDbType.Int32);
+                returnParameter.Direction = ParameterDirection.ReturnValue;
+
+                conn.Open();
+
+                _ = command.ExecuteNonQuery();
+                return Convert.ToBoolean(returnParameter.Value);
+            }
+        }
+
+        public List<Benutzerrolle> GetAlleBenutzerRollen()
+        {
+            string sql = "SELECT ID FROM BENUTZERROLLE";
+            List<Benutzerrolle> result = new List<Benutzerrolle>();
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Benutzerrolle b = new Benutzerrolle();
+                    b.SelektionId(reader.GetInt64("ID"));
+                    result.Add(b);
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+            return result;
+        }
+
+        public void GetAlleBenutzer()
+        {
+            Benutzer.Clear();
+            string sql = "SELECT B.ID FROM BENUTZER B";
+            MySqlConnection con = new MySqlConnection(GlobalConstants.connectionString);
+            try
+            {
+                con.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, con);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Benutzer b = new Benutzer();
+                    b.SelektionId(reader.GetInt64("ID"));
+                    Benutzer.Add(b);
+                }
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Debug.WriteLine(e.Message);
+#endif
+                throw e;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
 
         public List<Turnierart> GetAlleTurnierarten()
         {
