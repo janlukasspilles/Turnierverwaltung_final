@@ -153,6 +153,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="View\Pages\Anmeldung.aspx" />
     <Content Include="View\Pages\About.aspx" />
     <Content Include="View\Pages\Spieleverwaltung.aspx" />
     <Content Include="View\Pages\Ranking.aspx" />
@@ -213,6 +214,13 @@
   <ItemGroup>
     <Compile Include="CustomControls\CustomSwitchPanel.cs" />
     <Compile Include="CustomControls\CustomTable.cs" />
+    <Compile Include="View\Pages\Anmeldung.aspx.cs">
+      <DependentUpon>Anmeldung.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="View\Pages\Anmeldung.aspx.designer.cs">
+      <DependentUpon>Anmeldung.aspx</DependentUpon>
+    </Compile>
     <Compile Include="View\Pages\About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

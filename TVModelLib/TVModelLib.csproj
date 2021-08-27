@@ -90,6 +90,7 @@
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Model\Benutzeranmeldung\Benutzer.cs" />
     <Compile Include="Model\Domänen\Sportart.cs" />
     <Compile Include="Model\Teilnehmer\Mannschaft.cs" />
     <Compile Include="Model\Teilnehmer\Personen\Fussballspieler.cs" />

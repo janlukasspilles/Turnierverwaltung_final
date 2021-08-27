@@ -9,3 +9,11 @@ C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.dl
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.pdb
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\bin\Debug\System.Numerics.Vectors.dll
 C:\Users\jan-l\source\repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.csprojAssemblyReference.cache
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\bin\Debug\TVModelLib.dll.config
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\bin\Debug\TVModelLib.dll
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\bin\Debug\TVModelLib.pdb
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.csproj.CoreCompileInputs.cache
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.csproj.CopyComplete
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.dll
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.pdb
+C:\Users\janlukas.s\Source\Repos\Turnierverwaltung\TVModelLib\obj\Debug\TVModelLib.csprojAssemblyReference.cache
